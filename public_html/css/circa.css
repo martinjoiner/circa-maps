@@ -1,0 +1,23 @@
+
+html, body{
+	font-family: arial;
+	padding: 0;
+	margin: 0;
+}
+
+.canvasWrap{
+	width: 1200px;
+	height: 800px;
+	float: left;
+}
+
+#svg2, #mask{
+	position: absolute;
+	width: 1200px;
+	height: 800px;
+}
+
+#mask{
+	width: 1180px;
+	height: 780px;
+}
