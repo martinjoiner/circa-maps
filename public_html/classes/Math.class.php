@@ -2,6 +2,11 @@
 
 class Math{
 
+
+	/**
+	 Returns the midway point between 2 points (ie.)
+	 TODO: This needs converting to take arrPoints with x and y key-value pairs
+	*/
 	function midPoint( $pointA, $pointB ){
 
 		$aParts = explode(',',$pointA);
@@ -18,6 +23,12 @@ class Math{
 		return $avX . ',' . $avY;
 	} 
 
+
+
+
+	/**
+	 
+	*/
 	function is_in_polygon($points_polygon, $vertices_x, $vertices_y, $longitude_x, $latitude_y){
 
 		$i = $j = $c = 0;
@@ -28,6 +39,31 @@ class Math{
 		}
 		return $c;
 
+	}
+
+
+
+
+	/**
+	 Return the distance between 2 points
+	 $arrPointA - Associative array with 2 elements with the keys 'x' and 'y'
+	 $arrPointB - Same as above
+	*/
+	function distanceBetween( $arrPointA, $arrPointB ){
+
+		$x1 = floatval($arrPointA['x']);
+		$y1 = floatval($arrPointA['y']);
+
+		$x2 = floatval($arrPointB['x']);
+		$y2 = floatval($arrPointB['y']);
+
+		$xs = $x2 - $x1;
+		$xs = $xs * $xs;
+
+		$ys = $y2 - $y1;
+		$ys = $ys * $ys;
+
+		return sqrt( $xs + $ys );
 	}
 
 

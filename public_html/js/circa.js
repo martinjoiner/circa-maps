@@ -333,6 +333,7 @@ $('#svgJson').html('');
 /* @cord The co-ordinates of where the dot should be placed 	*/
 /* @colour *Optional* - Defaults to 'red'						*/
 function redDot( coord, colour ){
+
 	if(typeof colour === 'undefined'){
 		colour = 'red';
 	}
@@ -440,15 +441,21 @@ function is_in_polygon( cntPolygonPoints, vertices_x, vertices_y, longitude_x, l
 
 
 
+
 /* Handles click event on mask which is the 	-------------- */
 /* transparent layer that floats above the SVG 	-------------- */
 $('#mask').click( function(){
 	var mouseMode = $('input[name=mouseMode]:checked').val();
 	var mouseCoord = document.getElementById('mouseCoord').value;
-	if( mouseMode == 'IsOccupied' ){
+
+	if( mouseMode === 'isOccupied' ){
 		console.log( isOccupied( mouseCoord ) );
-	} else if( mouseMode == 'redDot' ){
+	} else if( mouseMode === 'redDot' ){
 		redDot( mouseCoord );
+	} else if( mouseMode === 'placeProperty' ){
+
+	} else if( mouseMode === 'dropBomb' ){
+
 	}
 	
 });
@@ -561,8 +568,3 @@ function polyCollision( poly1, poly2 ){
 }
 
 
-
-/*  */
-function separatingAxis( poly1, poly2 ){
-	
-}

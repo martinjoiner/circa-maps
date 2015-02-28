@@ -1,8 +1,10 @@
 
-html, body{
-	font-family: arial;
+html, 
+body{
+	font-family: arial, sans-serif;
 	padding: 0;
 	margin: 0;
+	font-size: 12px;
 }
 
 .canvasWrap{
@@ -11,7 +13,8 @@ html, body{
 	float: left;
 }
 
-#svg2, #mask{
+#svgMap, 
+#mask{
 	position: absolute;
 	width: 1200px;
 	height: 800px;
@@ -20,4 +23,30 @@ html, body{
 #mask{
 	width: 1180px;
 	height: 780px;
+}
+
+/* ------------------------- */
+/* ------------------------- */
+
+.controlPanel{
+	background-color: #333;
+	color: #CCC;
+	padding: 1em;
+	width: 180px;
+	float: left;
+	min-height: 700px;
+}
+
+.mouseMode{
+	border: 1px solid #888;
+	margin-bottom: 1em;
+}
+
+.controlPanel input{
+	margin-bottom: 1em;
+}
+
+.checkLabel:hover{
+	color: lightblue;
+	cursor: pointer;
 }
