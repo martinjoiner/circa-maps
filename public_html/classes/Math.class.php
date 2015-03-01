@@ -74,4 +74,26 @@ class Math{
 	}
 
 
+
+
+	/**
+	 Returns the co-ordinates of a point projected a distace from 2 points 
+	 @arrPoint1 associative array - The origin of the line of projection							
+	 @arrPoint2 associative array - The direction of the line of projection		
+	 @percent The percentage the line must be extended by path second point 	
+	*/
+	function projectPath( $arrPoint1, $arrPoint2, $percent = 10 ){
+
+		$x1 = $arrPoint1['x'];
+		$y1 = $arrPoint1['y'];
+
+		$x2 = $arrPoint2['x'];
+		$y2 = $arrPoint2['y'];
+
+		$x3 = $x1 + ( ( $x1 - $x2 ) / $percent );
+		$y3 = $y1 + ( ( $y1 - $y2 ) / $percent );
+
+		return round($x3, 3) + ',' + round($y3, 3);
+	}
+
 }

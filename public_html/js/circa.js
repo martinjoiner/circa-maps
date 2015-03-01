@@ -59,11 +59,6 @@ var spawnOffsetSide = (function( sideNum ){
 	arrAbsolutePoint[2] = ninetyDeg( projectPath( secondRoot, secondPoint ),  projectPath( firstRoot, firstPoint), true )
 	arrAbsolutePoint[3] = projectPath( firstRoot, firstPoint );
 
-	//redDot( arrAbsolutePoint[0] );
-	//redDot( arrAbsolutePoint[1], 'orange' );
-	//redDot( arrAbsolutePoint[2], 'green' );
-	//redDot( arrAbsolutePoint[3], 'blue' );
-
 	var arrReturn = [];
 
 	for(var i in arrAbsolutePoint){
@@ -88,6 +83,7 @@ var spawnOffsetSide = (function( sideNum ){
 
 
 
+
 /* Randomly varies points 2 and 3 slightly to create organic variation */
 var varyMiddleTwo = (function(){
 	this.arrOriginalPoints = [];
@@ -96,6 +92,7 @@ var varyMiddleTwo = (function(){
 	this.arrAbsolutePoints[1] = varyPoint(this.arrAbsolutePoints[1]);
 	this.arrAbsolutePoints[2] = varyPoint(this.arrAbsolutePoints[2]);
 });
+
 
 
 
@@ -109,14 +106,6 @@ function varyPoint( point ){
 	return coordParts[0].toFixed(3) + ',' + coordParts[1].toFixed(3);
 }
 
-
-
-/* Returns the center point of a 4 sided polygon 					*/
-var getCenter = (function(){
-	var firstMid = midPoint( this.arrAbsolutePoints[0], this.arrAbsolutePoints[2] );
-	var secondMid = midPoint( this.arrAbsolutePoints[1], this.arrAbsolutePoints[3] );
-	return midPoint( firstMid, secondMid );
-});
 
 
 
@@ -186,7 +175,7 @@ function renderPath( skvPath ){
 	if( typeof skvPath['id'] !== 'undefined' ){
 		path.setAttribute("id", skvPath['id'] );
 	}
-console.log( skvPath );
+
 	if( typeof skvPath['d'] !== 'undefined' ){
 		path.setAttribute("d", skvPath['d'] );
 	}
@@ -194,17 +183,6 @@ console.log( skvPath );
 	$('svg').append(path); 
 }
 
-
-
-
-var generateD = (function(){
-	this.d = 'm ';
-	for( var i in this.arrPoints ){
-		this.d += this.arrPoints[i] + " ";
-	}
-	this.d += 'z';
-	return this.d;
-})
 
 
 
@@ -228,12 +206,10 @@ var allPointsOnMap = (function(){
 var Path = (function(id, d){
 
 	this.spawnOffsetSide = spawnOffsetSide;
-	this.renderPath 	= renderPath;
 	this.getCenter 		= getCenter;
 	this.calculateRadii = calculateRadii;
 	this.allPointsOnMap = allPointsOnMap;
 	this.varyMiddleTwo 	= varyMiddleTwo;
-	this.generateD 		= generateD;
 
 	this.id = id;
 	this.d = d;
@@ -292,79 +268,6 @@ function ninetyDeg( coord1, coord2, clockwise ){
 
 
 
-/* Returns the co-ordinates of a point projected a distace from 2 points 	*/
-/* @coord1 The origin of the line of projection								*/
-/* @coord2 The direction of the line of projection							*/
-/* @percent The percentage the line must be extended by path second point 	*/
-function projectPath( coord1, coord2, percent ){
-	if(typeof percent === 'undefined'){
-		percent = 10;
-	}
-	coordParts = coord1.trim().split(',');
-	var x1 = parseFloat(coordParts[0]);
-	var y1 = parseFloat(coordParts[1]);
-	coordParts = coord2.trim().split(',');
-	var x2 = parseFloat(coordParts[0]);
-	var y2 = parseFloat(coordParts[1]);
-	var x3 = x1 + ( ( x1 - x2 ) / percent );
-	var y3 = y1 + ( ( y1 - y2 ) / percent );
-	//console.log( 'Returning ' + x3 + ',' + y3 );
-	return x3.toFixed(3) + ',' + y3.toFixed(3);
-}
-
-
-
-/* Initiates a path object and renders it on the canvas	*/
-/* @d An SVG standard definition of a path				*/
-/* @id *Optional* - Provided when data loaded from db, 	*/
-/* not required with new paths							*/
-function initPath( d, id){
-	var i = arrPaths.length;
-	//console.log( "Number of Paths: " + i);
-	if(typeof id === 'undefined'){
-		id = 'path' + i;
-	} 
-	id = 'path' + i;
-	arrPaths[i] = new Path( id, d);
-	arrPaths[i].renderPath();
-	arrPaths[i].calculateRadii();
-}
-
-var jsonSvg = $('#svgJson').html()
-var arrDs = $.parseJSON( jsonSvg );
-
-for(var i in arrDs){
-	initPath( arrDs[i].d, arrDs[i].id );
-};
-
-$('#svgJson').html('');
-
-
-
-/* Places a dot on the canvas 									*/
-/* For debugging purposes 										*/
-/* @cord The co-ordinates of where the dot should be placed 	*/
-/* @colour *Optional* - Defaults to 'red'						*/
-function redDot( coord, colour ){
-
-	if(typeof colour === 'undefined'){
-		colour = 'red';
-	}
-	var cX = coord.split(',')[0];
-	var cY = coord.split(',')[1];
-
-	var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-	circle.setAttribute("cx", cX );
-	circle.setAttribute("cy", cY );
-	circle.setAttribute("r", "2" );
-	//circle.setAttribute("stroke", "black" );
-	//circle.setAttribute("stroke-width", "1" );
-	circle.setAttribute("fill", colour );
-
-	$('svg').append(circle); 
-}
-
-
 
 /* Returns the co-ordinates of the midpoint between 2 points 	*/
 /* @pointA 														*/
@@ -388,42 +291,6 @@ function midPoint( pointA, pointB ){
 
 
 
-/* Tests all paths on map to see if point is inside 			*/
-/* @coord co-ordinates of point  								*/ 
-function isOccupied( coord ){
-	var coordParts = coord.trim().split(',');
-	var skvPoint = {};
-	skvPoint['x'] = coordParts[0];
-	skvPoint['y'] = coordParts[1];
-	
-
-	$.ajax({
-        type: "GET",
-        url: "/isOccupied/",
-        data: skvPoint,
-        dataType: "json"
-    }).done(function(data) {
-
-        // If a successful deletion has occured, remove the element from the DOM
-        console.log( data );
-
-        
-    });
-
-	// var occupied = false;
-
-	// for( var i in arrPaths ){
-
-	// 	if ( pointIsInPath( arrPaths[i], thisX, thisY ) ){
-	// 		console.log("Point occupied by: " + arrPaths[i].id );
-	// 		occupied = true;
-	// 	}
-		
-	// }
-	// return occupied;
-}
-
-
 
 /* Tests all paths on map to see if point is inside */
 /* @arrPoints Array of co-ordinates of points 		*/
@@ -439,22 +306,24 @@ function pointIsInPath( thisPath, x, y ){
 
 
 
-/* Takes a polygon and the co-ordinates of a point 	*/
-/* and checks if the point is inside the polygon 	*/
-function is_in_polygon( cntPolygonPoints, vertices_x, vertices_y, longitude_x, latitude_y){
 
-	var i = j = c = point = 0;
-	for (i = 0, j = cntPolygonPoints; i <= cntPolygonPoints; j = i++) {
-		point = i;
-		if( point == cntPolygonPoints )
-			point = 0;
-		if ( ((vertices_y[point]  >  latitude_y != (vertices_y[j] > latitude_y)) &&
-		(longitude_x < (vertices_x[j] - vertices_x[point]) * (latitude_y - vertices_y[point]) / (vertices_y[j] - vertices_y[point]) + vertices_x[point]) ) )
-		c = !c;
-	}
-	return c;
+/* Takes a polygon and the co-ordinates of a point ----------------------------------------- */
+/* and checks if the point is inside the polygon   ----------------------------------------- */
+// function is_in_polygon( cntPolygonPoints, vertices_x, vertices_y, longitude_x, latitude_y){
 
-}
+// 	var i = j = c = point = 0;
+// 	for (i = 0, j = cntPolygonPoints; i <= cntPolygonPoints; j = i++) {
+// 		point = i;
+// 		if( point == cntPolygonPoints )
+// 			point = 0;
+// 		if ( ((vertices_y[point]  >  latitude_y != (vertices_y[j] > latitude_y)) &&
+// 		(longitude_x < (vertices_x[j] - vertices_x[point]) * (latitude_y - vertices_y[point]) / (vertices_y[j] - vertices_y[point]) + vertices_x[point]) ) )
+// 		c = !c;
+// 	}
+// 	return c;
+
+// }
+
 
 
 
@@ -470,20 +339,24 @@ function is_in_polygon( cntPolygonPoints, vertices_x, vertices_y, longitude_x, l
 
 
 
-/* Handles click event on mask which is the 	-------------- */
-/* transparent layer that floats above the SVG 	-------------- */
+/* Handles click event on mask which is the 	--------------- */
+/* transparent layer that floats above the SVG 	--------------- */
 $('#mask').click( function(){
 	var mouseMode = $('input[name=mouseMode]:checked').val();
 	var mouseCoord = document.getElementById('mouseCoord').value;
 
-	if( mouseMode === 'isOccupied' ){
-		isOccupied( mouseCoord );
-	} else if( mouseMode === 'redDot' ){
-		redDot( mouseCoord );
-	} else if( mouseMode === 'placeProperty' ){
-		placeProperty( mouseCoord );
-	} else if( mouseMode === 'dropBomb' ){
+	var arrCoordParts = mouseCoord.split(',');
+	var x = arrCoordParts[0];
+	var y = arrCoordParts[1];
 
+	if( mouseMode === 'isOccupied' ){
+		isOccupied( x, y );
+	} else if( mouseMode === 'redDot' ){
+		redDot( x, y );
+	} else if( mouseMode === 'placeProperty' ){
+		placeProperty( x, y );
+	} else if( mouseMode === 'dropBomb' ){
+		dropBomb( x, y );
 	}
 	
 });
@@ -491,8 +364,59 @@ $('#mask').click( function(){
 
 
 
-function placeProperty( mouseCoord ){
-	// Send AJAX request to place a property
+/* Tests all paths on map to see if point is inside */
+/* @coord co-ordinates of point ------------------- */ 
+function isOccupied( x, y ){
+
+	$.ajax({
+        type: "GET",
+        url: "/isOccupied/",
+        data: { 'x': x, 'y': y },
+        dataType: "json"
+    }).done(function(data) {
+        console.log( data );
+    });
+
+}
+
+
+
+
+/* Places a dot on the canvas ------------------------------------------------- */
+/* For debugging purposes ----------------------------------------------------- */
+/* @cord The co-ordinates of where the dot should be placed ------------------- */
+/* @colour *Optional* - Defaults to 'red' ------------------------------------- */
+function redDot( x, y, colour ){
+
+	if(typeof colour === 'undefined'){
+		colour = 'red';
+	}
+
+	var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+	circle.setAttribute("cx", x );
+	circle.setAttribute("cy", y );
+	circle.setAttribute("r", "2" );
+	circle.setAttribute("fill", colour );
+
+	$('svg').append(circle); 
+}
+
+
+
+
+function placeProperty( x, y ){
+	// Send AJAX request to place a property 
+	$.ajax({
+        type: "GET",
+        url: "/placeProperty/",
+        data: { 'x': x, 'y': y },
+        dataType: "json"
+    }).done(function(data) {
+    	console.log( data );
+        if( data.success ){
+        	renderPath( data['arrPath'] );
+        }
+    });
 }
 
 
@@ -515,6 +439,7 @@ $('#btnDrawFronts').click( function(){
     }).done(function(data) {
 
         // If a successful deletion has occured, remove the element from the DOM
+        var i = iLimit = 0;
         for( i = 0, iLimit = data.length; i < iLimit; i++ ){
         	renderPath( data[i] );
         }
@@ -565,11 +490,6 @@ function spawn(){
 		valid = false;
 	}
 
-	if( valid ){
-		initPath( testPath.generateD() );
-	} else {
-		console.log( "Did not render" );
-	}
 	window.setTimeout( spawn, 10);
 }
 

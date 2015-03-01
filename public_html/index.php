@@ -56,9 +56,6 @@
 
 	</form>
 
-
-	<div id="svgJson"><?=json_encode( $svg->arrPaths )?></div>
-
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
 	<script src="/js/circa.js"></script>
 

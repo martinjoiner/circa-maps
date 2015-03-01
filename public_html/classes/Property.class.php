@@ -25,12 +25,26 @@ class Property{
 
 
 	public function printMarkup(){
-		$html = '<path class="Property" d="M ';
-		foreach( $this->arrPoints as $thisPoint ){
-			$html .= $thisPoint['x'] . ',' . $thisPoint['y'] . ' ';
-		} 
-		$html .= 'z" id="property' . $this->id . '" />';
+		$arrPath = $this->getPath();
+		$html = '<path class="' . $arrPath['class'] . '" d="' . $arrPath['d'] . '" id="' . $arrPath['id'] . '" />';
 		return $html;	
+	}
+
+
+
+	/**
+	 Returns an associative array with 'class', 'id' and 'd' values
+	*/
+	public function getPath(){
+		$arrPath = array();
+		$arrPath['id'] = 'property' . $this->id;
+		$arrPath['class'] = 'Property';
+		$arrPath['d'] = 'M ';
+		foreach( $this->arrPoints as $thisPoint ){
+			$arrPath['d'] .= $thisPoint['x'] . ',' . $thisPoint['y'] . ' ';
+		} 
+		$arrPath['d'] .= 'z';
+		return $arrPath;
 	}
 
 
