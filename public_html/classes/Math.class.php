@@ -29,13 +29,20 @@ class Math{
 	/**
 	 
 	*/
-	function is_in_polygon($cntPolygonPoints, $arrVerticesX, $arrVerticesY, $x, $y){
+	function isInPolygon($cntPolygonPoints, $arrVerticesX, $arrVerticesY, $x, $y){
 
-		$i = $j = $c = 0;
-		for ($i = 0, $j = $cntPolygonPoints; $i < $cntPolygonPoints; $j = $i++) {
-		if ( ( ($arrVerticesY[$i] > $y != ($arrVerticesY[$j] > $y) ) &&
-			($x < ($arrVerticesX[$j] - $arrVerticesX[$i]) * ($y - $arrVerticesY[$i]) / ($arrVerticesY[$j] - $arrVerticesY[$i]) + $arrVerticesX[$i]) ) )
-			$c = !$c;
+		$i = $j = $c = $point = 0;
+
+		for( $i = 0, $j = $cntPolygonPoints-1; $i < $cntPolygonPoints; $j = $i++ ){
+			$point = $i;
+			// If i is past the final point, use the first point
+			if( $point == $cntPolygonPoints ){
+				$point = 0;
+			}
+			if ( ( ($arrVerticesY[$point] > $y != ($arrVerticesY[$j] > $y) ) &&
+				($x < ($arrVerticesX[$j] - $arrVerticesX[$point]) * ($y - $arrVerticesY[$point]) / ($arrVerticesY[$j] - $arrVerticesY[$point]) + $arrVerticesX[$point]) ) ){
+				$c = !$c;
+			}
 		}
 		return $c;
 

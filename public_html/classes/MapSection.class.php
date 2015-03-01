@@ -122,7 +122,7 @@ class MapSection extends Map{
 
 			$points_polygon = count($thisProperty->arrPoints);  // number vertices - zero-based array
 
-			if( $objMath->is_in_polygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $x, $y) ){
+			if( $objMath->isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $x, $y) ){
 				$arrResult['isOccupied'] = true;
 				$arrResult['message'] = $x . ',' . $y . ' is inside property ID ' . $thisProperty->id;
 			} else { 

@@ -81,9 +81,9 @@ class MapComplete extends Map{
 				';
 
 		$html .= '<style type="text/css"><![CDATA[
-					.Route, .Property{ stroke: #555; stroke-opacity: 1; stroke-linejoin: miter; stroke-linecap: butt; }
-				    .Route{ fill: none; }
-				    .Property{ fill: #777; stroke-width: 1px; }
+					.Route, .Property{ stroke: #555; stroke-opacity: 1;  }
+				    .Route{ fill: none; stroke-linejoin: round; }
+				    .Property{ fill: #777; stroke-width: 1; }
 				  ]]></style>';
 
 		if( $includeRoutes ){
