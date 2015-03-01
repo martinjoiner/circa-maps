@@ -145,6 +145,8 @@ class MapSection extends Map{
 	*/
 	public function placeProperty( $x, $y){
 
+		$startTime = microtime(true);
+
 		$arrResult = array( 'arrPath'=>null, 'success'=>false );
 
 		// Generate 4 points based on supplied x and y
@@ -200,6 +202,7 @@ class MapSection extends Map{
 			$arrResult['arrPath'] = $this->arrProperties[ sizeof($this->arrProperties)-1 ]->getPath();
 		}
 
+		$arrResult['executionTime'] = microtime(true) - $startTime;
 
 		// Return result and arrPath
 		return $arrResult;
