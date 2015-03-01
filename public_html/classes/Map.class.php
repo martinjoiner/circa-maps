@@ -6,6 +6,7 @@ class Map{
 	var $name = ''; 
 	var $width = 0;
 	var $height = 0;
+	var $maxPropertyWidth = 100;
 
 	var $arrRoutes = array();
 	var $arrProperties = array();
@@ -44,6 +45,7 @@ class Map{
 	 Takes a db query result and loops through creating the route objects in the arrRoutes array
 	*/
 	protected function processDBResult( $rslt, $pathType = 'ROUTE' ){
+
 		$curID = 0;
 		foreach( $rslt as $thisResult ){
 
@@ -61,7 +63,9 @@ class Map{
 			$arrPoints[] = array( 'x'=>$thisResult['x'], 'y'=>$thisResult['y'] );
 			
 		}
-		$this->makePathType( $curID, $arrPoints, $pathType );
+		if( $curID != 0 ){
+			$this->makePathType( $curID, $arrPoints, $pathType );
+		}
 	}
 
 
@@ -133,33 +137,6 @@ class Map{
 
 
 
-
-	/**
-	 Takes a co-ordinate and returns true if there is a property sitting on that point or a route intersecting
-	*/
-	public function isOccupied( $coord ){
-
-		$coordParts = explode(',', trim($coord) );
-		$thisX = $coordParts[0];
-		$thisY = $coordParts[1];
-		$objMath = new Math();
-		
-		foreach($this->arrPaths as $thisPath ){
-		
-			$points_polygon = count($thisPath->arrVerticesX);  // number vertices - zero-based array
-
-			if ( $objMath->is_in_polygon($points_polygon, $thisPath->arrVerticesX, $thisPath->arrVerticesY, $thisX, $thisY) ){
-				return true;
-				//echo '<p>' . $thisX . ':' . $thisY . ' is in polygon! (' . implode(',',$thisPath->arrVerticesX) . '),(' . implode(',',$thisPath->arrVerticesY) . ')' . $points_polygon . '</p>';
-			}
-			else{ 
-				//echo '<p>' . $thisX . ':' . $thisY . ' is not in polygon (' . implode(',',$thisPath->arrVerticesX) . '),(' . implode(',',$thisPath->arrVerticesY) . ')' . $points_polygon . '</p>';
-			}
-
-		}
-		return false;
-
-	}
 
 }
 

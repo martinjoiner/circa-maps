@@ -3,16 +3,21 @@
 class Property{
 
 	var $id;
-	var $arrPoints;
+	var $arrPoints = array();
 
-	var $arrVerticesX;
-	var $arrVerticesY;
+	var $arrVerticesX = array(); // An array of just the x values (Useful for basic sanity checking in collision detection)
+	var $arrVerticesY = array(); // An array of just the y values
 
 
 	function __construct( $id, $arrPoints ){
 
 		$this->id 			= $id;
 		$this->arrPoints 	= $arrPoints;
+
+		foreach( $arrPoints as $thisPoint ){
+			$this->arrVerticesX[] = $thisPoint['x'];
+			$this->arrVerticesY[] = $thisPoint['y'];
+		}
 
 	}
 

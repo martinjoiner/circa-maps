@@ -11,7 +11,7 @@
 
 	<div class="canvasWrap">
 		<?php
-		include('autoloadRegister.inc.php');
+		include($_SERVER['DOCUMENT_ROOT'] . '/autoloadRegister.inc.php');
 		$objMap = new MapComplete(1);
 		echo $objMap->printMarkup();
 		?>

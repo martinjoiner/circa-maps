@@ -31,7 +31,7 @@ class MapComplete extends Map{
 								LEFT JOIN 	`route` ON `route`.`map_id` = `map`.`id`
 								LEFT JOIN 	`point` ON `point`.`route_id` = `route`.`id`
 								WHERE 		`map`.`id` = :mapID 
-								ORDER BY 	`point`.`order` 
+								ORDER BY 	`route`.`id`, `point`.`order` 
 							");
 		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
 		$qry->execute();
@@ -57,7 +57,7 @@ class MapComplete extends Map{
 								LEFT JOIN 	`property` ON `property`.`map_id` = `map`.`id`
 								LEFT JOIN 	`point` ON `point`.`property_id` = `property`.`id`
 								WHERE 		`map`.`id` = :mapID 
-								ORDER BY 	`point`.`order` 
+								ORDER BY 	`property`.`id`, `point`.`order` 
 							");
 		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
 		$qry->execute();

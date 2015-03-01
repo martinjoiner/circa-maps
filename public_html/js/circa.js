@@ -379,20 +379,35 @@ function midPoint( pointA, pointB ){
 /* @coord co-ordinates of point  								*/ 
 function isOccupied( coord ){
 	var coordParts = coord.trim().split(',');
-	var thisX = coordParts[0];
-	var thisY = coordParts[1];
+	var skvPoint = {};
+	skvPoint['x'] = coordParts[0];
+	skvPoint['y'] = coordParts[1];
 	
-	var occupied = false;
 
-	for( var i in arrPaths ){
+	$.ajax({
+        type: "GET",
+        url: "/isOccupied/",
+        data: skvPoint,
+        dataType: "json"
+    }).done(function(data) {
 
-		if ( pointIsInPath( arrPaths[i], thisX, thisY ) ){
-			console.log("Point occupied by: " + arrPaths[i].id );
-			occupied = true;
-		}
+        // If a successful deletion has occured, remove the element from the DOM
+        console.log( data );
+
+        
+    });
+
+	// var occupied = false;
+
+	// for( var i in arrPaths ){
+
+	// 	if ( pointIsInPath( arrPaths[i], thisX, thisY ) ){
+	// 		console.log("Point occupied by: " + arrPaths[i].id );
+	// 		occupied = true;
+	// 	}
 		
-	}
-	return occupied;
+	// }
+	// return occupied;
 }
 
 
@@ -449,16 +464,23 @@ $('#mask').click( function(){
 	var mouseCoord = document.getElementById('mouseCoord').value;
 
 	if( mouseMode === 'isOccupied' ){
-		console.log( isOccupied( mouseCoord ) );
+		isOccupied( mouseCoord );
 	} else if( mouseMode === 'redDot' ){
 		redDot( mouseCoord );
 	} else if( mouseMode === 'placeProperty' ){
-
+		placeProperty( mouseCoord );
 	} else if( mouseMode === 'dropBomb' ){
 
 	}
 	
 });
+
+
+
+
+function placeProperty( mouseCoord ){
+	// Send AJAX request to place a property
+}
 
 
 

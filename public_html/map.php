@@ -4,7 +4,8 @@
 
 echo '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'; 
 
-include('autoloadRegister.inc.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/autoloadRegister.inc.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/phDump/phDump.inc.php');
 
 $objMap = new MapComplete(1);
 

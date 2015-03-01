@@ -5,3 +5,5 @@ public_html/config.inc.php
 # Ignore log files but not the logs folder
 logs/*
 !logs/README.md
+
+public_html/phDump/*
