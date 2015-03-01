@@ -1,5 +1,7 @@
 <?php
 
+header('Content-Type: application/json');
+
 include($_SERVER['DOCUMENT_ROOT'] . '/autoloadRegister.inc.php');
 
 // Initialise a MapSection object

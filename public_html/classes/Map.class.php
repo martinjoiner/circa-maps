@@ -137,6 +137,18 @@ class Map{
 
 
 
+	/** 
+	 Returns an array of arrays representing fronts
+	*/
+	function getPropertyFronts(){
+		$arrFronts = array();
+		foreach( $this->arrProperties as $thisProperty ){
+			$arrFronts[] = $thisProperty->getFront();
+		}
+		return $arrFronts;
+	}
+
+
 
 }
 

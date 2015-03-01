@@ -29,7 +29,7 @@ class Property{
 		foreach( $this->arrPoints as $thisPoint ){
 			$html .= $thisPoint['x'] . ',' . $thisPoint['y'] . ' ';
 		} 
-		$html .= ' z" id="property' . $this->id . '" />';
+		$html .= 'z" id="property' . $this->id . '" />';
 		return $html;	
 	}
 
@@ -46,5 +46,20 @@ class Property{
 		$secondAv = $objMath->midPoint( $this->arrPoints[1], $this->arrPoints[3] );
 		return $objMath->midPoint( $firstAv, $secondAv );
 	}
+
+
+
+
+	/** 
+	 Returns an associative array with 'class', 'd' values 
+	 The front of a property is the 
+	*/
+	public function getFront(){
+		$arrFront = array();
+		$arrFront['class'] = 'Front';
+		$arrFront['d'] = 'M ' . $this->arrPoints[0]['x'] . ',' . $this->arrPoints[0]['y'] . ' ' . $this->arrPoints[1]['x'] . ',' . $this->arrPoints[1]['y'];
+		return $arrFront;
+	}
+
 
 }

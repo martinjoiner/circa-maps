@@ -170,18 +170,31 @@ function distanceBetween( pointA, pointB ){
 
 
 
-/* Renders the path on the canvas ----------------------------------------- */
-var renderPath = (function(){
+
+/**
+ Renders the path on the canvas  
+ @skvConfig can contain 'class', 'id', 'd'
+*/
+function renderPath( skvPath ){
 
 	var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-	var thisStyle = "fill:#888;stroke:#000000;stroke-width:1px;";
-	thisStyle += "stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1";
-	path.setAttribute("style", thisStyle);
-	path.setAttribute("id", this.id );
-	path.setAttribute("d", this.generateD() );
+
+	if( typeof skvPath['class'] !== 'undefined' ){
+		path.setAttribute("class", skvPath['class']);
+	}
+	
+	if( typeof skvPath['id'] !== 'undefined' ){
+		path.setAttribute("id", skvPath['id'] );
+	}
+console.log( skvPath );
+	if( typeof skvPath['d'] !== 'undefined' ){
+		path.setAttribute("d", skvPath['d'] );
+	}
 
 	$('svg').append(path); 
-});
+}
+
+
 
 
 var generateD = (function(){
@@ -489,6 +502,34 @@ function placeProperty( mouseCoord ){
 $('#btnSpawn').click( function(){
 	spawn();
 });
+
+
+
+
+$('#btnDrawFronts').click( function(){
+	
+	$.ajax({
+        type: "GET",
+        url: "/getPropertyFronts/",
+        dataType: "json"
+    }).done(function(data) {
+
+        // If a successful deletion has occured, remove the element from the DOM
+        for( i = 0, iLimit = data.length; i < iLimit; i++ ){
+        	renderPath( data[i] );
+        }
+
+    });
+
+});
+
+
+
+
+$('#btnDeleteFronts').click( function(){
+	$('svg .Front').remove();
+});
+
 
 
 
