@@ -34,8 +34,8 @@ class Map{
 		$thisResult = $rslt[0];
 
 		$this->name 		= $thisResult['name'];
-		$this->width 		= $thisResult['width'];
-		$this->height 		= $thisResult['height'];
+		$this->width 		= intval($thisResult['width']);
+		$this->height 		= intval($thisResult['height']);
 
 	}
 

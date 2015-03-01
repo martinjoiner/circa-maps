@@ -5,29 +5,60 @@ class Math{
 
 	/**
 	 Returns the midway point between 2 points (ie.)
-	 TODO: This needs converting to take arrPoints with x and y key-value pairs
+	 $arrPointA associative array with 'x' and 'y' values
+	 $arrPointB Same as above
 	*/
-	function midPoint( $pointA, $pointB ){
+	function pointPercentageBetweenPoints( $arrPointA, $arrPointB, $percent ){
 
-		$aParts = explode(',',$pointA);
-		$bParts = explode(',',$pointB);
+		$x1 = $arrPointA['x']; 
+		$y1 = $arrPointA['y']; 
 
-		$x1 = $aParts[0]; 
-		$x2 = $bParts[0]; 
+		$x2 = $arrPointB['x']; 
+		$y2 = $arrPointB['y']; 
 
-		$y1 = $aParts[1]; 
-		$y2 = $bParts[1]; 
+		$percAsDec = 100 / $percent;
 
-		$avX = ($x1 + $x2) / 2;
-		$avY = ($y1 + $y2) / 2;
-		return $avX . ',' . $avY;
+		$avX = $x1 + ( ($x2 - $x1) / $percAsDec );
+		$avY = $y1 + ( ($y2 - $y1) / $percAsDec );
+
+		$arrReturnPoint = array( 'x'=>$avX, 'y'=>$avY );
+
+		return $arrReturnPoint;
 	} 
 
 
 
 
 	/**
-	 
+	 Returns the a point that is some percentage along the path between arrPointA and arrPointB
+	*/
+	function midPoint( $arrPointA, $arrPointB ){
+		return $this->pointPercentageBetweenPoints( $arrPointA, $arrPointB, 50 );
+	}
+
+
+
+
+	/**
+	 Alters the location of a point by a random amount to fake organic positioning
+	*/
+	function randomVaryPoint( $arrPoint, $maxVary = 10 ){
+		
+		$x = $arrPoint['x'];
+		$y = $arrPoint['y'];
+		
+		$newX = $x + ( rand(0,$maxVary) - ($maxVary/2) );
+		$newY = $y + ( rand(0,$maxVary) - ($maxVary/2) );
+		
+		$arrReturnPoint = array( 'x'=>$newX, 'y'=>$newY );
+		return $arrReturnPoint;
+	}
+
+
+
+
+	/**
+	 Returns the a point that is midway between arrPointA and arrPointB
 	*/
 	function isInPolygon($cntPolygonPoints, $arrVerticesX, $arrVerticesY, $x, $y){
 

@@ -37,6 +37,11 @@
 		<table>
 			<tbody>
 				<tr>
+					<th></th>
+					<td><input type="button" id="btnInitXRoads" value="Init X-roads"></td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
 					<th>Routes</th>
 					<td><input type="button" id="btnDrawRoutes" value="Draw"></td>
 					<td><input type="button" id="btnDeleteRoutes" value="Delete"></td>

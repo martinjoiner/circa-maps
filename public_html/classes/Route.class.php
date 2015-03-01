@@ -13,19 +13,36 @@ class Route{
 
 	}
 
+
+
+
 	/**
 	 Returns the markup representation of this path for inclusion in an SVG file 
 	*/
-	function printMarkup(){
-		$html = '<path class="Route" stroke-width="' . $this->width . '" d="M ';
-		foreach( $this->arrPoints as $thisPoint ){
-			$html .= $thisPoint['x'] . ',' . $thisPoint['y'] . ' ';
-		} 
-
-		$html .= '" id="route' . $this->id . '" />
-		';
-		return $html;
+	public function printMarkup(){
+		$arrPath = $this->getPath();
+		$html = '<path class="' . $arrPath['class'] . '" stroke-width="' . $arrPath['stroke-width'] . '" d="' . $arrPath['d'] . '" id="' . $arrPath['id'] . '" />';
+		return $html;	
 	}
+
+
+
+
+	/**
+	 Returns an associative array with 'class', 'id' and 'd' values
+	*/
+	public function getPath(){
+		$arrPath = array();
+		$arrPath['id'] = 'route' . $this->id;
+		$arrPath['class'] = 'Route';
+		$arrPath['stroke-width'] = $this->width;
+		$arrPath['d'] = 'M ';
+		foreach( $this->arrPoints as $thisPoint ){
+			$arrPath['d'] .= $thisPoint['x'] . ',' . $thisPoint['y'] . ' ';
+		} 
+		return $arrPath;
+	}
+
 
 
 

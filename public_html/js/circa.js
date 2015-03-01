@@ -96,15 +96,16 @@ var varyMiddleTwo = (function(){
 
 
 
-function varyPoint( point ){
-	coordParts = point.trim().split(',');
-	var x = parseFloat(coordParts[0]);
-	var y = parseFloat(coordParts[1]);
-	for( i = 0; i <= 1; i++){
-		coordParts[i] = parseFloat(coordParts[i]) + ( Math.random() * 10 ) - 5;
-	}
-	return coordParts[0].toFixed(3) + ',' + coordParts[1].toFixed(3);
-}
+// PORTED TO PHP
+// function varyPoint( point ){
+// 	coordParts = point.trim().split(',');
+// 	var x = parseFloat(coordParts[0]);
+// 	var y = parseFloat(coordParts[1]);
+// 	for( i = 0; i <= 1; i++){
+// 		coordParts[i] = parseFloat(coordParts[i]) + ( Math.random() * 10 ) - 5;
+// 	}
+// 	return coordParts[0].toFixed(3) + ',' + coordParts[1].toFixed(3);
+// }
 
 
 
@@ -178,6 +179,10 @@ function renderPath( skvPath ){
 
 	if( typeof skvPath['d'] !== 'undefined' ){
 		path.setAttribute("d", skvPath['d'] );
+	}
+
+	if( typeof skvPath['stroke-width'] !== 'undefined' ){
+		path.setAttribute("stroke-width", skvPath['stroke-width'] );
 	}
 
 	$('svg').append(path); 
@@ -425,6 +430,29 @@ function placeProperty( x, y ){
 /* Handles click event to start spawning 	*/
 $('#btnSpawn').click( function(){
 	spawn();
+});
+
+
+
+
+$('#btnInitXRoads').click( function(){
+	
+	$.ajax({
+        type: "GET",
+        url: "/initCrossRoads/",
+        dataType: "json"
+    }).done(function(data) {
+
+        // If a successful deletion has occured, remove the element from the DOM
+        if( data.success ){
+        	var i = iLimit = 0;
+	        for( i = 0, iLimit = data.arrPaths.length; i < iLimit; i++ ){
+	        	renderPath( data.arrPaths[i] );
+	        }
+        }
+
+    });
+
 });
 
 
