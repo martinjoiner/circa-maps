@@ -3,7 +3,7 @@
 class Route{
 
 	var $id = 0;
-	var $width = 14;
+	var $width = 8;
 	var $arrPoints = array();
 
 	function __construct( $id, $arrPoints ){

@@ -38,7 +38,7 @@
 			<tbody>
 				<tr>
 					<th></th>
-					<td><input type="button" id="btnInitXRoads" value="Init X-roads"></td>
+					<td colspan="2"><input type="button" id="btnInitXRoads" value="Init X-roads"></td>
 					<td>&nbsp;</td>
 				</tr>
 				<tr>

@@ -34,7 +34,8 @@ class MapInitCrossRoads extends Map{
 
 		$arrPoints = $this->generateRoute( $startPoint, $endPoint );
 
-		$this->arrRoutes[] = new Route( 99, $arrPoints );
+		$routeID = $this->saveRouteInDB( $arrPoints );
+		$this->arrRoutes[] = new Route( $routeID, $arrPoints );
 
 
 		// Repeat for the north and south edge
@@ -46,8 +47,8 @@ class MapInitCrossRoads extends Map{
 
 		$arrPoints = $this->generateRoute( $startPoint, $endPoint );
 
-		// TO DO: $routeID = saveRouteInDB( $arrPoints );
-		$this->arrRoutes[] = new Route( 101, $arrPoints );
+		$routeID = $this->saveRouteInDB( $arrPoints );
+		$this->arrRoutes[] = new Route( $routeID, $arrPoints );
 
 
 
@@ -103,29 +104,34 @@ class MapInitCrossRoads extends Map{
 
 
 
-	// DO TO: Save paths in database
+	/**
+	 Saves path in database and returns the newly created database ID
+	*/
 	function saveRouteInDB( $arrPoints ){
-		// include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
+		
+		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
 
-		// $qry = $db->prepare("	INSERT INTO `route` ( `map_id` )
-		// 						VALUES ( :mapID );
-		// 					");
-		// $qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
-		// $qry->execute();
-		// $routeID = $db->lastInsertId();
+		$qry = $db->prepare("	INSERT INTO `route` ( `map_id` )
+								VALUES ( :mapID );
+							");
+		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
+		$qry->execute();
+		$routeID = $db->lastInsertId();
 
 		$cnt = 1;
 		foreach( $arrPoints as $thisPoint ){
-			// $qry = $db->prepare("	INSERT INTO `point` ( `route_id`, `order`, `x`, `y` )
-			// 						VALUES 	( :routeID, :order, :x, :y );
-			// 					");
-			// $qry->bindValue('routeID', $routeID, PDO::PARAM_INT);
-			// $qry->bindValue('order', $cnt++, PDO::PARAM_INT);
-			// $qry->bindValue('x', $thisPoint['x'], PDO::PARAM_INT);
-			// $qry->bindValue('y', $thisPoint['y'], PDO::PARAM_INT);
-			// $qry->execute();
+			$qry = $db->prepare("	INSERT INTO `point` ( `route_id`, `order`, `x`, `y` )
+									VALUES 	( :routeID, :order, :x, :y );
+								");
+			$qry->bindValue('routeID', 	$routeID, 			PDO::PARAM_INT);
+			$qry->bindValue('order', 	$cnt++, 			PDO::PARAM_INT);
+			$qry->bindValue('x', 		$thisPoint['x'], 	PDO::PARAM_INT);
+			$qry->bindValue('y', 		$thisPoint['y'], 	PDO::PARAM_INT);
+			$qry->execute();
 		}
-		// $qry->closeCursor();
+		$qry->closeCursor();
+
+		return $routeID;
 	}
 
 
