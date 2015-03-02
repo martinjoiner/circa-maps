@@ -1,4 +1,7 @@
 
+var globals = {};
+globals.mapID = 1;
+
 var arrPaths = [];
 var count = 0;
 var mapWidth 
@@ -93,19 +96,6 @@ var varyMiddleTwo = (function(){
 	this.arrAbsolutePoints[2] = varyPoint(this.arrAbsolutePoints[2]);
 });
 
-
-
-
-// PORTED TO PHP
-// function varyPoint( point ){
-// 	coordParts = point.trim().split(',');
-// 	var x = parseFloat(coordParts[0]);
-// 	var y = parseFloat(coordParts[1]);
-// 	for( i = 0; i <= 1; i++){
-// 		coordParts[i] = parseFloat(coordParts[i]) + ( Math.random() * 10 ) - 5;
-// 	}
-// 	return coordParts[0].toFixed(3) + ',' + coordParts[1].toFixed(3);
-// }
 
 
 
@@ -312,25 +302,6 @@ function pointIsInPath( thisPath, x, y ){
 
 
 
-/* Takes a polygon and the co-ordinates of a point ----------------------------------------- */
-/* and checks if the point is inside the polygon   ----------------------------------------- */
-// function is_in_polygon( cntPolygonPoints, vertices_x, vertices_y, longitude_x, latitude_y){
-
-// 	var i = j = c = point = 0;
-// 	for (i = 0, j = cntPolygonPoints; i <= cntPolygonPoints; j = i++) {
-// 		point = i;
-// 		if( point == cntPolygonPoints )
-// 			point = 0;
-// 		if ( ((vertices_y[point]  >  latitude_y != (vertices_y[j] > latitude_y)) &&
-// 		(longitude_x < (vertices_x[j] - vertices_x[point]) * (latitude_y - vertices_y[point]) / (vertices_y[j] - vertices_y[point]) + vertices_x[point]) ) )
-// 		c = !c;
-// 	}
-// 	return c;
-
-// }
-
-
-
 
 /* Populated in input box with mouse coordinates for debugging ------------------------ */
 (function() {
@@ -358,6 +329,8 @@ $('#mask').click( function(){
 		isOccupied( x, y );
 	} else if( mouseMode === 'redDot' ){
 		redDot( x, y );
+	} else if( mouseMode === 'nearestRoute' ){
+		nearestRoute( x, y );
 	} else if( mouseMode === 'placeProperty' ){
 		placeProperty( x, y );
 	} else if( mouseMode === 'dropBomb' ){
@@ -372,16 +345,17 @@ $('#mask').click( function(){
 /* Tests all paths on map to see if point is inside */
 /* @coord co-ordinates of point ------------------- */ 
 function isOccupied( x, y ){
-
 	$.ajax({
         type: "GET",
         url: "/isOccupied/",
-        data: { 'x': x, 'y': y },
+        data: { 'mapID': globals.mapID, 
+        		'x': x, 
+        		'y': y 
+        	},
         dataType: "json"
     }).done(function(data) {
         console.log( data );
     });
-
 }
 
 
@@ -409,15 +383,38 @@ function redDot( x, y, colour ){
 
 
 
-function placeProperty( x, y ){
-	// Send AJAX request to place a property 
+/* Send AJAX request to /nearestRoute/ and renders result */
+function nearestRoute( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/placeProperty/",
-        data: { 'x': x, 'y': y },
+        url: "/nearestRoute/",
+        data: { 'mapID': globals.mapID, 
+        		'x': x, 
+        		'y': y 
+        	},
         dataType: "json"
     }).done(function(data) {
     	console.log( data );
+        if( data.success ){
+        	renderPath( data['arrPath'] );
+        }
+    });
+}
+
+
+
+
+/* Send AJAX request to /placeProperty/ and renders result */ 
+function placeProperty( x, y ){
+	$.ajax({
+        type: "GET",
+        url: "/placeProperty/",
+        data: { 'mapID': globals.mapID, 
+        		'x': x, 
+        		'y': y 
+        	},
+        dataType: "json"
+    }).done(function(data) {
         if( data.success ){
         	renderPath( data['arrPath'] );
         }
@@ -453,6 +450,14 @@ $('#btnInitXRoads').click( function(){
 
     });
 
+});
+
+
+
+
+/* Removes all paths from the SVG that represent a Property on the map */
+$('#btnDeleteProperties').click( function(){
+	$('svg .Property').remove();
 });
 
 

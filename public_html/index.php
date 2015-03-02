@@ -27,6 +27,7 @@
 			<legend>Mouse Mode</legend>
 			<input type="radio" name="mouseMode" value="isOccupied" id="chkIsOccupied" checked><label for="chkIsOccupied" class="checkLabel">&quot;Is occupied?&quot; query</label><br>
 			<input type="radio" name="mouseMode" value="redDot" id="chkRedDot"><label for="chkRedDot" class="checkLabel">Red dot</label><br>
+			<input type="radio" name="mouseMode" value="nearestRoute" id="chkNearestRoute"><label for="chkNearestRoute" class="checkLabel">Nearest route</label><br>
 			<input type="radio" name="mouseMode" value="placeProperty" id="chkPlaceProperty"><label for="chkPlaceProperty" class="checkLabel">Place property</label><br>
 			<input type="radio" name="mouseMode" value="dropBomb" id="chkDropBomb"><label for="chkDropBomb" class="checkLabel">Drop a bomb</label>
 		</fieldset>
