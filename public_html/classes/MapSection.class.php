@@ -54,6 +54,7 @@ class MapSection extends Map{
 								AND p1.x < :xMax 
 								AND p1.y > :yMin 
 								AND p1.y < :yMax 
+								GROUP BY `point`.`id`
 								ORDER BY 	`route`.`id`, `point`.`order` 
 							");
 		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
@@ -139,6 +140,25 @@ class MapSection extends Map{
 	}
 
 
+
+
+	/**
+
+	*/
+	public function nearestRoute( $x, $y ){
+
+		$closestDistance = INF;
+		$nearestRoute = array();
+		foreach( $this->arrRoutes as $thisRoute ){
+			$thisResult = $thisRoute->gimme2NearestPoints( $x, $y );
+			if( $closestDistance > $thisResult['closestDistance'] ){
+				$closestDistance = $thisResult['closestDistance'];
+				$nearestRoute = $thisResult;
+			}
+		}
+
+		return $nearestRoute;
+	}
 
 }
 

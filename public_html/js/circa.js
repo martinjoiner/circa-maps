@@ -376,6 +376,7 @@ function redDot( x, y, colour ){
 	circle.setAttribute("cy", y );
 	circle.setAttribute("r", "2" );
 	circle.setAttribute("fill", colour );
+	circle.setAttribute("class", "Dot" );
 
 	$('svg').append(circle); 
 }
@@ -394,10 +395,11 @@ function nearestRoute( x, y ){
         	},
         dataType: "json"
     }).done(function(data) {
-    	console.log( data );
-        if( data.success ){
-        	renderPath( data['arrPath'] );
-        }
+    	//console.log( data );
+    	$('svg .Dot').remove();
+        redDot( data.top2NearestPoints[0]['x'], data.top2NearestPoints[0]['y'] );
+        redDot( data.top2NearestPoints[1]['x'], data.top2NearestPoints[1]['y'] );
+        
     });
 }
 

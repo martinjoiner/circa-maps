@@ -8,7 +8,7 @@ class Route{
 
 	function __construct( $id, $arrPoints ){
 
-		$this->id 			= $id;
+		$this->id 			= intval($id);
 		$this->arrPoints 	= $arrPoints;
 
 	}
@@ -51,6 +51,40 @@ class Route{
 	*/
 	function calculateLength(){
 
+	}
+
+
+
+
+	/**
+	 
+	*/
+	function gimme2NearestPoints( $x, $y ){
+
+		$testPoint = array( 'x'=>$x, 'y'=>$y );
+
+		$objMath = new Math();
+
+		// Loop through all the points in arrPoints
+		$arrScoreBoard = array();
+		$arrScoreBoard[0] = array( 'distance'=>INF );
+		$arrScoreBoard[1] = array( 'distance'=>INF );
+
+		foreach( $this->arrPoints as $thisPoint ){
+			$thisDistance = $objMath->distanceBetween( $testPoint, $thisPoint );
+			if( $arrScoreBoard[1]['distance'] > $thisDistance ){
+				$thisPoint['distance'] = $thisDistance;
+				array_unshift( $arrScoreBoard, $thisPoint);
+				$closestDistance = $thisDistance;
+			} 
+		}  
+
+		$arrResult = array();
+		$arrResult['top2NearestPoints'] = array_slice( $arrScoreBoard, 0, 2 );
+		$arrResult['closestDistance'] = min( $arrScoreBoard[0]['distance'], $arrScoreBoard[1]['distance'] );
+		$arrResult['routeID'] = $this->id;
+
+		return $arrResult;
 	}
 
 
