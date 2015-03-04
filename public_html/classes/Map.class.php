@@ -60,7 +60,7 @@ class Map{
 				$curID = $thisResult['id'];
 			}
 
-			$arrPoints[] = array( 'x'=>$thisResult['x'], 'y'=>$thisResult['y'] );
+			$arrPoints[] = array( 'x'=>intval($thisResult['x']), 'y'=>intval($thisResult['y']) );
 			
 		}
 		if( $curID != 0 ){
