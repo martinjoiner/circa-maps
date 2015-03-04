@@ -143,7 +143,7 @@ class MapSection extends Map{
 
 
 	/**
-
+	 BUGGY NOT LIVE-READY
 	*/
 	public function nearestRoute( $x, $y ){
 
@@ -157,7 +157,15 @@ class MapSection extends Map{
 			}
 		}
 
-		return $nearestRoute;
+		$objMath = new Math();
+		$arrPointOrigin = array('x'=>$x,'y'=>$y);
+		$closestPointBetween2 = $objMath->closestPointBetween2( $arrPointOrigin, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
+
+		$arrResult = array();
+		$arrResult['nearestRoute'] = $nearestRoute;
+		$arrResult['closestPointOnRoute'] = $closestPointBetween2;
+
+		return $arrResult;
 	}
 
 }

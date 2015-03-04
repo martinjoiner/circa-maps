@@ -127,4 +127,37 @@ class Math{
 		return round($x3, 3) + ',' + round($y3, 3);
 	}
 
+
+
+
+	/**
+	 Imagine you are stood looking at the side of a straight road that travels across your field of vision
+	 You know the coordinates of where you are, where the straight road starts and where it ends 
+	 What is the coordinate of the point on that straight road that is directly infront of you, aka closest to you. 
+	 $arrOriginPoint - associative array with 'x' and 'y' values
+	 $arrPointA - Same as above
+	 $arrPointB - Same as above
+	*/
+	function closestPointBetween2( $arrPointOrigin, $arrPointA, $arrPointB ){
+
+		$oppositeSide = $arrPointB['x'] - $arrPointA['x'];
+		$hypotenuse = $this->distanceBetween( $arrPointA, $arrPointB );
+		$angleA = asin( $oppositeSide / $hypotenuse );
+
+		$oppositeSide = $arrPointOrigin['x'] - $arrPointA['x'];
+		$hypotenuse = $this->distanceBetween( $arrPointOrigin, $arrPointA );
+		$angleC = asin( $oppositeSide / $hypotenuse );
+
+		$angleB = 180 - $angleA - $angleC;
+
+		$adjacentSide = cos($angleB) * $hypotenuse;
+
+		$aToBSide = $this->distanceBetween( $arrPointA, $arrPointB );
+
+		$percent = $adjacentSide / $aToBSide * 100;
+
+		return $this->pointPercentageBetweenPoints( $arrPointA, $arrPointB, $percent );
+
+	}
+
 }

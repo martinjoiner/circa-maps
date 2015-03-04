@@ -328,7 +328,7 @@ $('#mask').click( function(){
 	if( mouseMode === 'isOccupied' ){
 		isOccupied( x, y );
 	} else if( mouseMode === 'redDot' ){
-		redDot( x, y );
+		debugDot( x, y, 'red' );
 	} else if( mouseMode === 'nearestRoute' ){
 		nearestRoute( x, y );
 	} else if( mouseMode === 'placeProperty' ){
@@ -361,11 +361,10 @@ function isOccupied( x, y ){
 
 
 
-/* Places a dot on the canvas ------------------------------------------------- */
-/* For debugging purposes ----------------------------------------------------- */
-/* @cord The co-ordinates of where the dot should be placed ------------------- */
-/* @colour *Optional* - Defaults to 'red' ------------------------------------- */
-function redDot( x, y, colour ){
+/* Places a dot on the canvas for debugging purposes---------------------------- */
+/* @cord The co-ordinates of where the dot should be placed -------------------- */
+/* @colour *Optional* - Defaults to 'red' -------------------------------------- */
+function debugDot( x, y, colour ){
 
 	if(typeof colour === 'undefined'){
 		colour = 'red';
@@ -395,10 +394,11 @@ function nearestRoute( x, y ){
         	},
         dataType: "json"
     }).done(function(data) {
-    	//console.log( data );
+    	console.log( data );
     	$('svg .Dot').remove();
-        redDot( data.top2NearestPoints[0]['x'], data.top2NearestPoints[0]['y'] );
-        redDot( data.top2NearestPoints[1]['x'], data.top2NearestPoints[1]['y'] );
+        debugDot( data.nearestRoute.top2NearestPoints[0]['x'], data.nearestRoute.top2NearestPoints[0]['y'] );
+        debugDot( data.nearestRoute.top2NearestPoints[1]['x'], data.nearestRoute.top2NearestPoints[1]['y'] );
+        debugDot( data.closestPointOnRoute['x'], data.closestPointOnRoute['y'], 'blue' );
         
     });
 }
