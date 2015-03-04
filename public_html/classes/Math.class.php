@@ -140,23 +140,31 @@ class Math{
 	*/
 	function closestPointBetween2( $arrPointOrigin, $arrPointA, $arrPointB ){
 
+		// Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointB as it's hypotenuse
 		$oppositeSide = $arrPointB['x'] - $arrPointA['x'];
 		$hypotenuse = $this->distanceBetween( $arrPointA, $arrPointB );
 		$angleA = asin( $oppositeSide / $hypotenuse );
 
+		// Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointOrigin as it's hypotenuse
 		$oppositeSide = $arrPointOrigin['x'] - $arrPointA['x'];
 		$hypotenuse = $this->distanceBetween( $arrPointOrigin, $arrPointA );
 		$angleC = asin( $oppositeSide / $hypotenuse );
 
+		// Calculate the angle where the line between pointA and pointB meets the line between pointA and pointOrigin
 		$angleB = 180 - $angleA - $angleC;
 
+		// Now we have angleA and distance between pointA and pointResult we can calculate the coordinates
 		$adjacentSide = cos($angleB) * $hypotenuse;
 
-		$aToBSide = $this->distanceBetween( $arrPointA, $arrPointB );
+		$hypotenuse = $adjacentSide;
+		$yDiff = cos($angleA) * $hypotenuse;
+		$xDiff = sin($angleA) * $hypotenuse;
 
-		$percent = $adjacentSide / $aToBSide * 100;
+		$resultX = $arrPointA['x'] + $xDiff;
+		$resultY = $arrPointA['y'] + $yDiff;
+		$arrPointResult = array( 'x'=>$resultX, 'y'=>$resultY );
 
-		return $this->pointPercentageBetweenPoints( $arrPointA, $arrPointB, $percent );
+		return $arrPointResult;
 
 	}
 
