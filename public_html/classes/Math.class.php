@@ -131,6 +131,7 @@ class Math{
 
 
 	/**
+	 BUGGY NOT LIVE-READY
 	 Imagine you are stood looking at the side of a straight road that travels across your field of vision
 	 You know the coordinates of where you are, where the straight road starts and where it ends 
 	 What is the coordinate of the point on that straight road that is directly infront of you, aka closest to you. 
@@ -140,31 +141,64 @@ class Math{
 	*/
 	function closestPointBetween2( $arrPointOrigin, $arrPointA, $arrPointB ){
 
+		$arrReturn = array();
+
 		// Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointB as it's hypotenuse
-		$oppositeSide = $arrPointB['x'] - $arrPointA['x'];
-		$hypotenuse = $this->distanceBetween( $arrPointA, $arrPointB );
-		$angleA = asin( $oppositeSide / $hypotenuse );
+		$arrRightAngleCornerPointToA = array('x'=>$arrPointA['x'], 'y'=>$arrPointB['y']);
+		$arrReturn['arrOppAndAdjSidesToA'] = array( 	$arrPointB,
+														$arrRightAngleCornerPointToA, 
+														$arrPointA
+												);
+		$oppositeSideToALength = $this->distanceBetween( $arrPointB, $arrRightAngleCornerPointToA );
+		$hypotenuseToALength = $this->distanceBetween( $arrPointA, $arrPointB );
+		$sinA = $oppositeSideToALength / $hypotenuseToALength;
+		$angleA = rad2deg( asin( $sinA ) );
 
 		// Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointOrigin as it's hypotenuse
-		$oppositeSide = $arrPointOrigin['x'] - $arrPointA['x'];
-		$hypotenuse = $this->distanceBetween( $arrPointOrigin, $arrPointA );
-		$angleC = asin( $oppositeSide / $hypotenuse );
+		$arrRightAngleCornerPointToA = array('x'=>$arrPointA['x'], 'y'=>$arrPointOrigin['y']);
+		$arrReturn['arrOppAndAdjSidesToC'] = array( 	$arrPointOrigin,
+														$arrRightAngleCornerPointToA, 
+														$arrPointA
+												);
+		$oppositeSideToCLength = $this->distanceBetween( $arrPointOrigin, $arrRightAngleCornerPointToA );
+		$hypotenuseToCLength = $this->distanceBetween( $arrPointOrigin, $arrPointA );
+		$sinC = $oppositeSideToCLength / $hypotenuseToCLength;
+		$angleC = rad2deg( asin( $sinC ) );
 
 		// Calculate the angle where the line between pointA and pointB meets the line between pointA and pointOrigin
 		$angleB = 180 - $angleA - $angleC;
 
 		// Now we have angleA and distance between pointA and pointResult we can calculate the coordinates
-		$adjacentSide = cos($angleB) * $hypotenuse;
+		$hypotenuseToBLength = $hypotenuseToCLength;
+		$adjacentSideToB = cos( deg2rad($angleB) ) * $hypotenuseToBLength;
 
-		$hypotenuse = $adjacentSide;
-		$yDiff = cos($angleA) * $hypotenuse;
-		$xDiff = sin($angleA) * $hypotenuse;
+		$hypotenuse = $adjacentSideToB;
+		$yDiff = cos( deg2rad($angleA) ) * $hypotenuse;
+		$xDiff = sin( deg2rad($angleA) ) * $hypotenuse;
 
-		$resultX = $arrPointA['x'] + $xDiff;
+		
+		$resultX = $arrPointA['x'] - $xDiff;
 		$resultY = $arrPointA['y'] + $yDiff;
-		$arrPointResult = array( 'x'=>$resultX, 'y'=>$resultY );
 
-		return $arrPointResult;
+
+		$arrReturn['arrPointResult'] = array( 'x'=>$resultX, 'y'=>$resultY );
+
+		// Return some debugging
+		$arrReturn['oppositeSideToALength'] = $oppositeSideToALength;
+		$arrReturn['hypotenuseToALength'] = $hypotenuseToALength;
+		$arrReturn['sinA'] = $sinA;
+		$arrReturn['angleA'] = $angleA;
+
+		$arrReturn['oppositeSideToCLength'] = $oppositeSideToCLength;
+		$arrReturn['hypotenuseToCLength'] = $hypotenuseToCLength;
+		$arrReturn['sinC'] = $sinC;
+		$arrReturn['angleC'] = $angleC;
+
+		$arrReturn['angleB'] = $angleB;
+
+		$arrReturn['hypotenuseToBLength'] = $hypotenuseToBLength;
+
+		return $arrReturn;
 
 	}
 

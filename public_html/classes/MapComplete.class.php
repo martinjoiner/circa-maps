@@ -85,6 +85,7 @@ class MapComplete extends Map{
 				    .Route{ fill: none; stroke-linejoin: round; }
 				    .Property{ fill: #777; stroke-width: 1; }
 				    .Front{ stroke: #E22; }
+				    .DebugPath{ fill-opacity: 0.5; }
 				  ]]></style>';
 
 		if( $includeRoutes ){
