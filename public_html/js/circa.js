@@ -419,25 +419,25 @@ function nearestRoute( x, y ){
         	},
         dataType: "json"
     }).done(function(data) {
-    	console.log( data );
-    	$('svg .Dot').remove();
-    	console.log( 'abOrientation: ' + data.closestPointOnRoute.abOrientation );
-    	console.log( 'oppositeSideToALength: ' + data.closestPointOnRoute.oppositeSideToALength );
-    	console.log( 'hypotenuseToALength: ' + data.closestPointOnRoute.hypotenuseToALength );
-    	console.log( 'sinA: ' + data.closestPointOnRoute.sinA );
-    	console.log( 'angleA: ' + data.closestPointOnRoute.angleA );
-    	console.log( 'oppositeSideToCLength: ' + data.closestPointOnRoute.oppositeSideToCLength );
-    	console.log( 'hypotenuseToCLength: ' + data.closestPointOnRoute.hypotenuseToCLength );
-    	console.log( 'sinC: ' + data.closestPointOnRoute.sinC );
-    	console.log( 'angleC: ' + data.closestPointOnRoute.angleC );
-    	console.log( 'angleB: ' + data.closestPointOnRoute.angleB );
-    	console.log( 'hypotenuseToBLength: ' + data.closestPointOnRoute.hypotenuseToBLength );
-        debugPath( data.closestPointOnRoute.arrOppAndAdjSidesToA, 'orange' );
-        debugPath( data.closestPointOnRoute.arrOppAndAdjSidesToC, 'green' );
-        debugDot( data.closestPointOnRoute.arrPointA['x'], data.closestPointOnRoute.arrPointA['y'], 'red' );
-        debugDot( data.closestPointOnRoute.arrPointB['x'], data.closestPointOnRoute.arrPointB['y'], 'blue' );
-        debugDot( data.closestPointOnRoute.arrPointResult['x'], data.closestPointOnRoute.arrPointResult['y'], 'pink' );
-        
+		console.log( data );
+		$('svg .Dot').remove();
+		console.log( 'abOrientation: ' + data.closestPointOnRoute.abOrientation );
+		console.log( 'isOriginAboveLine: ' + data.closestPointOnRoute.isOriginAboveLine );
+		console.log( 'oppositeSideToALength: ' + data.closestPointOnRoute.oppositeSideToALength );
+		console.log( 'hypotenuseToALength: ' + data.closestPointOnRoute.hypotenuseToALength );
+		console.log( 'sinA: ' + data.closestPointOnRoute.sinA );
+		console.log( 'angleA: ' + data.closestPointOnRoute.angleA );
+		console.log( 'oppositeSideToCLength: ' + data.closestPointOnRoute.oppositeSideToCLength );
+		console.log( 'hypotenuseToCLength: ' + data.closestPointOnRoute.hypotenuseToCLength );
+		console.log( 'sinC: ' + data.closestPointOnRoute.sinC );
+		console.log( 'angleC: ' + data.closestPointOnRoute.angleC );
+		console.log( 'angleB: ' + data.closestPointOnRoute.angleB );
+		console.log( 'hypotenuseToBLength: ' + data.closestPointOnRoute.hypotenuseToBLength );
+		debugPath( data.closestPointOnRoute.arrOppAndAdjSidesToA, 'orange' );
+		debugPath( data.closestPointOnRoute.arrOppAndAdjSidesToC, 'green' );
+		debugDot( data.closestPointOnRoute.arrPointA['x'], data.closestPointOnRoute.arrPointA['y'], 'red' );
+		debugDot( data.closestPointOnRoute.arrPointB['x'], data.closestPointOnRoute.arrPointB['y'], 'blue' );
+		debugDot( data.closestPointOnRoute.arrPointResult['x'], data.closestPointOnRoute.arrPointResult['y'], 'pink' );
     });
 }
 
