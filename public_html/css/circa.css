@@ -50,3 +50,7 @@ body{
 	color: lightblue;
 	cursor: pointer;
 }
+
+.controlPanel a{
+	color: white;
+}

@@ -130,6 +130,7 @@ class Math{
 
 
 
+
 	/**
 	 BUGGY NOT LIVE-READY
 	 Imagine you are stood looking at the side of a straight road that travels across your field of vision
@@ -140,6 +141,20 @@ class Math{
 	 $arrPointB - Same as above
 	*/
 	function closestPointBetween2( $arrPointOrigin, $arrPointA, $arrPointB ){
+
+		// Orient the points so that A is on the left
+		if( $arrPointA['x'] > $arrPointB['x'] ){
+			$tempB = $arrPointB;
+			$arrPointB = $arrPointA;
+			$arrPointA = $tempB;
+		}
+
+		// Now there are only 2 orientations between A and B, ascending (B is higher) or descending (B is lower)
+		if( $arrPointA['y'] < $arrPointB['y'] ){
+			$abOrientation = 'descending';
+		} else {
+			$abOrientation = 'ascending';
+		}
 
 		$arrReturn = array();
 
@@ -178,12 +193,15 @@ class Math{
 
 		
 		$resultX = $arrPointA['x'] - $xDiff;
-		$resultY = $arrPointA['y'] + $yDiff;
+		$resultY = $arrPointA['y'] - $yDiff;
 
 
 		$arrReturn['arrPointResult'] = array( 'x'=>$resultX, 'y'=>$resultY );
 
 		// Return some debugging
+		$arrReturn['arrPointA'] = $arrPointA;
+		$arrReturn['arrPointB'] = $arrPointB;
+		$arrReturn['abOrientation'] = $abOrientation;
 		$arrReturn['oppositeSideToALength'] = $oppositeSideToALength;
 		$arrReturn['hypotenuseToALength'] = $hypotenuseToALength;
 		$arrReturn['sinA'] = $sinA;

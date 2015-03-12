@@ -1,6 +1,6 @@
 
 var globals = {};
-globals.mapID = 1;
+globals.mapID = $('input#mapID').val();
 
 var arrPaths = [];
 var count = 0;
@@ -421,6 +421,7 @@ function nearestRoute( x, y ){
     }).done(function(data) {
     	console.log( data );
     	$('svg .Dot').remove();
+    	console.log( 'abOrientation: ' + data.closestPointOnRoute.abOrientation );
     	console.log( 'oppositeSideToALength: ' + data.closestPointOnRoute.oppositeSideToALength );
     	console.log( 'hypotenuseToALength: ' + data.closestPointOnRoute.hypotenuseToALength );
     	console.log( 'sinA: ' + data.closestPointOnRoute.sinA );
@@ -433,8 +434,8 @@ function nearestRoute( x, y ){
     	console.log( 'hypotenuseToBLength: ' + data.closestPointOnRoute.hypotenuseToBLength );
         debugPath( data.closestPointOnRoute.arrOppAndAdjSidesToA, 'orange' );
         debugPath( data.closestPointOnRoute.arrOppAndAdjSidesToC, 'green' );
-        debugDot( data.nearestRoute.top2NearestPoints[0]['x'], data.nearestRoute.top2NearestPoints[0]['y'] );
-        debugDot( data.nearestRoute.top2NearestPoints[1]['x'], data.nearestRoute.top2NearestPoints[1]['y'] );
+        debugDot( data.closestPointOnRoute.arrPointA['x'], data.closestPointOnRoute.arrPointA['y'], 'red' );
+        debugDot( data.closestPointOnRoute.arrPointB['x'], data.closestPointOnRoute.arrPointB['y'], 'blue' );
         debugDot( data.closestPointOnRoute.arrPointResult['x'], data.closestPointOnRoute.arrPointResult['y'], 'pink' );
         
     });
@@ -476,6 +477,7 @@ $('#btnInitXRoads').click( function(){
 	$.ajax({
         type: "GET",
         url: "/initCrossRoads/",
+        data: { "mapID": globals.mapID },
         dataType: "json"
     }).done(function(data) {
 
@@ -507,6 +509,7 @@ $('#btnDrawFronts').click( function(){
 	$.ajax({
         type: "GET",
         url: "/getPropertyFronts/",
+        data: { "mapID": globals.mapID },
         dataType: "json"
     }).done(function(data) {
 

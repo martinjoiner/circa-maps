@@ -162,7 +162,6 @@ class MapSection extends Map{
 		$closestPointBetween2 = $objMath->closestPointBetween2( $arrPointOrigin, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
 
 		$arrResult = array();
-		$arrResult['nearestRoute'] = $nearestRoute;
 		$arrResult['closestPointOnRoute'] = $closestPointBetween2;
 
 		return $arrResult;

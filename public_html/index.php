@@ -12,7 +12,7 @@
 	<div class="canvasWrap">
 		<?php
 		include($_SERVER['DOCUMENT_ROOT'] . '/autoloadRegister.inc.php');
-		$objMap = new MapComplete(1);
+		$objMap = new MapComplete($_GET['mapID']);
 		echo $objMap->printMarkup();
 		?>
 		<div id="mask"></div>
@@ -20,6 +20,9 @@
 
 
 	<form class="controlPanel">
+
+		<input type="hidden" name="mapID" id="mapID" value="<?=$_GET['mapID']?>">
+
 		<label>Mouse co-ordinates</label>
 		<input type="text" id="mouseCoord" value="">
 
@@ -59,6 +62,8 @@
 				</tr>
 			</tbody>
 		</table>
+
+		<a href="?mapID=1">Map 1</a> <a href="?mapID=2">Map 2</a> <a href="?mapID=3">Map 3</a> 
 
 	</form>
 
