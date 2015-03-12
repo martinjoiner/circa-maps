@@ -130,6 +130,82 @@ class Math{
 
 
 
+	/**
+	 Returns true or false depending whether the $arrPointOrigin is above or below line
+	 (assumes pointA is to the left of pointB)
+	 */
+	function isOriginAboveLine( $arrPointOrigin, $arrPointA, $arrPointB ){
+		// Discover if the line is ascending or descending
+		$abOrientation = $this->abOrientation( $arrPointA, $arrPointB );
+
+		if( $abOrientation === 'descending' ){
+
+			// If origin is left of A or below B in a descending line it is definitely below, return false.
+			if( $arrPointOrigin['x'] < $arrPointA['x'] || $arrPointOrigin['y'] > $arrPointB['y'] ){
+				return false;
+			}
+
+			// If origin is right of B or above A in a descending line it is definitely above, return true.
+			if( $arrPointOrigin['x'] > $arrPointB['x'] || $arrPointOrigin['y'] < $arrPointA['y'] ){
+				return true;
+			}
+
+			// If we've reached this point of the function, origin must be inside the bounding box so we need to compare angles
+			$oppositeSideToBLength = $arrPointOrigin['x'] - $arrPointA['x'];
+			$hypotenuseToBLength = $this->distanceBetween( $arrPointOrigin, $arrPointA );
+			$sinB = $oppositeSideToBLength / $hypotenuseToBLength;
+			$angleB = rad2deg( asin( $sinB ) );
+
+		} else if( $abOrientation === 'ascending' ) {
+
+			// If origin is right of B or below A in an ascending line it is definitely below, return false.
+			if( $arrPointOrigin['x'] > $arrPointB['x'] || $arrPointOrigin['y'] > $arrPointA['y'] ){
+				return false;
+			}
+
+			// If origin is left of A or above B in an ascending line it is definitely above, return true.
+			if( $arrPointOrigin['x'] < $arrPointA['x'] || $arrPointOrigin['y'] < $arrPointB['y'] ){
+				return true;
+			}
+
+			// If we've reached this point of the function, origin must be inside the bounding box so we need to compare angles
+			$oppositeSideToBLength = $arrPointB['x'] - $arrPointOrigin['x'];
+			$hypotenuseToBLength = $this->distanceBetween( $arrPointB, $arrPointOrigin );
+			$sinB = $oppositeSideToBLength / $hypotenuseToBLength;
+			$angleB = rad2deg( asin( $sinB ) );
+
+		}
+
+		$oppositeSideToALength = $arrPointB['x'] - $arrPointA['x'];
+		$hypotenuseToALength = $this->distanceBetween( $arrPointB, $arrPointA );
+		$sinA = $oppositeSideToALength / $hypotenuseToALength;
+		$angleA = rad2deg( asin( $sinA ) );
+
+		if( $angleA > $angleB ){
+			return false;
+		} else {
+			return true;
+		}
+
+	}
+
+
+
+
+	/**
+	 There are only 2 orientations between A and B, ascending (B is higher) or descending (B is lower)
+	 (assumes pointA is to the left of pointB)
+	*/
+	function abOrientation( $arrPointA, $arrPointB ){
+		if( $arrPointA['y'] < $arrPointB['y'] ){
+			return 'descending';
+		} else {
+			return 'ascending';
+		}
+	}
+
+
+
 
 	/**
 	 BUGGY NOT LIVE-READY
@@ -149,12 +225,8 @@ class Math{
 			$arrPointA = $tempB;
 		}
 
-		// Now there are only 2 orientations between A and B, ascending (B is higher) or descending (B is lower)
-		if( $arrPointA['y'] < $arrPointB['y'] ){
-			$abOrientation = 'descending';
-		} else {
-			$abOrientation = 'ascending';
-		}
+		$abOrientation = $this->abOrientation( $arrPointA, $arrPointB );
+		$isOriginAboveLine = $this->isOriginAboveLine( $arrPointOrigin, $arrPointA, $arrPointB );
 
 		$arrReturn = array();
 
@@ -202,6 +274,7 @@ class Math{
 		$arrReturn['arrPointA'] = $arrPointA;
 		$arrReturn['arrPointB'] = $arrPointB;
 		$arrReturn['abOrientation'] = $abOrientation;
+		$arrReturn['isOriginAboveLine'] = $isOriginAboveLine;
 		$arrReturn['oppositeSideToALength'] = $oppositeSideToALength;
 		$arrReturn['hypotenuseToALength'] = $hypotenuseToALength;
 		$arrReturn['sinA'] = $sinA;
