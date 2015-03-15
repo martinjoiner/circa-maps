@@ -57,7 +57,7 @@ class Map{
 
 				// Reset the variables
 				$arrPoints = array();
-				$curID = $thisResult['id'];
+				$curID = intval($thisResult['id']);
 			}
 
 			$arrPoints[] = array( 'x'=>intval($thisResult['x']), 'y'=>intval($thisResult['y']) );

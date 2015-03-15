@@ -291,8 +291,8 @@ $('#mask').click( function(){
 		nearestRoute( x, y );
 	} else if( mouseMode === 'placeProperty' ){
 		placeProperty( x, y );
-	} else if( mouseMode === 'dropBomb' ){
-		dropBomb( x, y );
+	} else if( mouseMode === 'deleteProperty' ){
+		deleteProperty( x, y );
 	}
 	
 });
@@ -405,6 +405,27 @@ function placeProperty( x, y ){
     }).done(function(data) {
         if( data.success ){
         	renderPath( data['arrPath'] );
+        }
+    });
+}
+
+
+
+
+/* Tests all paths on map to see if point is inside */
+/* @coord co-ordinates of point ------------------- */ 
+function deleteProperty( x, y ){
+	$.ajax({
+        type: "GET",
+        url: "/deleteProperty/",
+        data: { 'mapID': globals.mapID, 
+        		'x': x, 
+        		'y': y 
+        	},
+        dataType: "json"
+    }).done(function(data) {
+        for( var i = 0; i <= data.length; i++ ){
+        	$( 'svg .Property#property' + data[i] ).remove();
         }
     });
 }
