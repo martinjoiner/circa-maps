@@ -441,7 +441,6 @@ $('#btnInitXRoads').click( function(){
         dataType: "json"
     }).done(function(data) {
 
-        // If a successful deletion has occured, remove the element from the DOM
         if( data.success ){
         	var i = iLimit = 0;
 	        for( i = 0, iLimit = data.arrPaths.length; i < iLimit; i++ ){
@@ -456,6 +455,51 @@ $('#btnInitXRoads').click( function(){
 
 
 
+$('#btnDrawRoutes').click( function(){
+	$.ajax({
+        type: "GET",
+        url: "/GET/routes/",
+        data: { "mapID": globals.mapID },
+        dataType: "json"
+    }).done(function(data) {
+
+        var i = iLimit = 0;
+        for( i = 0, iLimit = data.length; i < iLimit; i++ ){
+        	renderPath( data[i] );
+        }
+
+    });
+});
+
+
+
+
+$('#btnDeleteRoutes').click( function(){
+	$('svg .Route').remove();
+});
+
+
+
+
+$('#btnDrawProperties').click( function(){
+	$.ajax({
+        type: "GET",
+        url: "/GET/properties/",
+        data: { "mapID": globals.mapID },
+        dataType: "json"
+    }).done(function(data) {
+
+        var i = iLimit = 0;
+        for( i = 0, iLimit = data.length; i < iLimit; i++ ){
+        	renderPath( data[i] );
+        }
+
+    });
+});
+
+
+
+
 /* Removes all paths from the SVG that represent a Property on the map */
 $('#btnDeleteProperties').click( function(){
 	$('svg .Property').remove();
@@ -465,22 +509,19 @@ $('#btnDeleteProperties').click( function(){
 
 
 $('#btnDrawFronts').click( function(){
-	
 	$.ajax({
         type: "GET",
-        url: "/getPropertyFronts/",
+        url: "/GET/propertyFronts/",
         data: { "mapID": globals.mapID },
         dataType: "json"
     }).done(function(data) {
 
-        // If a successful deletion has occured, remove the element from the DOM
         var i = iLimit = 0;
         for( i = 0, iLimit = data.length; i < iLimit; i++ ){
         	renderPath( data[i] );
         }
 
     });
-
 });
 
 

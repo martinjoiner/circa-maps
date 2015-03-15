@@ -137,6 +137,21 @@ class Map{
 
 
 
+
+	/** 
+	 Returns an array of arrays representing fronts
+	*/
+	function getProperties(){
+		$arrFronts = array();
+		foreach( $this->arrProperties as $thisProperty ){
+			$arrFronts[] = $thisProperty->getPath();
+		}
+		return $arrFronts;
+	}
+
+
+
+
 	/** 
 	 Returns an array of arrays representing fronts
 	*/
@@ -144,6 +159,20 @@ class Map{
 		$arrFronts = array();
 		foreach( $this->arrProperties as $thisProperty ){
 			$arrFronts[] = $thisProperty->getFront();
+		}
+		return $arrFronts;
+	}
+
+
+
+
+	/** 
+	 Returns an array of arrays representing properties
+	*/
+	function getRoutes(){
+		$arrFronts = array();
+		foreach( $this->arrRoutes as $thisRoute ){
+			$arrFronts[] = $thisRoute->getPath();
 		}
 		return $arrFronts;
 	}
