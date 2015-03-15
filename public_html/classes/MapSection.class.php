@@ -143,7 +143,7 @@ class MapSection extends Map{
 
 
 	/**
-	 BUGGY NOT LIVE-READY
+	 Returns an array of variables describing the nearest route, the closest point on that route, and the distance to that point
 	*/
 	public function nearestRoute( $x, $y ){
 

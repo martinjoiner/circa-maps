@@ -208,7 +208,6 @@ class Math{
 
 
 	/**
-	 BUGGY NOT LIVE-READY
 	 Imagine you are stood looking at the side of a straight road that travels across your field of vision
 	 You know the coordinates of where you are, where the straight road starts and where it ends 
 	 What is the coordinate of the point on that straight road that is directly infront of you, aka closest to you. 
@@ -230,8 +229,13 @@ class Math{
 
 		$arrReturn = array();
 
-		// Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointB as it's hypotenuse
-		$arrRightAngleCornerPointToA = array('x'=>$arrPointA['x'], 'y'=>$arrPointB['y']);
+		// Angle a (Orange in docs) Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointB as it's hypotenuse
+		if( ( $abOrientation ==  'ascending' &&  $isOriginAboveLine ) || 
+			( $abOrientation == 'descending' && !$isOriginAboveLine ) ){
+			$arrRightAngleCornerPointToA = array('x'=>$arrPointB['x'], 'y'=>$arrPointA['y']);
+		} else { 
+			$arrRightAngleCornerPointToA = array('x'=>$arrPointA['x'], 'y'=>$arrPointB['y']);
+		}
 		$arrReturn['arrOppAndAdjSidesToA'] = array( 	$arrPointB,
 														$arrRightAngleCornerPointToA, 
 														$arrPointA
@@ -242,35 +246,65 @@ class Math{
 		$angleA = rad2deg( asin( $sinA ) );
 
 		// Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointOrigin as it's hypotenuse
-		$arrRightAngleCornerPointToA = array('x'=>$arrPointA['x'], 'y'=>$arrPointOrigin['y']);
+		if( ( $abOrientation ==  'ascending' &&  $isOriginAboveLine && $arrPointOrigin['x'] > $arrPointA['x'] ) || 
+			( $abOrientation ==  'ascending' && !$isOriginAboveLine && $arrPointOrigin['y'] > $arrPointA['y'] ) || 
+			( $abOrientation == 'descending' &&  $isOriginAboveLine && $arrPointOrigin['y'] < $arrPointA['y'] ) || 
+			( $abOrientation == 'descending' && !$isOriginAboveLine && $arrPointOrigin['x'] > $arrPointA['x'] ) ){
+			$arrRightAngleCornerPointToC = array('x'=>$arrPointA['x'], 'y'=>$arrPointOrigin['y']);
+		} else {
+			$arrRightAngleCornerPointToC = array('x'=>$arrPointOrigin['x'], 'y'=>$arrPointA['y']);
+		}
 		$arrReturn['arrOppAndAdjSidesToC'] = array( 	$arrPointOrigin,
-														$arrRightAngleCornerPointToA, 
+														$arrRightAngleCornerPointToC, 
 														$arrPointA
 												);
-		$oppositeSideToCLength = $this->distanceBetween( $arrPointOrigin, $arrRightAngleCornerPointToA );
+		$oppositeSideToCLength = $this->distanceBetween( $arrPointOrigin, $arrRightAngleCornerPointToC );
 		$hypotenuseToCLength = $this->distanceBetween( $arrPointOrigin, $arrPointA );
 		$sinC = $oppositeSideToCLength / $hypotenuseToCLength;
 		$angleC = rad2deg( asin( $sinC ) );
 
-		// Calculate the angle where the line between pointA and pointB meets the line between pointA and pointOrigin
-		$angleB = 180 - $angleA - $angleC;
+		if( ( $abOrientation ==  'ascending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] < $arrPointA['y'] ) ||
+			( $abOrientation == 'descending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] > $arrPointA['y'] ) ){
+			$totalAngle = 90;
+		} else {
+			$totalAngle = 180;
+		}
 
-		// Now we have angleA and distance between pointA and pointResult we can calculate the coordinates
+		// Calculate the angle where the line between pointA and pointB meets the line between pointA and pointOrigin
+		$angleB = $totalAngle - $angleA - $angleC;
+
+		// Now we have angleB and distance between pointA and pointOrigin we can calculate the distance of the line between pointOrigin and pointResult 
 		$hypotenuseToBLength = $hypotenuseToCLength;
 		$adjacentSideToB = cos( deg2rad($angleB) ) * $hypotenuseToBLength;
 
-		$hypotenuse = $adjacentSideToB;
-		$yDiff = cos( deg2rad($angleA) ) * $hypotenuse;
-		$xDiff = sin( deg2rad($angleA) ) * $hypotenuse;
+		$hypotenuseToDLength = $adjacentSideToB;
+		$side1Length = cos( deg2rad($angleA) ) * $hypotenuseToDLength;
+		$side2Length = sin( deg2rad($angleA) ) * $hypotenuseToDLength;
 
-		
-		$resultX = $arrPointA['x'] - $xDiff;
-		$resultY = $arrPointA['y'] - $yDiff;
+		if( $abOrientation == 'ascending' ){
+			if( $isOriginAboveLine ){
+				$resultX = $arrPointA['x'] + $side1Length;
+				$resultY = $arrPointA['y'] - $side2Length;
+			} else {
+				$resultX = $arrPointA['x'] + $side2Length;
+				$resultY = $arrPointA['y'] - $side1Length;
+			}
+		} else if( $abOrientation == 'descending' ) {
+			if( $isOriginAboveLine ){
+				$resultX = $arrPointA['x'] + $side2Length;
+				$resultY = $arrPointA['y'] + $side1Length;
+			} else {
+				$resultX = $arrPointA['x'] + $side1Length;
+				$resultY = $arrPointA['y'] + $side2Length;
+			}
+		}
 
-
-		$arrReturn['arrPointResult'] = array( 'x'=>$resultX, 'y'=>$resultY );
+		$arrPointResult = array( 'x'=>$resultX, 'y'=>$resultY );
 
 		// Return some debugging
+		$arrReturn['arrPointResult'] = $arrPointResult;
+		$arrReturn['distanceToPointResult'] = $this->distanceBetween( $arrPointOrigin, $arrPointResult );
+
 		$arrReturn['arrPointA'] = $arrPointA;
 		$arrReturn['arrPointB'] = $arrPointB;
 		$arrReturn['abOrientation'] = $abOrientation;
