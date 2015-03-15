@@ -87,18 +87,6 @@ var spawnOffsetSide = (function( sideNum ){
 
 
 
-/* Randomly varies points 2 and 3 slightly to create organic variation */
-var varyMiddleTwo = (function(){
-	this.arrOriginalPoints = [];
-	this.arrOriginalPoints[1] = this.arrAbsolutePoints[1];
-	this.arrOriginalPoints[2] = this.arrAbsolutePoints[2];
-	this.arrAbsolutePoints[1] = varyPoint(this.arrAbsolutePoints[1]);
-	this.arrAbsolutePoints[2] = varyPoint(this.arrAbsolutePoints[2]);
-});
-
-
-
-
 
 /* Use the mid point to calculate which point is farthest away from center 	*/
 /* and define that as the radius 											*/

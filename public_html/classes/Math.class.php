@@ -41,6 +41,7 @@ class Math{
 
 	/**
 	 Alters the location of a point by a random amount to fake organic positioning
+	 $maxVary Maximum number of units by which the point can vary on the x or y axis
 	*/
 	function randomVaryPoint( $arrPoint, $maxVary = 10 ){
 		

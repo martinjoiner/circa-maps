@@ -31,6 +31,10 @@ class PropertyPlacer extends MapSection{
 		$arrFrontLeftPoint = $objMath->pointPercentageBetweenPoints( $closestPointOnRoute['arrPointResult'], $arrRearLeftPoint, 20); 
 		$arrFrontRightPoint = $objMath->ninetyDeg( $arrRearLeftPoint, $arrFrontLeftPoint ); 
 		$arrRearRightPoint = $objMath->ninetyDeg( $arrFrontLeftPoint, $arrFrontRightPoint ); 
+
+		$arrRearLeftPoint = $objMath->randomVaryPoint( $arrRearLeftPoint, 5 );
+		$arrRearRightPoint = $objMath->randomVaryPoint( $arrRearRightPoint, 5 );
+
 		$arrPoints = array( $arrFrontLeftPoint, $arrFrontRightPoint, $arrRearRightPoint, $arrRearLeftPoint );
 
 		// Check all 4 points do not collide
@@ -84,5 +88,7 @@ class PropertyPlacer extends MapSection{
 		// Return result and arrPath
 		return $arrResult;
 	}
+
+
 	
 }
