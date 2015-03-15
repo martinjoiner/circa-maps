@@ -28,7 +28,7 @@ class PropertyPlacer extends MapSection{
 
 		// Generate 4 points based on supplied x and y
 		$arrRearLeftPoint = array( 'x'=>$x, 'y'=>$y ); 
-		$arrFrontLeftPoint = $objMath->pointPercentageBetweenPoints( $closestPointOnRoute['arrPointResult'], $arrRearLeftPoint, 20); 
+		$arrFrontLeftPoint = $objMath->pointDistanceBetweenPoints( $closestPointOnRoute['arrPointResult'], $arrRearLeftPoint, 8); 
 		$arrFrontRightPoint = $objMath->ninetyDeg( $arrRearLeftPoint, $arrFrontLeftPoint ); 
 		$arrRearRightPoint = $objMath->ninetyDeg( $arrFrontLeftPoint, $arrFrontRightPoint ); 
 

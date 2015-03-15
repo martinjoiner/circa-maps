@@ -3,10 +3,55 @@
 class Math{
 
 
+
 	/**
-	 Returns the midway point between 2 points (ie.)
-	 $arrPointA associative array with 'x' and 'y' values
-	 $arrPointB Same as above
+	 Returns the a point between 2 points 
+	 $arrPointA, $arrPointB associative array with 'x' and 'y' values
+	 $distance How far from pointA toward pointB should the result be
+	*/
+	function pointDistanceBetweenPoints( $arrPointA, $arrPointB, $distance ){
+		$oppositeSideToAngle = $arrPointA['y'] - $arrPointB['y'];
+		$adjascentSideToAngle = $arrPointB['x'] - $arrPointA['x'];
+		$tan = $oppositeSideToAngle / $adjascentSideToAngle;
+
+		$angle = rad2deg( atan($tan) );
+
+		$xDiff = cos( deg2rad($angle) ) * $distance;
+		$yDiff = sin( deg2rad($angle) ) * $distance;
+
+		if( $arrPointA['y'] > $arrPointB['y'] ){
+			if( $arrPointA['x'] > $arrPointB['x'] ){
+				// Above and left (working!)
+				 $newX = $arrPointA['x'] - $xDiff;
+				 $newY = $arrPointA['y'] + $yDiff;
+			} else {
+
+				$newX = $arrPointA['x'] + $xDiff;
+				$newY = $arrPointA['y'] - $yDiff;
+			}
+		} else {
+			if( $arrPointA['x'] > $arrPointB['x'] ){
+				// Below and left (working!)
+				$newX = $arrPointA['x'] - $xDiff;
+				$newY = $arrPointA['y'] + $yDiff;
+			} else {
+				// Below and right (working!)
+				$newX = $arrPointA['x'] + $xDiff;
+				$newY = $arrPointA['y'] - $yDiff;
+			}
+		}
+		$arrResultPoint = array( 'x'=>$newX, 'y'=>$newY );
+
+		return $arrResultPoint;
+	}
+
+
+
+
+	/**
+	 Returns a midway point between 2 points 
+	 $arrPointA, $arrPointB associative array with 'x' and 'y' values
+	 $percent How far along the route from pointA the result should be
 	*/
 	function pointPercentageBetweenPoints( $arrPointA, $arrPointB, $percent ){
 
