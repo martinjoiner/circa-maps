@@ -233,36 +233,6 @@ var Path = (function(id, d){
 
 
 
-/* Returns the adjascent point based on 2 points 					*/
-/* @coord1 															*/
-/* @coord2 															*/
-/* @clockwide *Optional* - Boolean - Defaults to true 				*/
-function ninetyDeg( coord1, coord2, clockwise ){
-	if(typeof clockwise === 'undefined'){
-		clockwise = true;
-	}
-	var coordParts = coord1.trim().split(',');
-	var x1 = parseFloat(coordParts[0]);
-	var y1 = parseFloat(coordParts[1]);
-	coordParts = coord2.trim().split(',');
-	var x2 = parseFloat(coordParts[0]);
-	var y2 = parseFloat(coordParts[1]);
-
-	var x3;
-	var y3;
-	if( clockwise ){
-		x3 = x2 + ( y2 - y1 );
-		y3 = y2 - ( x2 - x1 );
-	} else {
-		x3 = x2 - ( y2 - y1 );
-		y3 = y2 + ( x2 - x1 );
-	}
-
-	return x3.toFixed(3) + ',' + y3.toFixed(3);
-}
-
-
-
 
 /* Returns the co-ordinates of the midpoint between 2 points 	*/
 /* @pointA 														*/

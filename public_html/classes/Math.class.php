@@ -129,6 +129,28 @@ class Math{
 
 
 
+	/**
+	 Returns the adjascent point based on 2 points 	
+	 @arrPointA, @arrPointB - associative array describing a point											
+	 @clockwide *Optional* - Boolean - Defaults to true 	
+	*/
+	function ninetyDeg( $arrPointA, $arrPointB, $clockwise = true ){
+
+		$arrPointResult = array();
+
+		if( $clockwise ){
+			$arrPointResult['x'] = $arrPointB['x'] + ( $arrPointB['y'] - $arrPointA['y'] );
+			$arrPointResult['y'] = $arrPointB['y'] - ( $arrPointB['x'] - $arrPointA['x'] );
+		} else {
+			$arrPointResult['x'] = $arrPointB['x'] - ( $arrPointB['y'] - $arrPointA['y'] );
+			$arrPointResult['y'] = $arrPointB['y'] + ( $arrPointB['x'] - $arrPointA['x'] );
+		}
+
+		return $arrPointResult;
+	}
+
+
+
 
 	/**
 	 Returns true or false depending whether the $arrPointOrigin is above or below line

@@ -9,18 +9,29 @@ class PropertyPlacer extends MapSection{
 	/**
 	 Places a property on the map if it's points do not collide
 	*/
-	public function placeProperty( $x, $y){
+	public function placeProperty( $x, $y ){
 
 		$startTime = microtime(true);
 
 		$arrResult = array( 'arrPath'=>null, 'success'=>false );
 
+		$objMath = new Math();
+
+		// Get the nearest route
+		$arrNearestRouteResult = $this->nearestRoute( $x, $y );
+		$closestPointOnRoute = $arrNearestRouteResult['closestPointOnRoute'];
+
+
+		if( is_null($closestPointOnRoute['distanceToPointResult']) || $closestPointOnRoute['distanceToPointResult'] > 50 ){
+		 	return $arrResult;
+		}
+
 		// Generate 4 points based on supplied x and y
-		$arrPoints = array();
-		$arrPoints[] = array( 'x'=>$x, 'y'=>$y ); 
-		$arrPoints[] = array( 'x'=>$x + 10, 'y'=>$y ); 
-		$arrPoints[] = array( 'x'=>$x + 10, 'y'=>$y + 10 ); 
-		$arrPoints[] = array( 'x'=>$x, 'y'=>$y + 10 ); 
+		$arrRearLeftPoint = array( 'x'=>$x, 'y'=>$y ); 
+		$arrFrontLeftPoint = $objMath->pointPercentageBetweenPoints( $closestPointOnRoute['arrPointResult'], $arrRearLeftPoint, 20); 
+		$arrFrontRightPoint = $objMath->ninetyDeg( $arrRearLeftPoint, $arrFrontLeftPoint ); 
+		$arrRearRightPoint = $objMath->ninetyDeg( $arrFrontLeftPoint, $arrFrontRightPoint ); 
+		$arrPoints = array( $arrFrontLeftPoint, $arrFrontRightPoint, $arrRearRightPoint, $arrRearLeftPoint );
 
 		// Check all 4 points do not collide
 		$isCollisionFree = true;
