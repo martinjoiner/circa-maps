@@ -147,22 +147,27 @@ class MapSection extends Map{
 	*/
 	public function nearestRoute( $x, $y ){
 
+		$arrResult = array( 'closestPointOnRoute'=>NULL, 'cntRoutesChecked'=>0 );
+
 		$closestDistance = INF;
 		$nearestRoute = array();
+		$cntRoutesChecked = 0;
 		foreach( $this->arrRoutes as $thisRoute ){
 			$thisResult = $thisRoute->gimme2NearestPoints( $x, $y );
 			if( $closestDistance > $thisResult['closestDistance'] ){
 				$closestDistance = $thisResult['closestDistance'];
 				$nearestRoute = $thisResult;
 			}
+			$cntRoutesChecked++;
 		}
 
-		$objMath = new Math();
-		$arrPointOrigin = array('x'=>$x,'y'=>$y);
-		$closestPointBetween2 = $objMath->closestPointBetween2( $arrPointOrigin, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
-
-		$arrResult = array();
-		$arrResult['closestPointOnRoute'] = $closestPointBetween2;
+		if( $cntRoutesChecked ){
+			$objMath = new Math();
+			$arrPointOrigin = array('x'=>$x,'y'=>$y);
+			$closestPointBetween2 = $objMath->closestPointBetween2( $arrPointOrigin, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
+			$arrResult['closestPointOnRoute'] = $closestPointBetween2;
+			$arrResult['cntRoutesChecked'] = $cntRoutesChecked;
+		}
 
 		return $arrResult;
 	}
