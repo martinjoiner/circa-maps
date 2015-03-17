@@ -139,7 +139,6 @@ var Path = (function(id, d){
 	this.spawnOffsetSide = spawnOffsetSide;
 	this.getCenter 		= getCenter;
 	this.allPointsOnMap = allPointsOnMap;
-	this.varyMiddleTwo 	= varyMiddleTwo;
 
 	this.id = id;
 	this.d = d;
@@ -343,8 +342,57 @@ function deleteProperty( x, y ){
 
 
 /* Handles click event to start spawning 	*/
-$('#btnSpawn').click( function(){
-	spawn();
+$('#btnSpawnStart').click( spawn );
+
+
+
+
+/* A function that creates buildings. Then calls itself.	*/
+function spawn(){
+
+	$('#spawnNotify').addClass('active');
+
+	// Generate a pointer to a random existing path to build next to
+	var pathPointer = Math.floor( Math.random() * ( arrPaths.length - 1 ) );
+	console.log("Path Pointer: " + pathPointer);
+
+	// Generate a pointer to a random side of the building to build adjascent to
+	var sidePointer = Math.floor( Math.random() * 4 );
+	console.log("Side Pointer: " + sidePointer);
+
+	var arrPoints = arrPaths[pathPointer].spawnOffsetSide(sidePointer);
+	var d = 'M ' + arrPoints.join(' ') + ' z';
+
+	var id = "testPath";
+	var testPath = new Path( id, d);
+	testPath.varyMiddleTwo();
+
+
+	var valid = true;
+	for( var i in arrPaths ){
+		if( polyCollision( testPath, arrPaths[i] ) ){
+			console.warn("Invalid: Collision");
+			valid = false;
+		}
+	}
+
+	if( !testPath.allPointsOnMap() ){
+		console.warn("Invalid: Some points were not on map");
+		valid = false;
+	}
+
+	window.setTimeout( spawn, 10);
+}
+
+
+
+/* Handles click event to stop spawning 	*/
+$('#btnSpawnStop').click( function(){
+	var id = window.setTimeout(function() {}, 0);
+	while (id--) {
+	    window.clearTimeout(id);
+	}
+	$('#spawnNotify').removeClass('active');
 });
 
 
@@ -447,54 +495,6 @@ $('#btnDrawFronts').click( function(){
 
 $('#btnDeleteFronts').click( function(){
 	$('svg .Front').remove();
-});
-
-
-
-
-/* A function that creates buildings. Then calls itself.	*/
-function spawn(){
-
-	// Generate a pointer to a random existing path to build next to
-	var pathPointer = Math.floor( Math.random() * ( arrPaths.length - 1 ) );
-	console.log("Path Pointer: " + pathPointer);
-
-	// Generate a pointer to a random side of the building to build adjascent to
-	var sidePointer = Math.floor( Math.random() * 4 );
-	console.log("Side Pointer: " + sidePointer);
-
-	var arrPoints = arrPaths[pathPointer].spawnOffsetSide(sidePointer);
-	var d = 'M ' + arrPoints.join(' ') + ' z';
-
-	var id = "testPath";
-	var testPath = new Path( id, d);
-	testPath.varyMiddleTwo();
-
-
-	var valid = true;
-	for( var i in arrPaths ){
-		if( polyCollision( testPath, arrPaths[i] ) ){
-			console.warn("Invalid: Collision");
-			valid = false;
-		}
-	}
-
-	if( !testPath.allPointsOnMap() ){
-		console.warn("Invalid: Some points were not on map");
-		valid = false;
-	}
-
-	window.setTimeout( spawn, 10);
-}
-
-
-
-/* Handles click event to stop spawning 	*/
-$('#btnStop').click( function(){
-	var id = window.setTimeout(function() {}, 0);
-	while (id--) {
-	    window.clearTimeout(id);
-	}
 });
 
 

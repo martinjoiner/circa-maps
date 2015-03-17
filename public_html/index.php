@@ -39,8 +39,10 @@
 			<input type="radio" name="mouseMode" value="placeProperty" id="chkPlaceProperty"><label for="chkPlaceProperty" class="checkLabel">Place property</label><br>
 			<input type="radio" name="mouseMode" value="deleteProperty" id="chkDeleteProperty"><label for="chkDeleteProperty" class="checkLabel">Delete property</label>
 		</fieldset>
-		<input type="button" id="btnSpawn" value="Spawn">
-		<input type="button" id="btnStop" value="Stop spawning">
+
+		<p id="spawnNotify">Spawning</p>
+		<input type="button" id="btnSpawnStart" value="Spawn">
+		<input type="button" id="btnSpawnStop" value="Stop spawning">
 		
 		
 		<table>

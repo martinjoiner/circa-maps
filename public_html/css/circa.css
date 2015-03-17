@@ -54,3 +54,14 @@ body{
 .controlPanel a{
 	color: white;
 }
+
+#spawnNotify{
+	background-image: url(/images/LoadingSpinner.gif);
+	background-repeat: no-repeat;
+	padding-left: 22px;
+	visibility: hidden;
+
+}
+#spawnNotify.active{
+	visibility: visible;
+}
