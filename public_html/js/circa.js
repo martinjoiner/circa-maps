@@ -87,58 +87,6 @@ var spawnOffsetSide = (function( sideNum ){
 
 
 
-
-/* Use the mid point to calculate which point is farthest away from center 	*/
-/* and define that as the radius 											*/
-var calculateRadii = (function(){
-	var center = this.getCenter();
-	var farthestPointIndex;
-	var farthestPointDistance;
-	var nearestPointIndex;
-	var nearestPointDistance = 9999999;
-	// Loop through all points finding the furthest
-	for( var i in this.arrAbsolutePoints ){
-		thisDistance = distanceBetween( center, this.arrAbsolutePoints[i] );
-		if(nearestPointDistance > thisDistance){
-			nearestPointIndex = i;
-			nearestPointDistance = thisDistance;
-		}
-		if(farthestPointDistance < thisDistance){
-			farthestPointIndex = i;
-			farthestPointDistance = thisDistance;
-		}
-	}
-	this.nearestPointIndex 	= nearestPointIndex;
-	this.nearestRadius 		= nearestPointDistance;
-	this.farthestPointIndex = farthestPointIndex;
-	this.farthestRadius 	= farthestPointDistance;
-});
-
-
-
-/* Return the distance between 2 points */
-function distanceBetween( pointA, pointB ){
-
-	coordParts = pointA.trim().split(',');
-	var x1 = parseFloat(coordParts[0]);
-	var y1 = parseFloat(coordParts[1]);
-
-	coordParts = pointB.trim().split(',');
-	var x2 = parseFloat(coordParts[0]);
-	var y2 = parseFloat(coordParts[1]);
-
-	xs = x2 - x1;
-	xs = xs * xs;
-
-	ys = y2 - y1;
-	ys = ys * ys;
-
-	return Math.sqrt( xs + ys );
-}
-
-
-
-
 /**
  Renders the path on the canvas  
  @skvConfig can contain 'class', 'id', 'd'
@@ -190,7 +138,6 @@ var Path = (function(id, d){
 
 	this.spawnOffsetSide = spawnOffsetSide;
 	this.getCenter 		= getCenter;
-	this.calculateRadii = calculateRadii;
 	this.allPointsOnMap = allPointsOnMap;
 	this.varyMiddleTwo 	= varyMiddleTwo;
 
@@ -218,44 +165,6 @@ var Path = (function(id, d){
 	}
 
 });
-
-
-
-
-/* Returns the co-ordinates of the midpoint between 2 points 	*/
-/* @pointA 														*/
-/* @pointB 														*/
-function midPoint( pointA, pointB ){
-
-	var aParts = pointA.split(',');
-	var bParts = pointB.split(',');
-
-	var x1 = parseFloat(aParts[0]); 
-	var x2 = parseFloat(bParts[0]); 
-
-	var y1 = parseFloat(aParts[1]); 
-	var y2 = parseFloat(bParts[1]); 
-
-	var avX = (x1 + x2) / 2;
-	var avY = (y1 + y2) / 2;
-
-	return avX.toFixed(3) + ',' + avY.toFixed(3);
-} 
-
-
-
-
-/* Tests all paths on map to see if point is inside */
-/* @arrPoints Array of co-ordinates of points 		*/
-/* @x 												*/
-/* @y 												*/
-function pointIsInPath( thisPath, x, y ){
-	var cntPolygonPoints = thisPath.arrVerticesX.length;  // number vertices = number of points in a self-closing polygon
-	if ( is_in_polygon( cntPolygonPoints, thisPath.arrVerticesX, thisPath.arrVerticesY, x, y) ){
-		return true;
-	}
-	return false;
-}
 
 
 
@@ -560,7 +469,7 @@ function spawn(){
 	var id = "testPath";
 	var testPath = new Path( id, d);
 	testPath.varyMiddleTwo();
-	testPath.calculateRadii();
+
 
 	var valid = true;
 	for( var i in arrPaths ){
@@ -589,50 +498,5 @@ $('#btnStop').click( function(){
 });
 
 
-
-/* Tests 2 polygons to see if they are over lapping */
-/* http://content.gpwiki.org/index.php/Polygon_Collision */
-function polyCollision( poly1, poly2 ){
-	var collision = true;
-
-	var distanceBetweenCentres = distanceBetween( poly1.getCenter(), poly2.getCenter() );
-
-	// First check if distance between mid points of polygons is more than sum of maximum radius
-	// If so then there definitely cannot be a collision so: return false;
-	var sumOfRadii = poly1.farthestRadius + poly1.farthestRadius;
-	if( distanceBetweenCentres > sumOfRadii ){
-		console.warn('polyCollision(): Failed at stage 1');
-		return false;
-	}
-
-	// Next check if distance is less than either path's nearestRadius
-	// If so there definitely is a collision. This is good for checking paths that are exactly on top of each other.
-	if( distanceBetweenCentres < poly1.nearestRadius || distanceBetweenCentres < poly2.nearestRadius ){
-		console.warn('polyCollision(): Failed at stage 2');
-		return true;
-	}
-
-	// Next check if any of poly1's points are inside poly2, If so: return true;
-	for( var i in poly1.arrAbsolutePoints ){
-		thisPointParts = poly1.arrAbsolutePoints[i].split(',');
-		thisX = thisPointParts[0];
-		thisY = thisPointParts[1];
-		if( pointIsInPath( poly2, thisX, thisY ) ){
-			return true;
-		}
-	}
-	// Then check if any of poly2's points are inside poly1, If so: return true;
-	for( var i in poly2.arrAbsolutePoints ){
-		thisPointParts = poly2.arrAbsolutePoints[i].split(',');
-		thisX = thisPointParts[0];
-		thisY = thisPointParts[1];
-		if( pointIsInPath( poly1, thisX, thisY ) ){
-			return true;
-		}
-	}
-
-	// Finally use the more expensive method of separating Axis which will account for rare cases when mid sections overlap
-	//return collision;
-}
 
 

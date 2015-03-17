@@ -51,14 +51,37 @@ class Property{
 
 
 	/**
-	 Returns the central point of the property
+	 Takes an array of points, return the centre of them and the maximum radius
 	*/
-	public function getCenter(){
+	function getCenterData(){
 
 		$objMath = new Math();
-		$firstAv = $objMath->midPoint( $this->arrPoints[0], $this->arrPoints[2] );
-		$secondAv = $objMath->midPoint( $this->arrPoints[1], $this->arrPoints[3] );
-		return $objMath->midPoint( $firstAv, $secondAv );
+
+		$arrFirstAveragePoint = $objMath->midPoint( $this->arrPoints[0], $this->arrPoints[2] );
+		$arrSecondAveragePoint = $objMath->midPoint( $this->arrPoints[1], $this->arrPoints[3] );
+		$arrCenterPoint = $objMath->midPoint( $arrFirstAveragePoint, $arrSecondAveragePoint );
+
+		// Use the mid point to calculate which point is farthest away from center and define that as the radius 
+		$farthestPointDistance = 0;
+		$nearestPointDistance = INF;
+		// Loop through all points finding the farthest
+		foreach( $this->arrPoints as $thisPoint ){
+			$thisDistance = $objMath->distanceBetween( $arrCenterPoint, $thisPoint );
+
+			if( $nearestPointDistance > $thisDistance ){
+				$nearestPointDistance = $thisDistance;
+			}
+			if( $farthestPointDistance < $thisDistance ){
+				$farthestPointDistance = $thisDistance;
+			}
+		}
+
+		$arrReturn = array();
+		$arrReturn['arrCenterPoint'] = $arrCenterPoint;
+		$arrReturn['nearestRadius'] = $nearestPointDistance;
+		$arrReturn['farthestRadius'] = $farthestPointDistance;
+
+		return $arrReturn;
 	}
 
 
