@@ -331,8 +331,8 @@ class Math{
 		$sinC = $oppositeSideToCLength / $hypotenuseToCLength;
 		$angleC = rad2deg( asin( $sinC ) );
 
-		if( ( $abOrientation ==  'ascending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] < $arrPointA['y'] ) ||
-			( $abOrientation == 'descending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] > $arrPointA['y'] ) ){
+		if( ( $abOrientation ==  'ascending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] <= $arrPointA['y'] ) ||
+			( $abOrientation == 'descending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] >= $arrPointA['y'] ) ){
 			$totalAngle = 90;
 		} else {
 			$totalAngle = 180;
@@ -390,6 +390,33 @@ class Math{
 		$arrReturn['angleB'] = $angleB;
 
 		$arrReturn['hypotenuseToBLength'] = $hypotenuseToBLength;
+
+		return $arrReturn;
+
+	}
+
+
+
+
+	/**
+	 Returns an associative array containing area and for debugging purposes, the rightAngledTriangles used to calculate
+	*/
+	public function areaOfTriangle( $arrPointA, $arrPointB, $arrPointC ){
+
+		$arrReturn['area'] = 0;
+		$arrReturn['rightAngledTriangles'] = array();
+
+		$arrClosestPointBetween2 = $this->closestPointBetween2( $arrPointA, $arrPointB, $arrPointC );
+
+		$arrReturn['rightAngledTriangles'][0] = array( $arrPointA, $arrClosestPointBetween2['arrPointResult'], $arrPointB );
+		$lengthOfBase = $this->distanceBetween( $arrClosestPointBetween2['arrPointResult'], $arrPointB );
+		$arrReturn['area'] += $lengthOfBase * $arrClosestPointBetween2['distanceToPointResult'] / 2;
+
+		$arrReturn['rightAngledTriangles'][1] = array( $arrPointA, $arrClosestPointBetween2['arrPointResult'], $arrPointC );
+		$lengthOfBase = $this->distanceBetween( $arrClosestPointBetween2['arrPointResult'], $arrPointC );
+		$arrReturn['area'] += $lengthOfBase * $arrClosestPointBetween2['distanceToPointResult'] / 2;
+
+		$arrReturn['area'] = round( $arrReturn['area'], 2 );
 
 		return $arrReturn;
 

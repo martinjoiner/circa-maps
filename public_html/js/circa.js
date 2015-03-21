@@ -221,6 +221,10 @@ function isOccupied( x, y ){
         dataType: "json"
     }).done(function(data) {
         console.log( data );
+        debugPath( data.propertyInfo.area.rightAngledTriangles[0], 'red' );
+		debugPath( data.propertyInfo.area.rightAngledTriangles[1], 'orange' );
+		debugPath( data.propertyInfo.area.rightAngledTriangles[2], 'yellow' );
+		debugPath( data.propertyInfo.area.rightAngledTriangles[3], 'green' );
     });
 }
 
@@ -266,6 +270,7 @@ function debugPath( arrPoints, colour ){
 	var debugPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 	debugPath.setAttribute("d", d );
 	debugPath.setAttribute("stroke", colour );
+	debugPath.setAttribute("fill", colour );
 	debugPath.setAttribute("class", "DebugPath" );
 
 	$('svg').append(debugPath); 

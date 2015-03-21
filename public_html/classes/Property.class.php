@@ -99,4 +99,59 @@ class Property{
 	}
 
 
+
+
+	/**
+	 Returns an associative array of information about the property
+	*/
+	public function getInfo(){
+		$arrReturn = array();
+		$arrReturn['area'] = $this->getArea();
+		return $arrReturn;
+	}
+
+
+
+
+	/**
+	 Returns an associative array containing area of the property and for debugging purpsoses the right-angled triangles that were used to calculate it
+	*/
+	public function getArea(){
+
+		$objMath = new Math();
+
+		$arrReturn['area'] = 0;
+		$arrReturn['rightAngledTriangles'] = array();
+
+		$disection1Length = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
+		$disection2Length = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
+
+		if( $disection1Length > $disection2Length ){
+
+			$result = $objMath->areaOfTriangle( $this->arrPoints[1], $this->arrPoints[0], $this->arrPoints[2] );
+			$arrReturn['area'] += $result['area'];
+			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
+
+			$result = $objMath->areaOfTriangle( $this->arrPoints[3], $this->arrPoints[0], $this->arrPoints[2] );
+			$arrReturn['area'] += $result['area'];
+			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
+			
+		} else {
+
+			$result = $objMath->areaOfTriangle( $this->arrPoints[0], $this->arrPoints[1], $this->arrPoints[3] );
+			$arrReturn['area'] += $result['area'];
+			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
+
+			$result = $objMath->areaOfTriangle( $this->arrPoints[2], $this->arrPoints[1], $this->arrPoints[3] );
+			$arrReturn['area'] += $result['area'];
+			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
+
+		}
+
+		return $arrReturn;
+
+	}
+
+
+
 }

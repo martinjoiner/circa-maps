@@ -91,6 +91,7 @@ class MapSection extends Map{
 								AND p1.x < :xMax 
 								AND p1.y > :yMin 
 								AND p1.y < :yMax 
+								GROUP BY `point`.`id` 
 								ORDER BY 	`property`.`id`, `point`.`order` 
 							");
 		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
@@ -125,15 +126,13 @@ class MapSection extends Map{
 
 			if( $objMath->isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $x, $y) ){
 				$arrResult['isOccupied'] = true;
-				$arrResult['message'] = $x . ',' . $y . ' is inside property ID ' . $thisProperty->id;
-			} else { 
-				//echo '<p>' . $thisX . ':' . $thisY . ' is not in polygon (' . implode(',',$thisPath->arrVerticesX) . '),(' . implode(',',$thisPath->arrVerticesY) . ')' . $points_polygon . '</p>';
-			}
+				$arrResult['propertyInfo'] = $thisProperty->getInfo();
+				$arrResult['message'] = $x . ',' . $y . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['area']['area'] . ')';
+			} 
 
 		}
 
-		// TODO Check if point is on a route
-
+		// TODO: Check if point is on a route
 
 		return $arrResult;
 
