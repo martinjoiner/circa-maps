@@ -103,10 +103,28 @@ class Property{
 
 	/**
 	 Returns an associative array of information about the property
+	 Runs a series of checks to determine if the property is a standard (sensible) shape
 	*/
 	public function getInfo(){
 		$arrReturn = array();
 		$arrReturn['area'] = $this->getArea();
+		$arrReturn['isStandard'] = true;
+
+		// Area should be between 10 and 1600
+		if( $arrReturn['area'] < 100 || $arrReturn['area'] > 1600 ){
+			$arrReturn['isStandard'] = false;
+		}
+
+		$arrReturn['areDisectionsWithinLimits'] = $this->areDisectionsWithinLimits();
+		if( !$arrReturn['areDisectionsWithinLimits'] ){
+			$arrReturn['isStandard'] = false;
+		}
+
+		$arrReturn['areSideLengthsWithinLimits'] = $this->areSideLengthsWithinLimits();
+		if( !$arrReturn['areSideLengthsWithinLimits'] ){
+			$arrReturn['isStandard'] = false;
+		}
+
 		return $arrReturn;
 	}
 
@@ -149,6 +167,66 @@ class Property{
 		}
 
 		return $arrReturn;
+
+	}
+
+
+
+
+	/**
+	 Compares the distance between points 0 and 2 to the distance between points 1 and 3. 
+	 Returns true or false to indicate if difference in size is within limit. 
+	 $minShortPercentageOfLong The minimum percentage that shortest must be of longest
+	*/
+	function areDisectionsWithinLimits( $minShortPercentageOfLong = 80 ){
+
+		$objMath = new Math();
+
+		$disection1Length = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
+		$disection2Length = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
+
+		$shortestDisectionLength = min( $disection1Length, $disection2Length );
+		$longestDisectionLength = max( $disection1Length, $disection2Length );
+
+		// What is the shortest disection expressed as a percentage of the longest disection
+		$shortPercentageOfLong = $shortestDisectionLength / $longestDisectionLength * 100;
+
+		if( $shortPercentageOfLong < $minShortPercentageOfLong ){
+			return false;
+		} else {
+			return true;
+		}
+
+	}
+
+
+
+
+	/**
+	 Compares the length of all sides, finds shortest and longest
+	 Returns true or false to indicate if difference between shortest and longest is within limit.
+	 $minShortPercentageOfLong The minimum percentage that shortest must be of longest 
+	*/
+	function areSideLengthsWithinLimits( $minShortPercentageOfLong = 20 ){
+
+		$objMath = new Math();
+
+		// Area should be between 10 and 1600
+		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[1] );
+		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[2] );
+		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[2], $this->arrPoints[3] );
+		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[3], $this->arrPoints[0] );
+
+		$shortestSideLength = min( $arrSideLengths );
+		$longestSideLength = max( $arrSideLengths );
+
+		$shortPercentageOfLong = $shortestSideLength / $longestSideLength * 100;
+
+		if( $shortPercentageOfLong < $minShortPercentageOfLong ){
+			return false;
+		} else {
+			return true;
+		}
 
 	}
 
