@@ -10,14 +10,30 @@ class Math{
 	 $distance How far from pointA toward pointB should the result be
 	*/
 	function pointDistanceBetweenPoints( $arrPointA, $arrPointB, $distance ){
+
+		$arrResultPoint = array( 'x'=>NULL, 'y'=>NULL ); 
+
+		// If the Xs are equal the line is vertical so just add or subtract distance depending on orientation
+		if( $arrPointA['x'] == $arrPointB['x'] ){
+			$arrResultPoint['x'] = $arrPointA['x'];
+			if( $arrPointB['y'] > $arrPointA['y'] ){
+				$arrResultPoint['y'] = $arrPointA['y'] + $distance;
+			} else {
+				$arrResultPoint['y'] = $arrPointA['y'] - $distance;
+			}
+			return $arrResultPoint;
+		}
+
 		$oppositeSideToAngle = $arrPointA['y'] - $arrPointB['y'];
 		$adjascentSideToAngle = $arrPointB['x'] - $arrPointA['x'];
+
 		$tan = $oppositeSideToAngle / $adjascentSideToAngle;
 
 		$angle = rad2deg( atan($tan) );
 
 		$xDiff = cos( deg2rad($angle) ) * $distance;
 		$yDiff = sin( deg2rad($angle) ) * $distance;
+
 
 		if( $arrPointA['y'] > $arrPointB['y'] ){
 			if( $arrPointA['x'] > $arrPointB['x'] ){
@@ -40,7 +56,8 @@ class Math{
 				$newY = $arrPointA['y'] - $yDiff;
 			}
 		}
-		$arrResultPoint = array( 'x'=>$newX, 'y'=>$newY );
+		$arrResultPoint['x'] = $newX;
+		$arrResultPoint['y'] = $newY;
 
 		return $arrResultPoint;
 	}
