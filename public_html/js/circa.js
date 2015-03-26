@@ -215,7 +215,7 @@ $('#mask').click( function(){
 function isOccupied( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/isOccupied/",
+        url: "/GET/isOccupied/",
         data: { 'mapID': globals.mapID, 
         		'x': x, 
         		'y': y 
