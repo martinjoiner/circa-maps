@@ -120,12 +120,13 @@ class MapSection extends Map{
 		$arrResult = array( 'cntProperties'=>sizeof($this->arrProperties), 'cntRoutes'=>sizeof($this->arrRoutes), 'isOccupied'=>false, 'message'=>'');
 		
 		// Check if point is inside a property 
-		foreach( $this->arrProperties as $thisProperty ){
+		foreach( $this->arrProperties as $pointer => $thisProperty ){
 
 			$points_polygon = count($thisProperty->arrPoints);  // number vertices - zero-based array
 
 			if( $objMath->isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $x, $y) ){
 				$arrResult['isOccupied'] = true;
+				$arrResult['arrPropertiesPointer'] = $pointer;
 				$arrResult['propertyInfo'] = $thisProperty->getInfo();
 				$arrResult['message'] = $x . ',' . $y . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['area']['area'] . ')';
 			} 
@@ -169,6 +170,21 @@ class MapSection extends Map{
 		}
 
 		return $arrResult;
+	}
+
+
+
+
+	/**
+	 Uses the isOccupied() function to find if a property is in this location 
+	 Then returns the result of calling that property's getOffsetPoints() method
+	*/
+	public function getOffsetPoints( $x, $y ){
+		$arrIsOccupiedResult = $this->isOccupied( $x, $y );
+		if( $arrIsOccupiedResult['isOccupied'] ){
+			$thisProperty = $this->arrProperties[ $arrIsOccupiedResult['arrPropertiesPointer'] ];
+			return $thisProperty->getOffsetPoints();
+		}
 	}
 
 }

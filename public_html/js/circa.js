@@ -201,6 +201,8 @@ $('#mask').click( function(){
 		placeProperty( x, y );
 	} else if( mouseMode === 'deleteProperty' ){
 		deleteProperty( x, y );
+	} else if( mouseMode === 'offsetPoints' ){
+		offsetPoints( x, y );
 	}
 	
 });
@@ -306,6 +308,7 @@ function nearestRoute( x, y ){
 
 
 /* Send AJAX request to /placeProperty/ and renders result */ 
+/* @x, @y - co-ordinates of point ------------------------ */ 
 function placeProperty( x, y ){
 	$.ajax({
         type: "GET",
@@ -325,8 +328,8 @@ function placeProperty( x, y ){
 
 
 
-/* Tests all paths on map to see if point is inside */
-/* @coord co-ordinates of point ------------------- */ 
+/* Tests all paths on map to see if point is inside ------ */
+/* @x, @y - co-ordinates of point ------------------------ */ 
 function deleteProperty( x, y ){
 	$.ajax({
         type: "GET",
@@ -339,6 +342,28 @@ function deleteProperty( x, y ){
     }).done(function(data) {
         for( var i = 0; i <= data.length; i++ ){
         	$( 'svg .Property#property' + data[i] ).remove();
+        }
+    });
+}
+
+
+
+
+/* Queries a point on the map. If occupied by a property -- */
+/* it returns the offset points of that property ---------- */
+/* @x, @y - co-ordinates of point ------------------------- */ 
+function offsetPoints( x, y ){
+	$.ajax({
+        type: "GET",
+        url: "/GET/offsetPoints/",
+        data: { 'mapID': globals.mapID, 
+        		'x': x, 
+        		'y': y 
+        	},
+        dataType: "json"
+    }).done(function(data) {
+        for( var i = 0; i <= data.length; i++ ){
+        	debugDot( data[i]['x'], data[i]['y'], 'purple' );
         }
     });
 }

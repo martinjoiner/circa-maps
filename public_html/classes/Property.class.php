@@ -232,4 +232,30 @@ class Property{
 
 
 
+
+	/**
+	 Returns an array of 8 points representing a fixed distance from the sides
+	 $numDistance is how far away from the property the points are offset (breathing room basically)
+	*/
+	function getOffsetPoints( $numDistance = 5 ){
+
+		// Negativise it
+		$numDistance = 0 - $numDistance;
+
+		$objMath = new Math();
+		$arrReturn = array();
+		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[0], $this->arrPoints[1], $numDistance );
+		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[1], $this->arrPoints[2], $numDistance );
+		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[2], $this->arrPoints[3], $numDistance );
+		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[3], $this->arrPoints[0], $numDistance );
+		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[0], $this->arrPoints[3], $numDistance );
+		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[3], $this->arrPoints[2], $numDistance );
+		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[2], $this->arrPoints[1], $numDistance );
+		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[1], $this->arrPoints[0], $numDistance );
+
+		return $arrReturn;
+	}
+
+
+
 }
