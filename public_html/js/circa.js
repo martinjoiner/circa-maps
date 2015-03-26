@@ -340,7 +340,7 @@ function deleteProperty( x, y ){
         	},
         dataType: "json"
     }).done(function(data) {
-        for( var i = 0; i <= data.length; i++ ){
+        for( var i = 0; i < data.length; i++ ){
         	$( 'svg .Property#property' + data[i] ).remove();
         }
     });
@@ -362,7 +362,7 @@ function offsetPoints( x, y ){
         	},
         dataType: "json"
     }).done(function(data) {
-        for( var i = 0; i <= data.length; i++ ){
+        for( var i = 0; i < data.length; i++ ){
         	debugDot( data[i]['x'], data[i]['y'], 'purple' );
         }
     });
