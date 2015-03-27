@@ -128,7 +128,7 @@ class MapSection extends Map{
 				$arrResult['isOccupied'] = true;
 				$arrResult['arrPropertiesPointer'] = $pointer;
 				$arrResult['propertyInfo'] = $thisProperty->getInfo();
-				$arrResult['message'] = $x . ',' . $y . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['area']['area'] . ')';
+				$arrResult['message'] = $x . ',' . $y . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['arrAreaData']['area'] . ')';
 			} 
 
 		}
@@ -186,6 +186,44 @@ class MapSection extends Map{
 			return $thisProperty->getOffsetPoints();
 		}
 	}
+
+
+
+
+	/**
+	 Uses the isOccupied() function to find if a property is in this location 
+	 Then returns the result of calling that property's getOffsetPoints() method
+	*/
+	public function improvePropertyAtPoint( $x, $y ){
+		$arrIsOccupiedResult = $this->isOccupied( $x, $y );
+		if( !$arrIsOccupiedResult['isOccupied'] ){
+			return false;
+		} else {
+			$thisPropertyToBeImproved = $this->arrProperties[ $arrIsOccupiedResult['arrPropertiesPointer'] ];
+		}
+
+		$arrNeighboursOffsetPoints = array();
+
+		// TODO: Pop any occupied points from the array of neighboursOffsetPoints
+
+		// Gather the offset points of all the neighbouring properties
+		foreach( $this->arrProperties as $key => $thisProperty ){
+
+			if( $key != $arrIsOccupiedResult['arrPropertiesPointer'] ){
+				$arrNeighboursOffsetPoints = array_merge( $arrNeighboursOffsetPoints, $thisProperty->getOffsetPoints() );
+			}
+		}
+
+		$arrReturn = array();
+		$arrReturn['arrNeighboursOffsetPoints'] = $arrNeighboursOffsetPoints;
+
+		$arrReturn['arrImprovePointsResult'] = $thisPropertyToBeImproved->improvePoints( $arrNeighboursOffsetPoints );
+
+		return $arrReturn;
+
+	}
+
+
 
 }
 

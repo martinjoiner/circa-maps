@@ -42,6 +42,15 @@ body{
 	margin-bottom: 1em;
 }
 
+.mouseMode > *{
+	float: left;
+	line-height: 20px;
+}
+
+.mouseMode input{
+	clear: left;
+}
+
 .controlPanel input{
 	margin-bottom: 1em;
 }

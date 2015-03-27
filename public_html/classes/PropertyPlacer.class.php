@@ -38,7 +38,7 @@ class PropertyPlacer extends MapSection{
 		$arrPoints = array( $arrFrontLeftPoint, $arrFrontRightPoint, $arrRearRightPoint, $arrRearLeftPoint );
 
 		// Initialise an object to represent our proposed property 
-		$objProposedProperty = new Property( NULL, $arrPoints );
+		$objProposedProperty = new Property( $arrPoints, $this->id );
 
 		// Check for collision with all properties on map
 		$isCollisionFree = true;
@@ -49,37 +49,14 @@ class PropertyPlacer extends MapSection{
 		}
 
 		if( $isCollisionFree ){
-			// Call the saveInDB method of the newly created Property 
-			include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
-
-			$qry = $db->prepare("	INSERT INTO `property` ( `map_id`, `name` )
-									VALUES ( :mapID, 'new Property' );
-								");
-			$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
-			$qry->execute();
-			$propertyID = $db->lastInsertId();
-
-			$qry = $db->prepare("	INSERT INTO `point` ( `property_id`, `order`, `x`, `y` )
-									VALUES 	( :propertyID, 1, :x1, :y1 ),
-											( :propertyID, 2, :x2, :y2 ),
-											( :propertyID, 3, :x3, :y3 ),
-											( :propertyID, 4, :x4, :y4 );
-								");
-			$qry->bindValue('propertyID', $propertyID, PDO::PARAM_INT);
-			$qry->bindValue('x1', $arrPoints[0]['x'], PDO::PARAM_INT);
-			$qry->bindValue('y1', $arrPoints[0]['y'], PDO::PARAM_INT);
-			$qry->bindValue('x2', $arrPoints[1]['x'], PDO::PARAM_INT);
-			$qry->bindValue('y2', $arrPoints[1]['y'], PDO::PARAM_INT);
-			$qry->bindValue('x3', $arrPoints[2]['x'], PDO::PARAM_INT);
-			$qry->bindValue('y3', $arrPoints[2]['y'], PDO::PARAM_INT);
-			$qry->bindValue('x4', $arrPoints[3]['x'], PDO::PARAM_INT);
-			$qry->bindValue('y4', $arrPoints[3]['y'], PDO::PARAM_INT);
-			$qry->execute();
-			$qry->closeCursor();
-			
 
 			// If no collisions init a Property object
-			$this->arrProperties[] = new Property( $propertyID, $arrPoints );
+			$objPropertyNew = new Property( $arrPoints, $this->id );
+
+			// Call the saveInDB method of the newly created Property 
+			$objPropertyNew->saveInDB();
+
+			$this->arrProperties[] = $objPropertyNew;
 
 			$arrResult['success'] = true;
 			$arrResult['arrPath'] = $this->arrProperties[ sizeof($this->arrProperties)-1 ]->getPath();

@@ -101,6 +101,7 @@ function renderPath( skvPath ){
 	
 	if( typeof skvPath['id'] !== 'undefined' ){
 		path.setAttribute("id", skvPath['id'] );
+		$('svg #'+ skvPath['id']).remove();
 	}
 
 	if( typeof skvPath['d'] !== 'undefined' ){
@@ -203,6 +204,8 @@ $('#mask').click( function(){
 		deleteProperty( x, y );
 	} else if( mouseMode === 'offsetPoints' ){
 		offsetPoints( x, y );
+	} else if( mouseMode === 'improvePropertyAtPoint' ){
+		improvePropertyAtPoint( x, y );
 	}
 	
 });
@@ -223,10 +226,10 @@ function isOccupied( x, y ){
         dataType: "json"
     }).done(function(data) {
         console.log( data );
-        debugPath( data.propertyInfo.area.rightAngledTriangles[0], 'red' );
-		debugPath( data.propertyInfo.area.rightAngledTriangles[1], 'orange' );
-		debugPath( data.propertyInfo.area.rightAngledTriangles[2], 'yellow' );
-		debugPath( data.propertyInfo.area.rightAngledTriangles[3], 'green' );
+        debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[0], 'red' );
+		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[1], 'orange' );
+		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[2], 'yellow' );
+		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[3], 'green' );
     });
 }
 
@@ -364,6 +367,32 @@ function offsetPoints( x, y ){
     }).done(function(data) {
         for( var i = 0; i < data.length; i++ ){
         	debugDot( data[i]['x'], data[i]['y'], 'purple' );
+        }
+    });
+}
+
+
+
+
+/* Queries a point on the map. If occupied by a property ------------------ */
+/* it returns the offset points of that property's neighbouring properties  */
+/* @x, @y - co-ordinates of point ----------------------------------------- */ 
+function improvePropertyAtPoint( x, y ){
+	$.ajax({
+        type: "GET",
+        url: "/GET/improvePropertyAtPoint/",
+        data: { 'mapID': globals.mapID, 
+        		'x': x, 
+        		'y': y 
+        	},
+        dataType: "json"
+    }).done(function(data) {
+        // for( var i = 0; i < data.arrNeighboursOffsetPoints.length; i++ ){
+        // 	debugDot( data.arrNeighboursOffsetPoints[i]['x'], data.arrNeighboursOffsetPoints[i]['y'], 'purple' );
+        // }
+        console.log( data.arrImprovePointsResult.cntPointsReplaced + ' points improved' );
+        if( data.arrImprovePointsResult.cntPointsReplaced ){
+        	renderPath( data.arrImprovePointsResult.path );
         }
     });
 }

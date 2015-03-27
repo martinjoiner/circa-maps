@@ -2,17 +2,30 @@
 
 class Property{
 
-	var $id;
 	var $arrPoints = array();
+	var $id;
+	var $mapID; 
 
 	var $arrVerticesX = array(); // An array of just the x values (Useful for basic sanity checking in collision detection)
 	var $arrVerticesY = array(); // An array of just the y values
 
 
-	function __construct( $id, $arrPoints ){
 
-		$this->id 			= $id;
-		$this->arrPoints 	= $arrPoints;
+
+	/**
+	 A property can be constructed with just an array of points and a mapID
+	 passing and an id is optional
+	*/
+	function __construct( $arrPoints, $mapID = NULL, $id = NULL ){
+
+		$this->arrPoints = $arrPoints;
+
+		if( $mapID ){
+			$this->mapID = intval($mapID);
+		}
+		if( $id ){
+			$this->id = intval($id);
+		}
 
 		foreach( $arrPoints as $thisPoint ){
 			$this->arrVerticesX[] = $thisPoint['x'];
@@ -24,6 +37,9 @@ class Property{
 
 
 
+	/**
+	 Returns the XML markup of the path
+	*/
 	public function printMarkup(){
 		$arrPath = $this->getPath();
 		$html = '<path class="' . $arrPath['class'] . '" d="' . $arrPath['d'] . '" id="' . $arrPath['id'] . '" />';
@@ -107,11 +123,12 @@ class Property{
 	*/
 	public function getInfo(){
 		$arrReturn = array();
-		$arrReturn['area'] = $this->getArea();
+		$arrReturn['arrAreaData'] = $this->getAreaData();
+		$arrReturn['id'] = $this->id;
 		$arrReturn['isStandard'] = true;
 
-		// Area should be between 10 and 1600
-		if( $arrReturn['area'] < 100 || $arrReturn['area'] > 1600 ){
+		// Area should be between 100 and 1600
+		if( $arrReturn['arrAreaData']['area'] < 100 || $arrReturn['arrAreaData']['area'] > 2400 ){
 			$arrReturn['isStandard'] = false;
 		}
 
@@ -134,7 +151,7 @@ class Property{
 	/**
 	 Returns an associative array containing area of the property and for debugging purpsoses the right-angled triangles that were used to calculate it
 	*/
-	public function getArea(){
+	public function getAreaData(){
 
 		$objMath = new Math();
 
@@ -211,7 +228,6 @@ class Property{
 
 		$objMath = new Math();
 
-		// Area should be between 10 and 1600
 		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[1] );
 		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[2] );
 		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[2], $this->arrPoints[3] );
@@ -254,6 +270,113 @@ class Property{
 		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[1], $this->arrPoints[0], $numDistance );
 
 		return $arrReturn;
+	}
+
+
+
+	/** 
+	 Replaces zero or more of the properties points with any inside arrPotentialPoints dependant on if improvement would result  
+	 BUGGY! Needs to check collision with a route
+	*/
+	function improvePoints( $arrPotentialPoints ){
+		
+		$objMath = new Math();
+
+		$cntPointsReplaced = 0;
+		
+		// Loop over all 4 points
+		$iLimit = sizeof( $this->arrPoints );
+		for( $i = 0; $i < $iLimit; $i++ ){
+
+			// Get the nearestPoint from the array of potential points
+			// TODO: An improvement would be to test the top 10 nearest points to see which ones avoid collision but allow improvement
+			$nearestPointInArray = $objMath->nearestPointInArray( $this->arrPoints[$i], $arrPotentialPoints );
+
+			// Record the current area
+			$arrAreaDataPreChange = $this->getAreaData();
+
+
+			if( $nearestPointInArray['distance'] < 100 ){
+				
+				// Replace the point with the nearest point from arrPotentialPoints
+				$arrPointPreChange = $this->arrPoints[$i];
+				$this->arrPoints[$i] = $nearestPointInArray['arrPointNearest'];
+
+				// Test to see if your area has increased 
+				$arrPostChangeInfo = $this->getInfo();
+
+				// TODO: Need test for collision or too close to route
+
+				if( $arrPostChangeInfo['arrAreaData']['area'] > $arrAreaDataPreChange['area'] && $arrPostChangeInfo['isStandard'] ){
+					// If it has make the replacement a permenant change and update database
+					$cntPointsReplaced++;
+				} else {
+					// If it has not increased, reverse the change
+					$this->arrPoints[$i] = $arrPointPreChange;
+				}
+
+			}
+			
+		}
+
+		if( $cntPointsReplaced ){
+			// Save the new points in database
+			$this->saveInDB();
+		}
+
+		$arrReturn = array();
+		$arrReturn['cntPointsReplaced'] = $cntPointsReplaced;
+		$arrReturn['path'] = $this->getPath();
+
+		return $arrReturn;
+	}
+
+
+
+
+	/** 
+	 Creates or updates the database
+	*/
+	public function saveInDB(){
+
+		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
+
+		if( is_null($this->id) ){
+			// If id is null we need to create it in the database
+			$qry = $db->prepare("	INSERT INTO `property` ( `map_id`, `name` )
+									VALUES ( :mapID, 'new Property' );
+								");
+			$qry->bindValue('mapID', $this->mapID, PDO::PARAM_INT);
+			$qry->execute();
+			$this->id = $db->lastInsertId();
+		} else {
+			// If id is not null we should clear any poitns in the database attached to this property
+			$qry = $db->prepare("	DELETE FROM `point` 
+									WHERE `property_id`= :propertyID
+								");
+			$qry->bindValue('propertyID', $this->id, PDO::PARAM_INT);
+			$qry->execute();
+		}
+
+		// Insert rows for the points
+		$qry = $db->prepare("	INSERT INTO `point` ( `property_id`, `order`, `x`, `y` )
+								VALUES 	( :propertyID, 1, :x1, :y1 ),
+										( :propertyID, 2, :x2, :y2 ),
+										( :propertyID, 3, :x3, :y3 ),
+										( :propertyID, 4, :x4, :y4 );
+							");
+		$qry->bindValue('propertyID', $this->id, PDO::PARAM_INT);
+		$qry->bindValue('x1', $this->arrPoints[0]['x'], PDO::PARAM_INT);
+		$qry->bindValue('y1', $this->arrPoints[0]['y'], PDO::PARAM_INT);
+		$qry->bindValue('x2', $this->arrPoints[1]['x'], PDO::PARAM_INT);
+		$qry->bindValue('y2', $this->arrPoints[1]['y'], PDO::PARAM_INT);
+		$qry->bindValue('x3', $this->arrPoints[2]['x'], PDO::PARAM_INT);
+		$qry->bindValue('y3', $this->arrPoints[2]['y'], PDO::PARAM_INT);
+		$qry->bindValue('x4', $this->arrPoints[3]['x'], PDO::PARAM_INT);
+		$qry->bindValue('y4', $this->arrPoints[3]['y'], PDO::PARAM_INT);
+		$qry->execute();
+		$qry->closeCursor();
+
 	}
 
 

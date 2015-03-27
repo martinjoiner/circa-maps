@@ -73,7 +73,7 @@ class Map{
 		if( $pathType == 'ROUTE' ){
 			$this->arrRoutes[] = new Route( $id, $arrPoints );
 		} else if ( $pathType == 'PROPERTY' ){
-			$this->arrProperties[] = new Property( $id, $arrPoints );
+			$this->arrProperties[] = new Property( $arrPoints, $this->id, $id );
 		}
 	}
 

@@ -439,6 +439,28 @@ class Math{
 
 	}
 
+
+
+	/** 
+	 Takes a single point and searches an array of points to return the nearest 
+	*/
+	public function nearestPointInArray( $arrPointOrigin, $arrPoints ){
+		$nearestDistance = INF;
+		$arrPointNearest = NULL;
+		foreach( $arrPoints as $thisPoint ){
+			$thisDistance = $this->distanceBetween( $arrPointOrigin, $thisPoint );
+			if( $nearestDistance > $thisDistance ){
+				$nearestDistance = $thisDistance;
+				$arrPointNearest = $thisPoint;
+			}
+		}
+
+		$arrReturn = array();
+		$arrReturn['arrPointNearest'] = $arrPointNearest;
+		$arrReturn['distance'] = $nearestDistance;
+		return $arrReturn;
+	}
+
 	
 
 }

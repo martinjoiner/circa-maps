@@ -33,12 +33,13 @@
 
 		<fieldset class="mouseMode">
 			<legend>Mouse Mode</legend>
-			<input type="radio" name="mouseMode" value="isOccupied" id="chkIsOccupied" checked><label for="chkIsOccupied" class="checkLabel">&quot;Is occupied?&quot; query</label><br>
-			<input type="radio" name="mouseMode" value="redDot" id="chkRedDot"><label for="chkRedDot" class="checkLabel">Red dot</label><br>
-			<input type="radio" name="mouseMode" value="nearestRoute" id="chkNearestRoute"><label for="chkNearestRoute" class="checkLabel">Nearest route</label><br>
-			<input type="radio" name="mouseMode" value="placeProperty" id="chkPlaceProperty"><label for="chkPlaceProperty" class="checkLabel">Place property</label><br>
-			<input type="radio" name="mouseMode" value="deleteProperty" id="chkDeleteProperty"><label for="chkDeleteProperty" class="checkLabel">Delete property</label><br>
+			<input type="radio" name="mouseMode" value="isOccupied" id="chkIsOccupied" checked><label for="chkIsOccupied" class="checkLabel">&quot;Is occupied?&quot; query</label>
+			<input type="radio" name="mouseMode" value="redDot" id="chkRedDot"><label for="chkRedDot" class="checkLabel">Red dot</label>
+			<input type="radio" name="mouseMode" value="nearestRoute" id="chkNearestRoute"><label for="chkNearestRoute" class="checkLabel">Nearest route</label>
+			<input type="radio" name="mouseMode" value="placeProperty" id="chkPlaceProperty"><label for="chkPlaceProperty" class="checkLabel">Place property</label>
+			<input type="radio" name="mouseMode" value="deleteProperty" id="chkDeleteProperty"><label for="chkDeleteProperty" class="checkLabel">Delete property</label>
 			<input type="radio" name="mouseMode" value="offsetPoints" id="chkOffsetPoints"><label for="chkOffsetPoints" class="checkLabel">Offset Points</label>
+			<input type="radio" name="mouseMode" value="improvePropertyAtPoint" id="chkImprovePropertyAtPoint"><label for="chkImprovePropertyAtPoint" class="checkLabel">Improve property</label>
 		</fieldset>
 
 		<p id="spawnNotify">Spawning</p>
