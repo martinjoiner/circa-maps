@@ -1,7 +1,7 @@
 CIRCA
 =====
 
-Generative design code to produce large map-like images. Database-backed for saving and efficient collision detection during generation. 
+Generative design code to produce large map-like images. Database-backed for saving and efficient collision detection during generation by limiting run-time objects to a section of the map. 
 
 MySQL, PHP, Javascript, SVG, CSS
 
@@ -13,3 +13,5 @@ References
 ----------
 
 Scalable Vector Graphics (SVG) 1.1 (Second Edition) http://www.w3.org/TR/SVG/
+
+Coordinate Geometry http://www.mathopenref.com/coordintersection.html 
