@@ -7,3 +7,5 @@ logs/*
 !logs/README.md
 
 public_html/phDump/*
+
+test.php
