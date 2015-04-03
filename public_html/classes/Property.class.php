@@ -166,6 +166,11 @@ class Property{
 			$arrReturn['isStandard'] = false;
 		}
 
+		$arrReturn['doSidesIntersect'] = $this->doSidesIntersect();
+		if( $arrReturn['doSidesIntersect'] ){
+			$arrReturn['isStandard'] = false;
+		}
+
 		return $arrReturn;
 	}
 
@@ -243,6 +248,27 @@ class Property{
 			return true;
 		}
 
+	}
+
+
+
+
+	/**
+
+	*/
+	function doSidesIntersect(){
+		$objCoordinateGeometry = new CoordinateGeometry();
+		$arrSide[] = array( $this->arrPoints[0], $this->arrPoints[1] );
+		$arrSide[] = array( $this->arrPoints[1], $this->arrPoints[2] );
+		$arrSide[] = array( $this->arrPoints[2], $this->arrPoints[3] );
+		$arrSide[] = array( $this->arrPoints[3], $this->arrPoints[0] );
+		if( $objCoordinateGeometry->doSegmentsIntersect( $arrSide[0], $arrSide[2] ) ){
+			return true;
+		}
+		if( $objCoordinateGeometry->doSegmentsIntersect( $arrSide[1], $arrSide[3] ) ){
+			return true;
+		}
+		return false;
 	}
 
 
