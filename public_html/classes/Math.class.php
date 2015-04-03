@@ -310,7 +310,7 @@ class Math{
 	/** 
 	 Swaps 2 points if required to ensure the left most point is point A
 	*/
-	function orientSoLeftmostIsA( &$arrPointA, &$arrPointB ){
+	function orientSoLeftmostIsFirst( &$arrPointA, &$arrPointB ){
 		if( $arrPointA['x'] > $arrPointB['x'] ){
 			$tempB = $arrPointB;
 			$arrPointB = $arrPointA;
@@ -332,7 +332,7 @@ class Math{
 	function closestPointBetween2( $arrPointOrigin, $arrPointA, $arrPointB ){
 
 		// Orient the points so that A is on the left
-		$this->orientSoLeftmostIsA( $arrPointA, $arrPointB );
+		$this->orientSoLeftmostIsFirst( $arrPointA, $arrPointB );
 
 		$abOrientation = $this->abOrientation( $arrPointA, $arrPointB );
 		$isOriginAboveLine = $this->isOriginAboveLine( $arrPointOrigin, $arrPointA, $arrPointB );
