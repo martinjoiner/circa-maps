@@ -27,11 +27,34 @@ class Property{
 			$this->id = intval($id);
 		}
 
-		foreach( $arrPoints as $thisPoint ){
+		$this->calcVertices();
+	}
+
+
+
+
+	/**
+	 Populates the arrVerticesX and arrVerticesY variables
+	 (these are used in collision detection)
+	*/
+	private function calcVertices(){
+
+		$this->arrVerticesX = array();
+		$this->arrVerticesY = array();
+
+		foreach( $this->arrPoints as $thisPoint ){
 			$this->arrVerticesX[] = $thisPoint['x'];
 			$this->arrVerticesY[] = $thisPoint['y'];
 		}
 
+	}
+
+
+
+	
+	public function replacePoint( $arrayPointer, $arrPointReplacement ){
+		$this->arrPoints[$arrayPointer] = $arrPointReplacement;
+		$this->calcVertices();
 	}
 
 
@@ -122,6 +145,7 @@ class Property{
 	 Runs a series of checks to determine if the property is a standard (sensible) shape
 	*/
 	public function getInfo(){
+
 		$arrReturn = array();
 		$arrReturn['arrAreaData'] = $this->getAreaData();
 		$arrReturn['id'] = $this->id;
@@ -159,6 +183,7 @@ class Property{
 		$arrReturn['rightAngledTriangles'] = array();
 
 		$disection1Length = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
+
 		$disection2Length = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
 
 		if( $disection1Length > $disection2Length ){
@@ -170,7 +195,7 @@ class Property{
 			$result = $objMath->areaOfTriangle( $this->arrPoints[3], $this->arrPoints[0], $this->arrPoints[2] );
 			$arrReturn['area'] += $result['area'];
 			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
-			
+
 		} else {
 
 			$result = $objMath->areaOfTriangle( $this->arrPoints[0], $this->arrPoints[1], $this->arrPoints[3] );
@@ -201,6 +226,10 @@ class Property{
 
 		$disection1Length = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
 		$disection2Length = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
+
+		if( $disection1Length == 0 || $disection2Length == 0 ){
+			return false;
+		}
 
 		$shortestDisectionLength = min( $disection1Length, $disection2Length );
 		$longestDisectionLength = max( $disection1Length, $disection2Length );
@@ -250,85 +279,76 @@ class Property{
 
 
 	/**
-	 Returns an array of 8 points representing a fixed distance from the sides
-	 $numDistance is how far away from the property the points are offset (breathing room basically)
+	 Returns an array of 4 sides, each side contains 2 points. A side represents a paralel line offset from the side of the building
+	 $numDistance is how far away from the property the sides are offset (breathing room basically)
 	*/
-	function getOffsetPoints( $numDistance = 5 ){
+	function getOffsetSides( $numDistance = 3 ){
 
-		// Negativise it
-		$numDistance = 0 - $numDistance;
-
-		$objMath = new Math();
 		$arrReturn = array();
-		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[0], $this->arrPoints[1], $numDistance );
-		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[1], $this->arrPoints[2], $numDistance );
-		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[2], $this->arrPoints[3], $numDistance );
-		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[3], $this->arrPoints[0], $numDistance );
-		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[0], $this->arrPoints[3], $numDistance );
-		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[3], $this->arrPoints[2], $numDistance );
-		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[2], $this->arrPoints[1], $numDistance );
-		$arrReturn[] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[1], $this->arrPoints[0], $numDistance );
+
+		$arrReturn[] = $this->calculateOffsetSide( 0, 1, $numDistance );
+		$arrReturn[] = $this->calculateOffsetSide( 1, 2, $numDistance );
+		$arrReturn[] = $this->calculateOffsetSide( 2, 3, $numDistance );
+		$arrReturn[] = $this->calculateOffsetSide( 3, 0, $numDistance );
 
 		return $arrReturn;
 	}
 
 
 
-	/** 
-	 Replaces zero or more of the properties points with any inside arrPotentialPoints dependant on if improvement would result  
-	 BUGGY! Needs to check collision with a route
-	*/
-	function improvePoints( $arrPotentialPoints ){
-		
+
+	private function calculateOffsetSide( $numPoint1, $numPoint2, $numDistance ){
+
 		$objMath = new Math();
+		$arrSide = array();
 
-		$cntPointsReplaced = 0;
-		
-		// Loop over all 4 points
-		$iLimit = sizeof( $this->arrPoints );
-		for( $i = 0; $i < $iLimit; $i++ ){
+		$arrPointProjected = $objMath->ninetyDeg( $this->arrPoints[$numPoint1], $this->arrPoints[$numPoint2], false );
+		$arrSide[0] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[$numPoint2], $arrPointProjected, $numDistance );
 
-			// Get the nearestPoint from the array of potential points
-			// TODO: An improvement would be to test the top 10 nearest points to see which ones avoid collision but allow improvement
-			$nearestPointInArray = $objMath->nearestPointInArray( $this->arrPoints[$i], $arrPotentialPoints );
+		$arrPointProjected = $objMath->ninetyDeg( $this->arrPoints[$numPoint2], $this->arrPoints[$numPoint1], true );
+		$arrSide[1] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[$numPoint1], $arrPointProjected, $numDistance );
 
-			// Record the current area
-			$arrAreaDataPreChange = $this->getAreaData();
+		return $arrSide;
+	}
 
 
-			if( $nearestPointInArray['distance'] < 100 ){
-				
-				// Replace the point with the nearest point from arrPotentialPoints
-				$arrPointPreChange = $this->arrPoints[$i];
-				$this->arrPoints[$i] = $nearestPointInArray['arrPointNearest'];
 
-				// Test to see if your area has increased 
-				$arrPostChangeInfo = $this->getInfo();
 
-				// TODO: Need test for collision or too close to route
+	public function getSide( $numSide ){
+		switch( $numSide ){
+			case 0: return array( $this->arrPoints[0], $this->arrPoints[1] );
+			case 1: return array( $this->arrPoints[1], $this->arrPoints[2] );
+			case 2: return array( $this->arrPoints[2], $this->arrPoints[3] );
+			case 3: return array( $this->arrPoints[3], $this->arrPoints[0] );
+		}
+	}
 
-				if( $arrPostChangeInfo['arrAreaData']['area'] > $arrAreaDataPreChange['area'] && $arrPostChangeInfo['isStandard'] ){
-					// If it has make the replacement a permenant change and update database
-					$cntPointsReplaced++;
-				} else {
-					// If it has not increased, reverse the change
-					$this->arrPoints[$i] = $arrPointPreChange;
-				}
 
+
+
+	public function replaceSide( $numSide, $arrSide ){
+
+		switch( $numSide ){
+			case 0: $this->arrPoints[0] = $arrSide[0]; $this->arrPoints[1] = $arrSide[1]; break;
+			case 1: $this->arrPoints[1] = $arrSide[0]; $this->arrPoints[2] = $arrSide[1]; break;
+			case 2: $this->arrPoints[2] = $arrSide[0]; $this->arrPoints[3] = $arrSide[1]; break;
+			case 3: $this->arrPoints[3] = $arrSide[0]; $this->arrPoints[0] = $arrSide[1]; break;
+		}
+		$this->calcVertices();
+	}
+
+
+
+
+	// Checks if one of the points matches the provided point
+	function hasPointWithSameCoords( $arrPointCheck ){
+		// Loop through all points finding the farthest
+		foreach( $this->arrPoints as $thisPoint ){
+			if( $arrPointCheck['x'] === $thisPoint['x'] && $arrPointCheck['y'] === $thisPoint['y'] ){
+				return true;
 			}
-			
 		}
-
-		if( $cntPointsReplaced ){
-			// Save the new points in database
-			$this->saveInDB();
-		}
-
-		$arrReturn = array();
-		$arrReturn['cntPointsReplaced'] = $cntPointsReplaced;
-		$arrReturn['path'] = $this->getPath();
-
-		return $arrReturn;
+		return false;
 	}
 
 

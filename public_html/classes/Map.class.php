@@ -179,5 +179,29 @@ class Map{
 
 
 
+
+	/** 
+	 Tests all properties on the Map against a provided object of class Property
+	 (useful when checking for improved version of property)
+	*/
+	function isCollisionWithMapProperties( $objPropertySubject ){
+		
+		// Initialise an object of class PropertyCollision 
+		$objPropertyCollision = new PropertyCollision();
+		
+		// Check for collision with all properties on map
+		foreach( $this->arrProperties as $objThisProperty ){
+			// Only test for collision if the property's IDs are different
+			if( $objThisProperty->id != $objPropertySubject->id ){
+
+				if( $objPropertyCollision->isCollision( $objPropertySubject, $objThisProperty ) ){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 }
 

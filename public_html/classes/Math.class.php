@@ -38,8 +38,8 @@ class Math{
 		if( $arrPointA['y'] > $arrPointB['y'] ){
 			if( $arrPointA['x'] > $arrPointB['x'] ){
 				// Above and left (working!)
-				 $newX = $arrPointA['x'] - $xDiff;
-				 $newY = $arrPointA['y'] + $yDiff;
+				$newX = $arrPointA['x'] - $xDiff;
+				$newY = $arrPointA['y'] + $yDiff;
 			} else {
 
 				$newX = $arrPointA['x'] + $xDiff;
@@ -223,21 +223,31 @@ class Math{
 		// Discover if the line is ascending or descending
 		$abOrientation = $this->abOrientation( $arrPointA, $arrPointB );
 
-		if( $abOrientation === 'descending' ){
+		if( $abOrientation === 'flat' ){
+
+			if( $arrPointOrigin['y'] < $arrPointB['y'] ){
+				return true;
+			} else {
+				return false;
+			}
+
+		} else if( $abOrientation === 'descending' ){
 
 			// If origin is left of A or below B in a descending line it is definitely below, return false.
-			if( $arrPointOrigin['x'] < $arrPointA['x'] || $arrPointOrigin['y'] > $arrPointB['y'] ){
+			if( $arrPointOrigin['x'] <= $arrPointA['x'] || $arrPointOrigin['y'] >= $arrPointB['y'] ){
 				return false;
 			}
 
 			// If origin is right of B or above A in a descending line it is definitely above, return true.
-			if( $arrPointOrigin['x'] > $arrPointB['x'] || $arrPointOrigin['y'] < $arrPointA['y'] ){
+			if( $arrPointOrigin['x'] >= $arrPointB['x'] || $arrPointOrigin['y'] < $arrPointA['y'] ){
 				return true;
 			}
 
 			// If we've reached this point of the function, origin must be inside the bounding box so we need to compare angles
 			$oppositeSideToBLength = $arrPointOrigin['x'] - $arrPointA['x'];
+
 			$hypotenuseToBLength = $this->distanceBetween( $arrPointOrigin, $arrPointA );
+
 			$sinB = $oppositeSideToBLength / $hypotenuseToBLength;
 			$angleB = rad2deg( asin( $sinB ) );
 
@@ -256,7 +266,11 @@ class Math{
 			// If we've reached this point of the function, origin must be inside the bounding box so we need to compare angles
 			$oppositeSideToBLength = $arrPointB['x'] - $arrPointOrigin['x'];
 			$hypotenuseToBLength = $this->distanceBetween( $arrPointB, $arrPointOrigin );
-			$sinB = $oppositeSideToBLength / $hypotenuseToBLength;
+			if( $hypotenuseToBLength == 0 ){
+				$sinB = 0;
+			} else {
+				$sinB = $oppositeSideToBLength / $hypotenuseToBLength;
+			}
 			$angleB = rad2deg( asin( $sinB ) );
 
 		}
@@ -282,10 +296,25 @@ class Math{
 	 (assumes pointA is to the left of pointB)
 	*/
 	function abOrientation( $arrPointA, $arrPointB ){
-		if( $arrPointA['y'] < $arrPointB['y'] ){
+		if( $arrPointA['y'] === $arrPointB['y'] ){
+			return 'flat';
+		} else if( $arrPointA['y'] < $arrPointB['y'] ){
 			return 'descending';
 		} else {
 			return 'ascending';
+		}
+	}
+
+
+
+	/** 
+	 Swaps 2 points if required to ensure the left most point is point A
+	*/
+	function orientSoLeftmostIsA( &$arrPointA, &$arrPointB ){
+		if( $arrPointA['x'] > $arrPointB['x'] ){
+			$tempB = $arrPointB;
+			$arrPointB = $arrPointA;
+			$arrPointA = $tempB;
 		}
 	}
 
@@ -303,11 +332,7 @@ class Math{
 	function closestPointBetween2( $arrPointOrigin, $arrPointA, $arrPointB ){
 
 		// Orient the points so that A is on the left
-		if( $arrPointA['x'] > $arrPointB['x'] ){
-			$tempB = $arrPointB;
-			$arrPointB = $arrPointA;
-			$arrPointA = $tempB;
-		}
+		$this->orientSoLeftmostIsA( $arrPointA, $arrPointB );
 
 		$abOrientation = $this->abOrientation( $arrPointA, $arrPointB );
 		$isOriginAboveLine = $this->isOriginAboveLine( $arrPointOrigin, $arrPointA, $arrPointB );
@@ -327,7 +352,11 @@ class Math{
 												);
 		$oppositeSideToALength = $this->distanceBetween( $arrPointB, $arrRightAngleCornerPointToA );
 		$hypotenuseToALength = $this->distanceBetween( $arrPointA, $arrPointB );
-		$sinA = $oppositeSideToALength / $hypotenuseToALength;
+		if( $hypotenuseToALength == 0 ){
+			$sinA = 0;
+		} else {
+			$sinA = $oppositeSideToALength / $hypotenuseToALength;
+		}
 		$angleA = rad2deg( asin( $sinA ) );
 
 		// Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointOrigin as it's hypotenuse
@@ -345,7 +374,11 @@ class Math{
 												);
 		$oppositeSideToCLength = $this->distanceBetween( $arrPointOrigin, $arrRightAngleCornerPointToC );
 		$hypotenuseToCLength = $this->distanceBetween( $arrPointOrigin, $arrPointA );
-		$sinC = $oppositeSideToCLength / $hypotenuseToCLength;
+		if( $hypotenuseToCLength == 0 ){
+			$sinC = 0;
+		} else {
+			$sinC = $oppositeSideToCLength / $hypotenuseToCLength;
+		}
 		$angleC = rad2deg( asin( $sinC ) );
 
 		if( ( $abOrientation ==  'ascending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] <= $arrPointA['y'] ) ||
@@ -441,24 +474,40 @@ class Math{
 
 
 
+
 	/** 
-	 Takes a single point and searches an array of points to return the nearest 
+	 Takes a single point and searches an array of points to return the top n nearest
 	*/
-	public function nearestPointInArray( $arrPointOrigin, $arrPoints ){
-		$nearestDistance = INF;
-		$arrPointNearest = NULL;
-		foreach( $arrPoints as $thisPoint ){
-			$thisDistance = $this->distanceBetween( $arrPointOrigin, $thisPoint );
-			if( $nearestDistance > $thisDistance ){
-				$nearestDistance = $thisDistance;
-				$arrPointNearest = $thisPoint;
+	public function nearestPointsInArray( $arrPointOrigin, $arrPoints, $resultLimit = 5, $distanceLimit = 100 ){
+		
+		$arrPointsWithinLimit = array();
+
+		// Loop over $arrPoints calculating distance and assigning them to $arrPointsWithinLimit if within limit
+		$iLimit = sizeof($arrPoints);
+		for( $i = 0; $i < $iLimit; $i++ ){
+			$arrPoints[$i]['distance'] = $this->distanceBetween( $arrPointOrigin, $arrPoints[$i] );
+			if( $arrPoints[$i]['distance'] < $distanceLimit ){
+				$arrPointsWithinLimit[] = $arrPoints[$i];
 			}
 		}
 
-		$arrReturn = array();
-		$arrReturn['arrPointNearest'] = $arrPointNearest;
-		$arrReturn['distance'] = $nearestDistance;
-		return $arrReturn;
+		// Sort arrPointsWithinLimit by distance
+		usort( $arrPointsWithinLimit, array( "Math", "comparePointsDistance" ) );
+
+		return array_slice($arrPointsWithinLimit, 0, $resultLimit);
+	}
+
+
+
+
+	/**
+	 Comparison function used by nearestPointsInArray() when sorting array
+	*/
+	private static function comparePointsDistance( $arrPoint1, $arrPoint2 ){
+		if( $arrPoint1['distance'] > $arrPoint2['distance'] ){
+			return 1;
+		}
+		return 0;
 	}
 
 	

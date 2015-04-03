@@ -38,7 +38,7 @@
 			<input type="radio" name="mouseMode" value="nearestRoute" id="chkNearestRoute"><label for="chkNearestRoute" class="checkLabel">Nearest route</label>
 			<input type="radio" name="mouseMode" value="placeProperty" id="chkPlaceProperty"><label for="chkPlaceProperty" class="checkLabel">Place property</label>
 			<input type="radio" name="mouseMode" value="deleteProperty" id="chkDeleteProperty"><label for="chkDeleteProperty" class="checkLabel">Delete property</label>
-			<input type="radio" name="mouseMode" value="offsetPoints" id="chkOffsetPoints"><label for="chkOffsetPoints" class="checkLabel">Offset Points</label>
+			<input type="radio" name="mouseMode" value="offsetSides" id="chkOffsetSides"><label for="chkOffsetSides" class="checkLabel">Offset Sides</label>
 			<input type="radio" name="mouseMode" value="improvePropertyAtPoint" id="chkImprovePropertyAtPoint"><label for="chkImprovePropertyAtPoint" class="checkLabel">Improve property</label>
 		</fieldset>
 

@@ -202,8 +202,8 @@ $('#mask').click( function(){
 		placeProperty( x, y );
 	} else if( mouseMode === 'deleteProperty' ){
 		deleteProperty( x, y );
-	} else if( mouseMode === 'offsetPoints' ){
-		offsetPoints( x, y );
+	} else if( mouseMode === 'offsetSides' ){
+		offsetSides( x, y );
 	} else if( mouseMode === 'improvePropertyAtPoint' ){
 		improvePropertyAtPoint( x, y );
 	}
@@ -355,19 +355,17 @@ function deleteProperty( x, y ){
 /* Queries a point on the map. If occupied by a property -- */
 /* it returns the offset points of that property ---------- */
 /* @x, @y - co-ordinates of point ------------------------- */ 
-function offsetPoints( x, y ){
+function offsetSides( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/GET/offsetPoints/",
+        url: "/GET/offsetSides/",
         data: { 'mapID': globals.mapID, 
         		'x': x, 
         		'y': y 
         	},
         dataType: "json"
     }).done(function(data) {
-        for( var i = 0; i < data.length; i++ ){
-        	debugDot( data[i]['x'], data[i]['y'], 'purple' );
-        }
+    	renderSides( data );
     });
 }
 
@@ -387,14 +385,24 @@ function improvePropertyAtPoint( x, y ){
         	},
         dataType: "json"
     }).done(function(data) {
-        // for( var i = 0; i < data.arrNeighboursOffsetPoints.length; i++ ){
-        // 	debugDot( data.arrNeighboursOffsetPoints[i]['x'], data.arrNeighboursOffsetPoints[i]['y'], 'purple' );
-        // }
-        console.log( data.arrImprovePointsResult.cntPointsReplaced + ' points improved' );
-        if( data.arrImprovePointsResult.cntPointsReplaced ){
-        	renderPath( data.arrImprovePointsResult.path );
+    	//renderSides( data.arrNeighboursOffsetSides );
+        console.log( data.cntSidesReplaced + ' sides replaced' );
+        if( data.cntSidesReplaced ){
+        	renderPath( data.path );
         }
     });
+}
+
+
+
+
+function renderSides( arrSides ){
+
+    var arrCols = [ 'purple', 'green', 'blue', 'red' ];
+    for( var i = 0; i < arrSides.length; i++ ){
+    	debugDot( arrSides[i][0]['x'], arrSides[i][0]['y'], arrCols[i] );
+    	debugDot( arrSides[i][1]['x'], arrSides[i][1]['y'], arrCols[i] );
+    }
 }
 
 

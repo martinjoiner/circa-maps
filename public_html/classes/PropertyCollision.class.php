@@ -1,6 +1,6 @@
 <?php
 
-class propertyCollision{
+class PropertyCollision{
 
 
 	/**

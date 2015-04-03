@@ -179,11 +179,11 @@ class MapSection extends Map{
 	 Uses the isOccupied() function to find if a property is in this location 
 	 Then returns the result of calling that property's getOffsetPoints() method
 	*/
-	public function getOffsetPoints( $x, $y ){
+	public function getOffsetSides( $x, $y ){
 		$arrIsOccupiedResult = $this->isOccupied( $x, $y );
 		if( $arrIsOccupiedResult['isOccupied'] ){
 			$thisProperty = $this->arrProperties[ $arrIsOccupiedResult['arrPropertiesPointer'] ];
-			return $thisProperty->getOffsetPoints();
+			return $thisProperty->getOffsetSides();
 		}
 	}
 
@@ -192,7 +192,7 @@ class MapSection extends Map{
 
 	/**
 	 Uses the isOccupied() function to find if a property is in this location 
-	 Then returns the result of calling that property's getOffsetPoints() method
+	 Then attempts to improve that property by changing it's shape
 	*/
 	public function improvePropertyAtPoint( $x, $y ){
 		$arrIsOccupiedResult = $this->isOccupied( $x, $y );
@@ -202,25 +202,126 @@ class MapSection extends Map{
 			$thisPropertyToBeImproved = $this->arrProperties[ $arrIsOccupiedResult['arrPropertiesPointer'] ];
 		}
 
-		$arrNeighboursOffsetPoints = array();
+		$arrNeighboursOffsetSides = array();
 
-		// TODO: Pop any occupied points from the array of neighboursOffsetPoints
-
-		// Gather the offset points of all the neighbouring properties
+		// Gather the offset points of all the neighbouring properties (ie. All but the property in question)
 		foreach( $this->arrProperties as $key => $thisProperty ){
 
 			if( $key != $arrIsOccupiedResult['arrPropertiesPointer'] ){
-				$arrNeighboursOffsetPoints = array_merge( $arrNeighboursOffsetPoints, $thisProperty->getOffsetPoints() );
+				$arrNeighboursOffsetSides = array_merge( $arrNeighboursOffsetSides, $thisProperty->getOffsetSides() );
 			}
 		}
 
-		$arrReturn = array();
-		$arrReturn['arrNeighboursOffsetPoints'] = $arrNeighboursOffsetPoints;
+		// TODO: Strip out any sides containing occupied points
 
-		$arrReturn['arrImprovePointsResult'] = $thisPropertyToBeImproved->improvePoints( $arrNeighboursOffsetPoints );
+		// TODO: Strip out any sides contianing points that are too close to a route
+
+		$objMath = new Math();
+
+		$cntSidesReplaced = 0;
+		$arrPotentialImprovements = array();
+
+		// Loop over all 4 sides of the property, testing if replacing them with a neighbour's offset side would be an improvement in area
+		for( $i = 0; $i < 4; $i++ ){
+
+			// From the array of potential points, get the 5 nearest that are within 100 units 
+			//$arrNearestPoints = $objMath->nearestPointsInArray( $thisPropertyToBeImproved->arrPoints[$i], $arrNeighboursOffsetSides, 5, 100 );
+
+			// Record the current area
+			$arrAreaDataPreChange = $thisPropertyToBeImproved->getAreaData();
+
+			// Save the original side in a variable
+			$arrSidePreChange = $thisPropertyToBeImproved->getSide($i);
+
+			// Set the best area achieved so far as being the current one
+			$bestAreaSoFar = $arrAreaDataPreChange['area'];
+			$arrSideBestSoFar = $arrSidePreChange;
+
+			$improvementToSidePossible = false;
+
+			// Loop over the 5 nearest points
+			$nLimit = sizeof($arrNeighboursOffsetSides);						
+	
+			for( $n = 0; $n < $nLimit; $n++ ){
+
+				$validReplacement = true;
+				
+				// if( $thisPropertyToBeImproved->hasPointWithSameCoords($arrNearestPoints[$n]) ){
+				// 	$validReplacement = false;
+				// } else {
+
+				// TODO: Check if centre sections cross and flip the orientation of the points if they do
+				if( false ){
+					$arrCorrectedOrientationSide = array_reverse( $arrNeighboursOffsetSides[$n] );
+				} else {
+					$arrCorrectedOrientationSide = $arrNeighboursOffsetSides[$n];
+				}
+
+				// Replace the point with the nearest point from arrNeighboursOffsetSides
+				$thisPropertyToBeImproved->replaceSide( $i, $arrCorrectedOrientationSide );
+
+				// Get info on the new shape of property
+				$arrPostChangeInfo = $thisPropertyToBeImproved->getInfo();
+				if( !$arrPostChangeInfo['isStandard'] ){
+					$validReplacement = false;
+				}
+
+				if( parent::isCollisionWithMapProperties( $thisPropertyToBeImproved ) ){
+					$validReplacement = false;
+				}
+
+				// Test to see if your area has increased 
+				if( $validReplacement && $arrPostChangeInfo['arrAreaData']['area'] > $bestAreaSoFar ){
+					
+					$improvementToSidePossible = true;
+					$bestAreaSoFar = $arrPostChangeInfo['arrAreaData']['area'];
+					$arrSideBestSoFar = $arrCorrectedOrientationSide;
+				} 
+
+			}
+
+			// If it has improved, record this replacement as a potential improvement
+			if( $improvementToSidePossible ){
+				$arrPotentialImprovements[] = array( "numSide"=>$i, "area"=>$bestAreaSoFar, "arrSideNew"=>$arrSideBestSoFar );
+			} 
+			
+			// Revert the change for now because we gonna try the other sides
+			$thisPropertyToBeImproved->replaceSide( $i, $arrSidePreChange );
+
+		}
+
+
+		
+		// Apply the improvement with the biggest gain
+		if( sizeof($arrPotentialImprovements) ){
+
+			// Sort $arrPotentialImprovements by "area" to see which replacement makes the biggest gain
+			usort( $arrPotentialImprovements, array( $this, "compareImprovements") );
+
+			// Apply the first item in the arrPotentialImprovements array which will by definition be the best
+			$thisPropertyToBeImproved->replaceSide( $arrPotentialImprovements[0]['numSide'], $arrPotentialImprovements[0]['arrSideNew'] );
+
+			$cntSidesReplaced++;
+
+			// Save the new points in database
+			$thisPropertyToBeImproved->saveInDB();
+		}
+
+		$arrReturn = array();
+		$arrReturn['cntSidesReplaced'] = $cntSidesReplaced;
+		$arrReturn['path'] = $thisPropertyToBeImproved->getPath();
+		$arrReturn['arrNeighboursOffsetSides'] = $arrNeighboursOffsetSides;
 
 		return $arrReturn;
 
+	}
+
+
+	private static function compareImprovements( $arrImprovement1, $arrImprovement2 ){
+		if( $arrImprovement1['area'] < $arrImprovement2['area'] ){
+			return 1;
+		} 
+		return 0;
 	}
 
 

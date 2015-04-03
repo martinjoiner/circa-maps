@@ -83,7 +83,7 @@ class MapComplete extends Map{
 		$html .= '<style type="text/css"><![CDATA[
 					.Route, .Property{ stroke: #555; stroke-opacity: 1;  }
 				    .Route{ fill: none; stroke-linejoin: round; }
-				    .Property{ fill: #777; stroke-width: 1; }
+				    .Property{ fill: #777; opacity: 0.5; stroke-width: 0; }
 				    .Front{ stroke: #E22; }
 				    .DebugPath{ fill-opacity: 0.5; }
 				  ]]></style>';

@@ -40,20 +40,22 @@ class PropertyPlacer extends MapSection{
 		// Initialise an object to represent our proposed property 
 		$objProposedProperty = new Property( $arrPoints, $this->id );
 
-		// Initialise an object of class PropertyCollision 
-		$objPropertyCollision = new PropertyCollision();
-
 		// Check for collision with all properties on map
-		$isCollisionFree = true;
-		foreach( $this->arrProperties as $objThisProperty ){
-			if( $objPropertyCollision->isCollision( $objProposedProperty, $objThisProperty ) ){
-				$isCollisionFree = false;
+		if( parent::isCollisionWithMapProperties( $objProposedProperty ) ){
+			$isValid = false;
+		} else {
+			$isValid = true;
+		}
+
+		if( $isValid ){
+			// Check if property meets standards
+			$arrProposedPropertyInfo = $objProposedProperty->getInfo();
+			if( !$arrProposedPropertyInfo['isStandard'] ){
+				$isValid = false;
 			}
 		}
 
-		// TODO: Use Property class method getInfo() to check if property meets standards
-
-		if( $isCollisionFree ){
+		if( $isValid ){
 
 			// If no collisions init a Property object
 			$objPropertyNew = new Property( $arrPoints, $this->id );
@@ -72,6 +74,7 @@ class PropertyPlacer extends MapSection{
 		// Return result and arrPath
 		return $arrResult;
 	}
+
 
 
 

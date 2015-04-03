@@ -6,6 +6,6 @@ include($_SERVER['DOCUMENT_ROOT'] . '/autoloadRegister.inc.php');
 
 $objMapSection = new MapSection( $_GET['mapID'], $_GET['x'], $_GET['y'] );
 
-$arrResult = $objMapSection->getOffsetPoints( $_GET['x'], $_GET['y'] );
+$arrResult = $objMapSection->getOffsetSides( $_GET['x'], $_GET['y'] );
 
 echo json_encode($arrResult);
