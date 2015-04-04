@@ -152,7 +152,7 @@ class Property{
 		$arrReturn['isStandard'] = true;
 
 		// Area should be between 100 and 1600
-		if( $arrReturn['arrAreaData']['area'] < 100 || $arrReturn['arrAreaData']['area'] > 2400 ){
+		if( $arrReturn['arrAreaData']['area'] < 100 || $arrReturn['arrAreaData']['area'] > 3200 ){
 			$arrReturn['isStandard'] = false;
 		}
 
