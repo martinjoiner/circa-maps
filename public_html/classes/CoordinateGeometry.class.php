@@ -85,7 +85,12 @@ Class CoordinateGeometry extends Math{
 		$rightSideVal = $equationOfLineB['b'] - $equationOfLineA['b'];
 
 		// mx - mx = $rightSideVal --> (m-m)x = $rightSideVal --> x = $rightSideVal / (m-m)
-		$x = $rightSideVal / ( $equationOfLineA['m'] - $equationOfLineB['m'] );
+		$mDiff = $equationOfLineA['m'] - $equationOfLineB['m'];
+		if( $mDiff == 0 ){
+			$x = 0;
+		} else {
+			$x = $rightSideVal / ( $equationOfLineA['m'] - $equationOfLineB['m'] );
+		}
 
 		// Now we have x, use A's equation to calculate y
 		$y = ( $equationOfLineA['m'] * $x ) + $equationOfLineA['b'];
