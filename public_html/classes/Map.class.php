@@ -189,5 +189,43 @@ class Map{
 		return false;
 	}
 
+
+
+
+	/** 
+	 Tests all routes on the Map against a provided object of class Property
+	 return true if any sides of the property intersect a segment of the route
+	 (useful when checking for improved version of property)
+	*/
+	function isCollisionWithMapRoutes( $objPropertySubject ){
+		
+		$arrAllSegments = array();
+
+		$arrCenterData = $objPropertySubject->getCenterData();
+		$arrCenterPoint = $arrCenterData['arrCenterPoint'];
+
+		// Get all the route segments within range
+		foreach( $this->arrRoutes as $objThisRoute ){
+			// Append this route's segments to the total array
+			$arrAllSegments = array_merge( $arrAllSegments, $objThisRoute->getSegmentsWithinRange( $arrCenterPoint, 100 ) );
+		}
+
+		$cntSegments = sizeof($arrAllSegments);
+
+		$objCoordinateGeometry = new CoordinateGeometry();
+
+		// Test each of the properties' sides against all the nearby route segments 
+		for( $i = 0; $i < 4; $i++ ){
+			$thisSide = $objPropertySubject->getSide($i);
+			for( $s = 0; $s < $cntSegments; $s++ ){
+				if( $objCoordinateGeometry->doSegmentsIntersect( $thisSide, $arrAllSegments[$s] ) ){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 }
 

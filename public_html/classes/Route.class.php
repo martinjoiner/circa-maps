@@ -61,7 +61,7 @@ class Route{
 	*/
 	function gimme2NearestPoints( $x, $y ){
 
-		$testPoint = array( 'x'=>$x, 'y'=>$y );
+		$arrPointTest = array( 'x'=>$x, 'y'=>$y );
 
 		$objMath = new Math();
 
@@ -71,7 +71,7 @@ class Route{
 		$arrScoreBoard[1] = array( 'distance'=>INF );
 
 		foreach( $this->arrPoints as $thisPoint ){
-			$thisDistance = $objMath->distanceBetween( $testPoint, $thisPoint );
+			$thisDistance = $objMath->distanceBetween( $arrPointTest, $thisPoint );
 			if( $arrScoreBoard[1]['distance'] > $thisDistance ){
 				$thisPoint['distance'] = $thisDistance;
 				array_unshift( $arrScoreBoard, $thisPoint);
@@ -85,6 +85,36 @@ class Route{
 		$arrResult['routeID'] = $this->id;
 
 		return $arrResult;
+	}
+
+
+
+
+	/** 
+	 Returns any segments of the route that contain a point within distance limit
+	*/
+	function getSegmentsWithinRange( $arrPointOrigin, $distanceLimit = 200 ){
+		
+		$objMath = new Math();
+
+		$arrSegments = array();
+
+		// Because the loop takes the point at i *and* the next one we only need to go to 1 before end of array
+		$iLimit = sizeof($this->arrPoints) - 1;
+		for( $i = 0; $i < $iLimit; $i++ ){
+			$arrPointA = $this->arrPoints[$i];
+			$arrPointB = $this->arrPoints[$i+1];
+
+			$distanceA = $objMath->distanceBetween( $arrPointOrigin, $arrPointA );
+			$distanceB = $objMath->distanceBetween( $arrPointOrigin, $arrPointB );
+
+			// If either point is within distance, add the segment to return
+			if( $distanceA < $distanceLimit || $distanceB < $distanceLimit ){
+				$arrSegments[] = array( $arrPointA, $arrPointB );
+			} 
+		}
+
+		return $arrSegments;
 	}
 
 

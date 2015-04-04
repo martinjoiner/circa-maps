@@ -270,6 +270,10 @@ class MapSection extends Map{
 					$validReplacement = false;
 				}
 
+				if( parent::isCollisionWithMapRoutes( $thisPropertyToBeImproved ) ){
+					$validReplacement = false;
+				}
+
 				// Test to see if your area has increased 
 				if( $validReplacement && $arrPostChangeInfo['arrAreaData']['area'] > $bestAreaSoFar ){
 					
