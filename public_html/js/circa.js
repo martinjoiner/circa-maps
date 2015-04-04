@@ -2,88 +2,6 @@
 var globals = {};
 globals.mapID = $('input#mapID').val();
 
-var arrPaths = [];
-var count = 0;
-var mapWidth 
-
-
-var isPointOnYou = (function( point ){
-	var coordParts = point.split(',');
-	var x = parseFloat(coordParts[0]);
-	var y = parseFloat(coordParts[1]);
-	if( x < 0 || y < 0 || x > this.width || y > this.height ){
-		return false;
-	}
-	return true;
-});
-
-
-var Map = (function(){
-	this.width = 1200;
-	this.height = 800;
-
-	this.isPointOnYou = isPointOnYou;
-});
-
-var map = new Map();
-
-
-/* Returns 4 points that represent a polygon adjascent to one of the vertex */
-/* @sideNum *Optional* which vertex it should be adjascent to 				*/
-var spawnOffsetSide = (function( sideNum ){
-	if(typeof sideNum === 'undefined'){
-		sideNum = 1;
-	}
-
-	var arrCoords = [];
-	var pos = sideNum - 2;
-	for (i = 0; i < 4; i++){
-		if( pos < 0 ){
-			pos = pos + this.arrAbsolutePoints.length;
-		} else if ( pos > this.arrAbsolutePoints.length - 1 ){
-			pos = 0;
-		}
-		arrCoords[i] = pos++;
-	}
-
-	var firstRoot = this.arrAbsolutePoints[arrCoords[0]]
-	var firstPoint = this.arrAbsolutePoints[arrCoords[1]];
-	var secondPoint = this.arrAbsolutePoints[arrCoords[2]];
-	var secondRoot = this.arrAbsolutePoints[arrCoords[3]];
-	
-	// Put simply, this says if looking at side 4 the second point is actually the first point
-	if( sideNum > this.arrAbsolutePoints.length - 1 ){
-		secondPoint = this.arrAbsolutePoints[0];
-	}
-
-	var arrAbsolutePoint = [];
-	arrAbsolutePoint[0] = projectPath( secondRoot, secondPoint );
-	arrAbsolutePoint[1] = ninetyDeg( projectPath( firstRoot, firstPoint) , projectPath( secondRoot, secondPoint ), false );
-	arrAbsolutePoint[2] = ninetyDeg( projectPath( secondRoot, secondPoint ),  projectPath( firstRoot, firstPoint), true )
-	arrAbsolutePoint[3] = projectPath( firstRoot, firstPoint );
-
-	var arrReturn = [];
-
-	for(var i in arrAbsolutePoint){
-		var coordParts = arrAbsolutePoint[i].split(',');
-		if( i == 0 ){
-			diffX 	= coordParts[0];
-			diffY 	= coordParts[1];
-		} else {
-			var prevCoordParts = arrAbsolutePoint[i-1].split(',');
-			diffX = prevCoordParts[0] - coordParts[0];
-			diffY = prevCoordParts[1] - coordParts[1];
-		}
-		arrReturn[i] = parseFloat(diffX).toFixed(3) + ',' + parseFloat(diffY).toFixed(3);
-	}
-
-	//console.log(arrAbsolutePoint);
-	//console.log(arrReturn);
-
-	return arrReturn;
-	
-});
-
 
 
 
@@ -118,59 +36,7 @@ function renderPath( skvPath ){
 
 
 
-/* Returns boolean of whether or not all points in the */
-/* polygon are within the boundaries of the map ------ */
-var allPointsOnMap = (function(){
-	//console.warn( "allPointsOnMap() is checking " + this.arrAbsolutePoints );
-	for(var i in this.arrAbsolutePoints){
-		if( !map.isPointOnYou( this.arrAbsolutePoints[i] ) ){
-			return false;
-		}
-	}
-	return true;
-});
-
-
-
-/* Path object 															*/
-/* @id String A web standard id 										*/
-/* @d String SVG standard path definition 								*/
-var Path = (function(id, d){
-
-	this.spawnOffsetSide = spawnOffsetSide;
-	this.getCenter 		= getCenter;
-	this.allPointsOnMap = allPointsOnMap;
-
-	this.id = id;
-	this.d = d;
-
-	this.arrVerticesX = [];
-	this.arrVerticesY = [];
-	this.arrAbsolutePoints = [];
-
-	var reg = /[0-9-.]*,[0-9-.]*/g;
-	this.arrPoints = this.d.match(reg);
-
-	cursorX = 0;
-	cursorY = 0;
-	for(var i in this.arrPoints){
-
-		cursorX = cursorX + parseFloat( this.arrPoints[i].split(',')[0] );
-		cursorY = cursorY + parseFloat( this.arrPoints[i].split(',')[1] );
-
-		this.arrVerticesX[i] = cursorX;
-		this.arrVerticesY[i] = cursorY;
-
-		this.arrAbsolutePoints[i] = cursorX + ',' + cursorY;
-	}
-
-});
-
-
-
-
-
-/* Populated in input box with mouse coordinates for debugging ------------------------ */
+/* Populate input box with mouse coordinates for debugging ------------------------ */
 (function() {
     window.onmousemove = handleMouseMove;
     function handleMouseMove(event) {
@@ -213,8 +79,8 @@ $('#mask').click( function(){
 
 
 
-/* Tests all paths on map to see if point is inside */
-/* @coord co-ordinates of point ------------------- */ 
+/* Tests all paths on map to see if point is inside ------------------------------- */
+/* @x, @y co-ordinates of point --------------------------------------------------- */ 
 function isOccupied( x, y ){
 	$.ajax({
         type: "GET",
@@ -237,7 +103,7 @@ function isOccupied( x, y ){
 
 
 /* Places a dot on the canvas for debugging purposes---------------------------- */
-/* @cord The co-ordinates of where the dot should be placed -------------------- */
+/* @x, @y The co-ordinates of where the dot should be placed ------------------- */
 /* @colour *Optional* - Defaults to 'red' -------------------------------------- */
 function debugDot( x, y, colour ){
 
@@ -419,37 +285,23 @@ function spawn(){
 
 	$('#spawnNotify').addClass('active');
 
-	// Generate a pointer to a random existing path to build next to
-	var pathPointer = Math.floor( Math.random() * ( arrPaths.length - 1 ) );
-	console.log("Path Pointer: " + pathPointer);
+	// Generate a pointer to a random existing path (property) to build next to
 
-	// Generate a pointer to a random side of the building to build adjascent to
-	var sidePointer = Math.floor( Math.random() * 4 );
-	console.log("Side Pointer: " + sidePointer);
+	// Generate a pointer to a random side of the property to build adjascent to
 
-	var arrPoints = arrPaths[pathPointer].spawnOffsetSide(sidePointer);
-	var d = 'M ' + arrPoints.join(' ') + ' z';
+	// Call the spanOffsetSide() method to get a new set of points
 
-	var id = "testPath";
-	var testPath = new Path( id, d);
-	testPath.varyMiddleTwo();
+	// Create a new object of class Path with generated points
 
+	// Vary the 2 points away from the side slightly to give organic shape
 
-	var valid = true;
-	for( var i in arrPaths ){
-		if( polyCollision( testPath, arrPaths[i] ) ){
-			console.warn("Invalid: Collision");
-			valid = false;
-		}
-	}
+	// Test the new property does not collide with any existing properties
 
-	if( !testPath.allPointsOnMap() ){
-		console.warn("Invalid: Some points were not on map");
-		valid = false;
-	}
+	// Make it a permenant change if it's all good
 
 	window.setTimeout( spawn, 10);
 }
+
 
 
 
