@@ -288,7 +288,7 @@ function debugPath( arrPoints, colour ){
 function nearestRoute( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/nearestRoute/",
+        url: "/GET/nearestRoute/",
         data: { 'mapID': globals.mapID, 
         		'x': x, 
         		'y': y 
@@ -315,7 +315,7 @@ function nearestRoute( x, y ){
 function placeProperty( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/placeProperty/",
+        url: "/POST/placeProperty/",
         data: { 'mapID': globals.mapID, 
         		'x': x, 
         		'y': y 
@@ -336,7 +336,7 @@ function placeProperty( x, y ){
 function deleteProperty( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/deleteProperty/",
+        url: "/DELETE/property/",
         data: { 'mapID': globals.mapID, 
         		'x': x, 
         		'y': y 
@@ -378,7 +378,7 @@ function offsetSides( x, y ){
 function improvePropertyAtPoint( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/GET/improvePropertyAtPoint/",
+        url: "/PUT/improvePropertyAtPoint/",
         data: { 'mapID': globals.mapID, 
         		'x': x, 
         		'y': y 
@@ -469,7 +469,7 @@ $('#btnInitXRoads').click( function(){
 	
 	$.ajax({
         type: "GET",
-        url: "/initCrossRoads/",
+        url: "/POST/initCrossRoads/",
         data: { "mapID": globals.mapID },
         dataType: "json"
     }).done(function(data) {
