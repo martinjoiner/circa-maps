@@ -266,11 +266,11 @@ class MapSection extends Map{
 					$validReplacement = false;
 				}
 
-				if( parent::isCollisionWithMapProperties( $thisPropertyToBeImproved ) ){
+				if( $validReplacement && parent::isCollisionWithMapProperties( $thisPropertyToBeImproved ) ){
 					$validReplacement = false;
 				}
 
-				if( parent::isCollisionWithMapRoutes( $thisPropertyToBeImproved ) ){
+				if( $validReplacement && parent::isCollisionWithMapRoutes( $thisPropertyToBeImproved ) ){
 					$validReplacement = false;
 				}
 
