@@ -321,6 +321,10 @@ class MapSection extends Map{
 	}
 
 
+
+	/**
+	 Comparison function used by the method above
+	*/
 	private static function compareImprovements( $arrImprovement1, $arrImprovement2 ){
 		if( $arrImprovement1['area'] < $arrImprovement2['area'] ){
 			return 1;
