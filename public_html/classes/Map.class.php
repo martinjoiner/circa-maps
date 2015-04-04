@@ -100,20 +100,6 @@ class Map{
 
 
 
-	/**
-	 Gets the Average Area of Points on the map. In other words, the population centre
-	*/
-	public function getAAP(){
-		$returnResult = '';
-		foreach( $this->arrPaths as $thisPath ){
-			$returnResult = $thisPath->getCenter();
-		}
-		return $returnResult;
-	}
-
-
-
-
 	function limitXToBoundaries( $x ){
 		if( $x < 0 ){
 			return 0;
