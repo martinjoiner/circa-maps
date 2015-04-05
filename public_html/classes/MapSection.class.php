@@ -218,6 +218,8 @@ class MapSection extends Map{
 
 		$objMath = new Math();
 
+		$objCoordinateGeometry = new CoordinateGeometry();
+
 		$cntSidesReplaced = 0;
 		$arrPotentialImprovements = array();
 
@@ -250,9 +252,12 @@ class MapSection extends Map{
 				// 	$validReplacement = false;
 				// } else {
 
-				// TODO: Check if centre sections cross and flip the orientation of the points if they do
-				// Use the doSegmentsIntersect() method to determine if the points are switching places
-				if( false ){
+				// If replacing this side with the new side will cause the points to cross paths during the switch, 
+				// swap the points around so they do not cross
+				// Use the doSegmentsIntersect() method to determine if the points cross paths during switch
+				$arrReplacementPath1 = array( $arrNeighboursOffsetSides[$n][0], $arrSidePreChange[0] );
+				$arrReplacementPath2 = array( $arrNeighboursOffsetSides[$n][1], $arrSidePreChange[1] );
+				if( $objCoordinateGeometry->doSegmentsIntersect( $arrReplacementPath1, $arrReplacementPath2 ) ){
 					$arrCorrectedOrientationSide = array_reverse( $arrNeighboursOffsetSides[$n] );
 				} else {
 					$arrCorrectedOrientationSide = $arrNeighboursOffsetSides[$n];
