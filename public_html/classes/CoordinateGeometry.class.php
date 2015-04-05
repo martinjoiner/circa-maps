@@ -87,7 +87,7 @@ Class CoordinateGeometry extends Math{
 		$equationOfLineA = $this->equationOfLine( $lineSegmentA[0], $lineSegmentA[1] );
 		$equationOfLineB = $this->equationOfLine( $lineSegmentB[0], $lineSegmentB[1] );
 
-		// If the slopiness of both lines is equal, they will never intersect
+		// If the slopiness of both lines is equal or both m values are null, they will never intersect
 		if( $equationOfLineA['m'] === $equationOfLineB['m'] ){ 
 			$arrReturn['lineAreParallel'] = true;
 			return $arrReturn;
