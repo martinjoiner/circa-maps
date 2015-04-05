@@ -46,7 +46,12 @@ Class CoordinateGeometry extends Math{
 
 		$arrReturn['b'] = $arrPointA['y'] - round( $oppositeToDelta, 2);
 
+		if( $arrPointA['x'] === 0 ){
+			// TODO: If one of the points provided is on the y axis then we have to use y = m(x-Px) + Py equation 
+		} 
+
 		$arrReturn['m'] = $oppositeToDelta / $arrPointA['x'];
+
 
 		return $arrReturn;
 
@@ -69,9 +74,10 @@ Class CoordinateGeometry extends Math{
 	/**
 	 Returns the point at which the lines of 2 line segments intersect
 	 and if whether that point is on the segments
-	 TODO: This does not yet handle intersections with vertical lines
 	*/
 	function lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB ){
+
+		$arrReturn = array( 'x'=>null, 'y'=>null, 'intersectionOnSegment'=>false, 'lineAreParallel'=>false );
 
 		// Arrange the points in both segments so that the first point is on the left
 		parent::orientSoLeftmostIsFirst( $lineSegmentA[0], $lineSegmentA[1] );
@@ -81,28 +87,65 @@ Class CoordinateGeometry extends Math{
 		$equationOfLineA = $this->equationOfLine( $lineSegmentA[0], $lineSegmentA[1] );
 		$equationOfLineB = $this->equationOfLine( $lineSegmentB[0], $lineSegmentB[1] );
 
-		// mx + b = mx + b --> mx - mx = b - b
-		$rightSideVal = $equationOfLineB['b'] - $equationOfLineA['b'];
+		// If the slopiness of both lines is equal, they will never intersect
+		if( $equationOfLineA['m'] === $equationOfLineB['m'] ){ 
+			$arrReturn['lineAreParallel'] = true;
+			return $arrReturn;
+		}
 
-		// mx - mx = $rightSideVal --> (m-m)x = $rightSideVal --> x = $rightSideVal / (m-m)
-		$mDiff = $equationOfLineA['m'] - $equationOfLineB['m'];
-		if( $mDiff == 0 ){
-			$x = 0;
+		// If one of the lines is vertical the equation is different
+		if( $equationOfLineA['isVertical'] != $equationOfLineB['isVertical'] ){
+
+			if( $equationOfLineA['isVertical'] ){
+				$x = $equationOfLineA['x'];
+				$verticalSegment = $lineSegmentA;
+				$nonVertEquation = $equationOfLineB;
+				
+			} else {
+				$x = $equationOfLineB['x'];
+				$verticalSegment = $lineSegmentB;
+				$nonVertEquation = $equationOfLineA;
+			}
+
+			// y = mx + b 
+			$y = ( $nonVertEquation['m'] * $x ) + $nonVertEquation['b'];
+			$y = round( $y, 2 );
+			// What's this nonsense! It removes -0 which can be returned by line above
+			if( $y == 0 ){
+				$y = 0;
+			}
+
+			// Check if the intersection point is within the vertical segments y limits
+			if( $y >= min( $verticalSegment[0]['y'], $verticalSegment[1]['y'] ) && $y <= max( $verticalSegment[0]['y'], $verticalSegment[1]['y'] ) ){
+				$arrReturn['intersectionOnSegment'] = true;
+			} else {
+				$arrReturn['intersectionOnSegment'] = false;
+			}
+
 		} else {
+
+			// mx + b = mx + b --> mx - mx = b - b
+			$rightSideVal = $equationOfLineB['b'] - $equationOfLineA['b'];
+
+			// mx - mx = $rightSideVal --> (m-m)x = $rightSideVal --> x = $rightSideVal / (m-m)
 			$x = $rightSideVal / ( $equationOfLineA['m'] - $equationOfLineB['m'] );
+
+			// Now we have x, use A's equation to calculate y
+			$y = ( $equationOfLineA['m'] * $x ) + $equationOfLineA['b'];
+
+			// Check if the intersection point is within one of the line segment's x limits
+			if( $x >= $lineSegmentA[0]['x'] && $x <= $lineSegmentA[1]['x'] ){
+				$arrReturn['intersectionOnSegment'] = true;
+			} else {
+				$arrReturn['intersectionOnSegment'] = false;
+			}
+
 		}
 
-		// Now we have x, use A's equation to calculate y
-		$y = ( $equationOfLineA['m'] * $x ) + $equationOfLineA['b'];
+		$arrReturn['x'] = $x;
+		$arrReturn['y'] = $y;
 
-		// Check if the intersection point is within one of the line segments x limits
-		if( $x > $lineSegmentA[0]['x'] && $x < $lineSegmentA[1]['x'] ){
-			$intersectionOnSegment = true;
-		} else {
-			$intersectionOnSegment = false;
-		}
-
-		return array( 'x'=>$x, 'y'=>$y, 'intersectionOnSegment'=>$intersectionOnSegment );
+		return $arrReturn;
 
 	}
 
