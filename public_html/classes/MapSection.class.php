@@ -251,6 +251,7 @@ class MapSection extends Map{
 				// } else {
 
 				// TODO: Check if centre sections cross and flip the orientation of the points if they do
+				// Use the doSegmentsIntersect() method to determine if the points are switching places
 				if( false ){
 					$arrCorrectedOrientationSide = array_reverse( $arrNeighboursOffsetSides[$n] );
 				} else {
