@@ -1,13 +1,19 @@
 CIRCA
 =====
 
-Generative design code to produce large map-like images. Database-backed for saving and efficient collision detection during generation by limiting run-time objects to a section of the map. 
+Generative design code to produce large map-like artworks. Database-backed for saving and efficient collision detection during generation by limiting run-time objects to a section of the map. 
+
+The end goal is to generate massively detailed SVG files which can be loaded into a CNC router which will carve the shapes into a 16 ft plywood printing block. This can then be inked-up and pressed using a ride-on road roller. 
+
+![Alt text](/docs/screenshot-2015.jpg "Screenshot of Circa at end of 2015")
+
+Live at: http://circa.butterscotchworld.co.uk
+
+## Technology 
 
 MySQL, PHP, Javascript, SVG, CSS
 
 In this version the Javascript is used to send AJAX requests for map events and then update the visible SVG in return. Events can cause changes in the data such as new roads, new properties, properties expanding by acquiring neighbouring property, structural growth, destruction or replacement. Each event goes with various parameters such as economic conditions which will affect size and decedance of structure and public or private dominence which will affect variety of building. PHP does all the generation of items on the map server-side with careful collision detection. 
-
-The end goal is to output the SVG as a file which can be loaded into a CNC router to produce a plywood printing block for large scale printing.
 
 References
 ----------
