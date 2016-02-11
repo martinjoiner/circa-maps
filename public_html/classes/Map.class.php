@@ -1,23 +1,31 @@
 <?php
 
-class Map{
+abstract class Map{
 
 	protected $id = 0;
-	var $name = ''; 
-	var $width = 0;
-	var $height = 0;
-	var $maxPropertyWidth = 100;
+	protected $name = ''; 
 
-	var $arrRoutes = array();
-	var $arrProperties = array();
+	/**
+	 * The total width and height of the whole map
+	 */
+	protected $width = 0;
+	protected $height = 0;
 
+	/**
+	 * The upper limit for the width of a property
+	 */
+	protected $maxPropertyWidth = 100;
+
+	protected $arrRoutes =[];
+
+	protected $arrProperties = [];
 
 
 
 
 	/**
-	 Extracts the basic details for the map and sets the class variables
-	*/
+	 * Extracts the basic details for the map and sets the class variables
+	 */
 	protected function extractMapFromDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
@@ -42,8 +50,11 @@ class Map{
 
 
 	/** 
-	 Takes a db query result and loops through creating the route objects in the arrRoutes array
-	*/
+	 * Takes a db query result and loops through creating the route objects in the arrRoutes array
+	 *
+	 * @param 
+	 * @param {string} $pathType 
+	 */
 	protected function processDBResult( $rslt, $pathType = 'ROUTE' ){
 
 		$curID = 0;
@@ -69,6 +80,14 @@ class Map{
 	}
 
 
+
+	/**
+	 * 
+	 *
+	 * @param {integer} $id
+	 * @param {array} $arrPoints
+	 * @param {string} $pathType
+	 */
 	private function makePathType( $id, $arrPoints, $pathType ){
 		if( $pathType == 'ROUTE' ){
 			$this->arrRoutes[] = new Route( $id, $arrPoints );
@@ -81,8 +100,8 @@ class Map{
 
 
 	/**
-	 IN DEV
-	*/
+	 * IN DEV
+	 */
 	public function placeRandPath(){
 		// Know the minimum area of footprint you want to build on
 		$desArea = 80 * 80; // Desired area of property
@@ -100,7 +119,7 @@ class Map{
 
 
 
-	function limitXToBoundaries( $x ){
+	public function limitXToBoundaries( $x ){
 		if( $x < 0 ){
 			return 0;
 		} else if( $x > $this->width ){
@@ -112,7 +131,7 @@ class Map{
 
 
 
-	function limitYToBoundaries( $y ){
+	public function limitYToBoundaries( $y ){
 		if( $y < 0 ){
 			return 0;
 		} else if( $y > $this->height ){
@@ -125,9 +144,9 @@ class Map{
 
 
 	/** 
-	 Returns an array of arrays representing fronts
-	*/
-	function getProperties(){
+	 * Returns an array of arrays representing fronts
+	 */
+	public function getProperties(){
 		$arrFronts = array();
 		foreach( $this->arrProperties as $thisProperty ){
 			$arrFronts[] = $thisProperty->getPath();
@@ -139,9 +158,9 @@ class Map{
 
 
 	/** 
-	 Returns an array of arrays representing fronts
-	*/
-	function getPropertyFronts(){
+	 * Returns an array of arrays representing fronts
+	 */
+	public function getPropertyFronts(){
 		$arrFronts = array();
 		foreach( $this->arrProperties as $thisProperty ){
 			$arrFronts[] = $thisProperty->getFront();
@@ -153,9 +172,9 @@ class Map{
 
 
 	/** 
-	 Returns an array of arrays representing properties
-	*/
-	function getRoutes(){
+	 * Returns an array of arrays representing properties
+	 */
+	public function getRoutes(){
 		$arrFronts = array();
 		foreach( $this->arrRoutes as $thisRoute ){
 			$arrFronts[] = $thisRoute->getPath();
@@ -167,10 +186,12 @@ class Map{
 
 
 	/** 
-	 Tests all properties on the Map against a provided object of class Property
-	 (useful when checking for improved version of property)
-	*/
-	function isCollisionWithMapProperties( $objPropertySubject ){
+	 * Tests all properties on the Map against a provided object of class Property
+	 * (useful when checking for improved version of property)
+	 *
+	 * @param {object} $objPropertySubject
+	 */
+	protected function isCollisionWithMapProperties( $objPropertySubject ){
 		
 		// Initialise an object of class PropertyCollision 
 		$objPropertyCollision = new PropertyCollision();
@@ -193,11 +214,13 @@ class Map{
 
 
 	/** 
-	 Tests all routes on the Map against a provided object of class Property
-	 return true if any sides of the property intersect a segment of the route
-	 (useful when checking for improved version of property)
-	*/
-	function isCollisionWithMapRoutes( $objPropertySubject ){
+	 * Tests all routes on the Map against a provided object of class Property
+	 * return true if any sides of the property intersect a segment of the route
+	 * (useful when checking for improved version of property)
+	 *
+	 * @return {boolean}
+	 */
+	protected function isCollisionWithMapRoutes( $objPropertySubject ){
 		
 		$arrAllSegments = array();
 

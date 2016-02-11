@@ -6,7 +6,7 @@
 class MapInitCrossRoads extends Map{
 
 
-	function __construct( $id ){
+	public function __construct( $id ){
 
 		$this->id = $id;
 
@@ -18,8 +18,8 @@ class MapInitCrossRoads extends Map{
 
 
 	/**
-	 Places a property on the map if it's points do not collide
-	*/
+	 * Places a property on the map if it's points do not collide
+	 */
 	public function generateCrossRoads(){
 
 		$startTime = microtime(true);

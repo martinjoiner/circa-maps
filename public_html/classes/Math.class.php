@@ -56,8 +56,8 @@ class Math{
 				$newY = $arrPointA['y'] - $yDiff;
 			}
 		}
-		$arrResultPoint['x'] = $newX;
-		$arrResultPoint['y'] = $newY;
+		$arrResultPoint['x'] = round( $newX, 2 );
+		$arrResultPoint['y'] = round( $newY, 2 );
 
 		return $arrResultPoint;
 	}

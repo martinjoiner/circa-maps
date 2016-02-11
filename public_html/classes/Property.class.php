@@ -13,10 +13,14 @@ class Property{
 
 
 	/**
-	 A property can be constructed with just an array of points and a mapID
-	 passing and an id is optional
-	*/
-	function __construct( $arrPoints, $mapID = NULL, $id = NULL ){
+	 * A property can be constructed with just an array of points and a mapID
+	 * passing and an id is optional
+	 *
+	 * @param {array} $arrPoints
+	 * @param {integer} $mapID
+	 * @param {integer} $id
+	 */
+	public function __construct( $arrPoints, $mapID = NULL, $id = NULL ){
 
 		$this->arrPoints = $arrPoints;
 
@@ -34,9 +38,9 @@ class Property{
 
 
 	/**
-	 Populates the arrVerticesX and arrVerticesY variables
-	 (these are used in collision detection)
-	*/
+	 * Populates the arrVerticesX and arrVerticesY variables
+	 * (these are used in collision detection)
+	 */
 	private function calcVertices(){
 
 		$this->arrVerticesX = array();
@@ -61,8 +65,8 @@ class Property{
 
 
 	/**
-	 Returns the XML markup of the path
-	*/
+	 * Returns the XML markup of the path
+	 */
 	public function printMarkup(){
 		$arrPath = $this->getPath();
 		$html = '<path class="' . $arrPath['class'] . '" d="' . $arrPath['d'] . '" id="' . $arrPath['id'] . '" />';
@@ -71,9 +75,12 @@ class Property{
 
 
 
+
 	/**
-	 Returns an associative array with 'class', 'id' and 'd' values
-	*/
+	 * Returns an associative array with 'class', 'id' and 'd' values
+	 *
+	 * @return {array}
+	 */
 	public function getPath(){
 		$arrPath = array();
 		$arrPath['id'] = 'property' . $this->id;
@@ -127,9 +134,11 @@ class Property{
 
 
 	/** 
-	 Returns an associative array with 'class', 'd' values 
-	 The front of a property is the 
-	*/
+	 * Returns an associative array with 'class', 'd' values 
+	 * The front of a property is the 
+	 *
+	 * @return {array}
+	 */
 	public function getFront(){
 		$arrFront = array();
 		$arrFront['class'] = 'Front';
@@ -141,9 +150,11 @@ class Property{
 
 
 	/**
-	 Returns an associative array of information about the property
-	 Runs a series of checks to determine if the property is a standard (sensible) shape
-	*/
+	 * Returns an associative array of information about the property
+	 * Runs a series of checks to determine if the property is a standard (sensible) shape
+	 *
+	 * @return {array}
+	 */
 	public function getInfo(){
 
 		$arrReturn = array();
@@ -221,10 +232,12 @@ class Property{
 
 
 	/**
-	 Compares the distance between points 0 and 2 to the distance between points 1 and 3. 
-	 Returns true or false to indicate if difference in size is within limit. 
-	 $minShortPercentageOfLong The minimum percentage that shortest must be of longest
-	*/
+	 * Compares the distance between points 0 and 2 to the distance between points 1 and 3. 
+	 * Returns true or false to indicate if difference in size is within limit. 
+	 * $minShortPercentageOfLong The minimum percentage that shortest must be of longest
+	 *
+	 * @param {integer} $minShortPercentageOfLong
+	 */
 	function areDisectionsWithinLimits( $minShortPercentageOfLong = 80 ){
 
 		$objMath = new Math();
@@ -254,8 +267,10 @@ class Property{
 
 
 	/**
-
-	*/
+	 *
+	 *
+	 * @return {boolean}
+	 */
 	function doSidesIntersect(){
 		$objCoordinateGeometry = new CoordinateGeometry();
 		$arrSide[] = array( $this->arrPoints[0], $this->arrPoints[1] );
@@ -275,11 +290,15 @@ class Property{
 
 
 	/**
-	 Compares the length of all sides, finds shortest and longest
-	 Returns true or false to indicate if difference between shortest and longest is within limit.
-	 $minShortPercentageOfLong The minimum percentage that shortest must be of longest 
-	*/
-	function areSideLengthsWithinLimits( $minShortPercentageOfLong = 20 ){
+	 * Compares the length of all sides, finds shortest and longest
+	 * Returns true or false to indicate if difference between shortest and longest is within limit.
+	 * $minShortPercentageOfLong The minimum percentage that shortest must be of longest 
+	 *
+	 * @param {integer} $minShortPercentageOfLong Minimum different between the lonest side and the shortest side
+	 *
+	 * @return {boolean}
+	 */
+	public function areSideLengthsWithinLimits( $minShortPercentageOfLong = 20 ){
 
 		$objMath = new Math();
 
@@ -305,10 +324,14 @@ class Property{
 
 
 	/**
-	 Returns an array of 4 sides, each side contains 2 points. A side represents a paralel line offset from the side of the building
-	 $numDistance is how far away from the property the sides are offset (breathing room basically)
-	*/
-	function getOffsetSides( $numDistance = 3 ){
+	 * Returns an array of 4 sides, each side contains 2 points. A side represents a paralel line offset from the side of the building
+	 * $numDistance is how far away from the property the sides are offset (breathing room basically)
+	 *
+	 * @param {integer}
+	 *
+	 * @return {array}
+	 */
+	public function getOffsetSides( $numDistance = 3 ){
 
 		$arrReturn = array();
 
@@ -323,6 +346,10 @@ class Property{
 
 
 
+	/**
+	 *
+	 * @return {array}
+	 */
 	private function calculateOffsetSide( $numPoint1, $numPoint2, $numDistance ){
 
 		$objMath = new Math();
@@ -340,6 +367,12 @@ class Property{
 
 
 
+	/**
+	 *
+	 * @param {integer} 
+	 *
+	 * @return {array}
+	 */
 	public function getSide( $numSide ){
 		switch( $numSide ){
 			case 0: return array( $this->arrPoints[0], $this->arrPoints[1] );
@@ -352,6 +385,11 @@ class Property{
 
 
 
+	/**
+	 *
+	 * @param {integer}
+	 * @param {array}
+	 */
 	public function replaceSide( $numSide, $arrSide ){
 
 		switch( $numSide ){
@@ -366,7 +404,13 @@ class Property{
 
 
 
-	// Checks if one of the points matches the provided point
+	/**
+	 * Checks if one of the points matches the provided point
+	 *
+	 * @param {array} 
+	 *
+	 * @return {boolean} 
+	 */
 	function hasPointWithSameCoords( $arrPointCheck ){
 		// Loop through all points finding the farthest
 		foreach( $this->arrPoints as $thisPoint ){
@@ -381,8 +425,8 @@ class Property{
 
 
 	/** 
-	 Creates or updates the database
-	*/
+	 * Creates or updates the database
+	 */
 	public function saveInDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );

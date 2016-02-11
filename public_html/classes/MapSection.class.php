@@ -1,8 +1,8 @@
 <?php
 
 /**
- This class is a map but with only the routes and properties in proximity to given coordinates
-*/
+ * This class is a map but with only the routes and properties in proximity to given coordinates
+ */
 class MapSection extends Map{
 
 	var $x;
@@ -16,7 +16,7 @@ class MapSection extends Map{
 	var $yMax;
 
 
-	function __construct( $id, $x, $y, $xMargin = 100, $yMargin = 100 ){
+	public function __construct( $id, $x, $y, $xMargin = 100, $yMargin = 100 ){
 
 		$this->id = $id;
 
@@ -37,10 +37,10 @@ class MapSection extends Map{
 
 
 	/**
-	 Extracts all the data for the routes on this map inside the xMin, xMax, yMin and yMax boundaries
-	 the reason we do this is because collision detection across the entire set of objects will be impossible when there are thousands of points
-	 By leveraging a database index we can only run collission detection against objects that contain points that are resonably close
-	*/
+	 * Extracts all the data for the routes on this map inside the xMin, xMax, yMin and yMax boundaries
+	 * the reason we do this is because collision detection across the entire set of objects will be impossible when there are thousands of points
+	 * By leveraging a database index we can only run collission detection against objects that contain points that are resonably close
+	 */
 	private function extractRoutesFromDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
@@ -74,10 +74,10 @@ class MapSection extends Map{
 
 
 	/**
-	 Extracts all the data for the properties on this map inside the xMin, xMax, yMin and yMax boundaries
-	 the reason we do this is because collision detection across the entire set of objects will be impossible when there are thousands of items on the map
-	 By leveraging a database index we can only run collission detection against objects that contain points that are resonably close
-	*/
+	 * Extracts all the data for the properties on this map inside the xMin, xMax, yMin and yMax boundaries
+	 * the reason we do this is because collision detection across the entire set of objects will be impossible when there are thousands of items on the map
+	 * By leveraging a database index we can only run collission detection against objects that contain points that are resonably close
+	 */
 	private function extractPropertiesFromDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
@@ -111,8 +111,13 @@ class MapSection extends Map{
 
 
 	/**
-	 Takes a co-ordinate and returns true if there is a property sitting on that point or a route intersecting
-	*/
+	 * Takes a co-ordinate and returns true if there is a property sitting on that point or a route intersecting
+	 *
+	 * @param {integer} $x
+	 * @param {integer} $y
+	 *
+	 * @return {array} 
+	 */
 	public function isOccupied( $x, $y ){
 
 		$objMath = new Math();
@@ -143,8 +148,13 @@ class MapSection extends Map{
 
 
 	/**
-	 Returns an array of variables describing the nearest route, the closest point on that route, and the distance to that point
-	*/
+	 * Returns an array of variables describing the nearest route, the closest point on that route, and the distance to that point
+	 *
+	 * @param {integer} $x
+	 * @param {integer} $y
+	 *
+	 * @return {array} 
+	 */
 	public function nearestRoute( $x, $y ){
 
 		$arrResult = array( 'closestPointOnRoute'=>NULL, 'cntRoutesChecked'=>0 );
@@ -176,9 +186,14 @@ class MapSection extends Map{
 
 
 	/**
-	 Uses the isOccupied() function to find if a property is in this location 
-	 Then returns the result of calling that property's getOffsetPoints() method
-	*/
+	 * Uses the isOccupied() function to find if a property is in this location 
+	 * Then returns the result of calling that property's getOffsetPoints() method
+	 *
+	 * @param {integer} $x
+	 * @param {integer} $y
+	 *
+	 * @return {integer} $y
+	 */
 	public function getOffsetSides( $x, $y ){
 		$arrIsOccupiedResult = $this->isOccupied( $x, $y );
 		if( $arrIsOccupiedResult['isOccupied'] ){

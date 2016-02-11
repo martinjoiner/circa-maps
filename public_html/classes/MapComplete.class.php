@@ -4,7 +4,7 @@ class MapComplete extends Map{
 
 
 
-	function __construct( $id ){
+	public function __construct( $id ){
 
 		$this->id = $id;
 
@@ -20,8 +20,8 @@ class MapComplete extends Map{
 
 
 	/**
-	 Extracts all the data for the routes on this map 
-	*/
+	 * Extracts all the data for the routes on this map 
+	 */
 	private function extractRoutesFromDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
@@ -46,8 +46,8 @@ class MapComplete extends Map{
 
 
 	/**
-	 Extracts all the data for the properties on this map 
-	*/
+	 * Extracts all the data for the properties on this map 
+	 */
 	private function extractPropertiesFromDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
@@ -72,15 +72,18 @@ class MapComplete extends Map{
 
 
 	/**
-	 Returns HTML markup of an svg. 
-	 $includeRoutes boolean dictates whether the routes are included
-	 $includeProperties boolean dictates whether the properties are included
-	*/
+	 * Produces markup for an SVG image
+	 *
+	 * @param {boolean} $includeRoutes Dictates whether the routes are included
+	 * @param {boolean} $includeProperties Dictates whether the properties are included
+	 *
+	 * @return {string} XML markup 
+	 */
 	public function printMarkup( $includeRoutes = true, $includeProperties = true ){
-		$html = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $this->width . '" height="' . $this->height . '" id="svgMap">
+		$xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $this->width . '" height="' . $this->height . '" id="svgMap">
 				';
 
-		$html .= '<style type="text/css"><![CDATA[
+		$xml .= '<style type="text/css"><![CDATA[
 					.Route, .Property{ stroke: #555; stroke-opacity: 1;  }
 				    .Route{ fill: none; stroke-linejoin: round; }
 				    .Property{ fill: #777; opacity: 0.5; stroke-width: 0; }
@@ -90,19 +93,20 @@ class MapComplete extends Map{
 
 		if( $includeRoutes ){
 			foreach( $this->arrRoutes as $thisRoute ){
-				$html .= $thisRoute->printMarkup();
+				$xml .= $thisRoute->printMarkup();
 			}
 		}		
 
 		if( $includeProperties ){
 			foreach( $this->arrProperties as $thisProperty ){
-				$html .= $thisProperty->printMarkup();
+				$xml .= $thisProperty->printMarkup();
 			}
 		}
 
-		$html .= '</svg>
+		$xml .= '</svg>
 		';
-		return $html;	
+
+		return $xml;	
 
 	}
 
