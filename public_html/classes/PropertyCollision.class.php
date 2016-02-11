@@ -1,18 +1,26 @@
 <?php
 
+/**
+ * A checker to see if 2 properties overlap/collide
+ */
 class PropertyCollision{
 
 
 	/**
-	 Tests 2 properties to see if they are overlapping 
-	 http://content.gpwiki.org/index.php/Polygon_Collision 
-	*/
-	function isCollision( $objProperty1, $objProperty2 ){
+	 * Tests 2 properties to see if they are overlapping 
+	 * http://content.gpwiki.org/index.php/Polygon_Collision 
+	 *
+	 * @param {Property} $property1
+	 * @param {Property} $property2
+	 *
+	 * @return {boolean} Was a collision detected?
+	 */
+	public function isCollision( Property $property1, Property $property2 ){
 
 		$objMath = new Math();
 
-		$arrProperty1Data = $objProperty1->getCenterData();
-		$arrProperty2Data = $objProperty2->getCenterData();
+		$arrProperty1Data = $property1->getCenterData();
+		$arrProperty2Data = $property2->getCenterData();
 
 		$distanceBetweenCentres = $objMath->distanceBetween( $arrProperty1Data['arrCenterPoint'], $arrProperty2Data['arrCenterPoint'] );
 		$sumOfFarthestRadii = $arrProperty1Data['farthestRadius'] + $arrProperty2Data['farthestRadius'];
@@ -32,17 +40,17 @@ class PropertyCollision{
 		}
 
 		// Next check if any of $arrPoints1's points are inside $arrPoints2, If so: return true;
-		foreach( $objProperty1->arrPoints as $arrThisPoint ){
-			$points_polygon = count($objProperty2->arrPoints);  // number vertices - zero-based array
-			if( $objMath->isInPolygon($points_polygon, $objProperty2->arrVerticesX, $objProperty2->arrVerticesY, $arrThisPoint['x'], $arrThisPoint['y'] ) ){
+		foreach( $property1->arrPoints as $arrThisPoint ){
+			$points_polygon = count($property2->arrPoints);  // number vertices - zero-based array
+			if( $objMath->isInPolygon($points_polygon, $property2->arrVerticesX, $property2->arrVerticesY, $arrThisPoint['x'], $arrThisPoint['y'] ) ){
 				return true;
 			}
 		}
 
 		// Next check if any of $arrPoints1's points are inside $arrPoints2, If so: return true;
-		foreach( $objProperty2->arrPoints as $arrThisPoint ){
-			$points_polygon = count($objProperty1->arrPoints);  // number vertices - zero-based array
-			if( $objMath->isInPolygon($points_polygon, $objProperty1->arrVerticesX, $objProperty1->arrVerticesY, $arrThisPoint['x'], $arrThisPoint['y'] ) ){
+		foreach( $property2->arrPoints as $arrThisPoint ){
+			$points_polygon = count($property1->arrPoints);  // number vertices - zero-based array
+			if( $objMath->isInPolygon($points_polygon, $property1->arrVerticesX, $property1->arrVerticesY, $arrThisPoint['x'], $arrThisPoint['y'] ) ){
 				return true;
 			}
 		}
