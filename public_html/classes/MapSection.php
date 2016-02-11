@@ -206,11 +206,14 @@ class MapSection extends Map{
 
 
 	/**
-	 Uses the isOccupied() function to find if a property is in this location 
-	 Then attempts to improve that property by changing it's shape
-	*/
-	public function improvePropertyAtPoint( $x, $y ){
-		$arrIsOccupiedResult = $this->isOccupied( $x, $y );
+	 * Uses the isOccupied() function to find if a property is in this location 
+	 * Then attempts to improve that property by changing it's shape
+	 *
+	 * @param {Point} 
+	 */
+	public function improvePropertyAtPoint( Point $point ){
+		$arrIsOccupiedResult = $this->isOccupied( $point->x, $point->y );
+
 		if( !$arrIsOccupiedResult['isOccupied'] ){
 			return false;
 		} else {
