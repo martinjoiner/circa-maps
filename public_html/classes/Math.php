@@ -5,13 +5,17 @@ class Math{
 
 
 	/**
-	 Returns the a point between 2 points 
-	 $arrPointA, $arrPointB associative array with 'x' and 'y' values
-	 $distance How far from pointA toward pointB should the result be
-	*/
-	function pointDistanceBetweenPoints( $arrPointA, $arrPointB, $distance ){
+	 * Returns the a point between 2 points 
+	 *
+	 * @param {array} $arrPointA, 
+	 * @param {array} $arrPointB associative array with 'x' and 'y' values
+	 * @param {integer} $distance How far from pointA toward pointB should the result be
+	 * 
+	 * @return {array} A point between 2 points 
+	 */
+	public function pointDistanceBetweenPoints( $arrPointA, $arrPointB, $distance ){
 
-		$arrResultPoint = array( 'x'=>NULL, 'y'=>NULL ); 
+		$arrResultPoint = [ 'x' => null, 'y' => null ]; 
 
 		// If the Xs are equal the line is vertical so just add or subtract distance depending on orientation
 		if( $arrPointA['x'] == $arrPointB['x'] ){

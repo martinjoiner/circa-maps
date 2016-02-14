@@ -1,31 +1,31 @@
 <?php
 
 /**
- * This class is a map but with only the routes and properties in proximity to given coordinates
+ * MapSection is a limited area of the map with only the routes and properties in proximity to given coordinates
  */
 class MapSection extends Map{
 
-	var $x;
-	var $y;
-	var $xMargin;
-	var $yMargin;
+	private $topLeftPoint;
 
-	var $xMin;
-	var $xMax;
-	var $yMin;
-	var $yMax;
+	private $bottomRightPoint;
 
 
+	/**
+	 *
+	 */
 	public function __construct( $id, $x, $y, $xMargin = 100, $yMargin = 100 ){
 
 		$this->id = $id;
 
 		parent::extractMapFromDB();
 
-		$this->xMin = parent::limitXToBoundaries( $x - $xMargin );
-		$this->xMax = parent::limitXToBoundaries( $x + $xMargin );
-		$this->yMin = parent::limitYToBoundaries( $y - $yMargin );
-		$this->yMax = parent::limitYToBoundaries( $y + $yMargin );
+		$xMin = parent::limitXToBoundaries( $x - $xMargin );
+		$xMax = parent::limitXToBoundaries( $x + $xMargin );
+		$yMin = parent::limitYToBoundaries( $y - $yMargin );
+		$yMax = parent::limitYToBoundaries( $y + $yMargin );
+
+		$this->topLeftPoint = new Point($xMin, $yMin);
+		$this->bottomRightPoint = new Point($xMax, $yMax);
 
 		$this->extractRoutesFromDB();
 
@@ -58,10 +58,10 @@ class MapSection extends Map{
 								ORDER BY 	`route`.`id`, `point`.`order` 
 							");
 		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
-		$qry->bindValue('xMin', $this->xMin, PDO::PARAM_INT);
-		$qry->bindValue('xMax', $this->xMax, PDO::PARAM_INT);
-		$qry->bindValue('yMin', $this->yMin, PDO::PARAM_INT);
-		$qry->bindValue('yMax', $this->yMax, PDO::PARAM_INT);
+		$qry->bindValue('xMin', $this->topLeftPoint->x, PDO::PARAM_INT);
+		$qry->bindValue('xMax', $this->bottomRightPoint->x, PDO::PARAM_INT);
+		$qry->bindValue('yMin', $this->topLeftPoint->y, PDO::PARAM_INT);
+		$qry->bindValue('yMax', $this->bottomRightPoint->y, PDO::PARAM_INT);
 		$qry->execute();
 		$rslt = $qry->fetchAll(PDO::FETCH_ASSOC);
 		$qry->closeCursor();
@@ -95,10 +95,10 @@ class MapSection extends Map{
 								ORDER BY 	`property`.`id`, `point`.`order` 
 							");
 		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
-		$qry->bindValue('xMin', $this->xMin, PDO::PARAM_INT);
-		$qry->bindValue('xMax', $this->xMax, PDO::PARAM_INT);
-		$qry->bindValue('yMin', $this->yMin, PDO::PARAM_INT);
-		$qry->bindValue('yMax', $this->yMax, PDO::PARAM_INT);
+		$qry->bindValue('xMin', $this->topLeftPoint->x, PDO::PARAM_INT);
+		$qry->bindValue('xMax', $this->bottomRightPoint->x, PDO::PARAM_INT);
+		$qry->bindValue('yMin', $this->topLeftPoint->y, PDO::PARAM_INT);
+		$qry->bindValue('yMax', $this->bottomRightPoint->y, PDO::PARAM_INT);
 		$qry->execute();
 		$rslt = $qry->fetchAll(PDO::FETCH_ASSOC);
 		$qry->closeCursor();
@@ -116,29 +116,42 @@ class MapSection extends Map{
 	 * @param {integer} $x
 	 * @param {integer} $y
 	 *
-	 * @return {array} 
+	 * @return {array} Contains: occupationType, message
 	 */
 	public function isOccupied( $x, $y ){
 
 		$objMath = new Math();
 
-		$arrResult = array( 'cntProperties'=>sizeof($this->arrProperties), 'cntRoutes'=>sizeof($this->arrRoutes), 'isOccupied'=>false, 'message'=>'');
+		$arrResult = [ 	'cntProperties' => sizeof($this->arrProperties), 
+						'cntRoutes' => sizeof($this->arrRoutes), 
+						'isOccupied' => false, 
+						'occupationType' => null,
+						'message' => '' 
+					];
 		
-		// Check if point is inside a property 
+		// Iterate over properties, checking if point is inside it 
 		foreach( $this->arrProperties as $pointer => $thisProperty ){
 
 			$points_polygon = count($thisProperty->arrPoints);  // number vertices - zero-based array
 
 			if( $objMath->isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $x, $y) ){
 				$arrResult['isOccupied'] = true;
+				$arrResult['occupationType'] = 'PROPERTY';
 				$arrResult['arrPropertiesPointer'] = $pointer;
 				$arrResult['propertyInfo'] = $thisProperty->getInfo();
-				$arrResult['message'] = $x . ',' . $y . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['arrAreaData']['area'] . ')';
+				$arrResult['message'] .= $x . ',' . $y . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['arrAreaData']['area'] . ')';
 			} 
 
 		}
 
-		// TODO: Check if point is on a route
+		// Fetch the nearest Route
+		$point = new Point( $x, $y );
+		$nearestRouteResult = $this->nearestRoute( $point );
+		if( $nearestRouteResult['distanceToClosestPointOnRoute'] < 10 ){
+			$arrResult['isOccupied'] = true;
+			$arrResult['occupationType'] = 'ROUTE';
+			$arrResult['message'] .= 'Point is ' . $nearestRouteResult['distanceToClosestPointOnRoute'] . ' units from a route';
+		}
 
 		return $arrResult;
 
@@ -150,22 +163,25 @@ class MapSection extends Map{
 	/**
 	 * Returns an array of variables describing the nearest route, the closest point on that route, and the distance to that point
 	 *
-	 * @param {integer} $x
-	 * @param {integer} $y
+	 * @param {Point} $point
 	 *
-	 * @return {array} 
+	 * @return {array} Contains: closestPointOnRoute, cntRoutesChecked, closestDistance (closestPointOnRoute, distanceToClosestPointOnRoute, cntRoutesChecked)
 	 */
-	public function nearestRoute( $x, $y ){
+	public function nearestRoute( Point $point ){
 
-		$arrResult = array( 'closestPointOnRoute'=>NULL, 'cntRoutesChecked'=>0 );
+		$arrResult = [ 	'closestPointOnRoute' => null, 
+						'cntRoutesChecked' => 0, 
+						'closestDistance' => INF
+					];
 
-		$closestDistance = INF;
 		$nearestRoute = array();
 		$cntRoutesChecked = 0;
+
+		// Iterate over all the routes
 		foreach( $this->arrRoutes as $thisRoute ){
-			$thisResult = $thisRoute->gimme2NearestPoints( $x, $y );
-			if( $closestDistance > $thisResult['closestDistance'] ){
-				$closestDistance = $thisResult['closestDistance'];
+			$thisResult = $thisRoute->gimme2NearestPoints( $point->x, $point->y );
+			if( $arrResult['closestDistance'] > $thisResult['closestDistance'] ){
+				$arrResult['closestDistance'] = $thisResult['closestDistance'];
 				$nearestRoute = $thisResult;
 			}
 			$cntRoutesChecked++;
@@ -173,9 +189,10 @@ class MapSection extends Map{
 
 		if( $cntRoutesChecked ){
 			$objMath = new Math();
-			$arrPointOrigin = array('x'=>$x,'y'=>$y);
+			$arrPointOrigin = array('x'=>$point->x,'y'=>$point->y);
 			$closestPointBetween2 = $objMath->closestPointBetween2( $arrPointOrigin, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
 			$arrResult['closestPointOnRoute'] = $closestPointBetween2;
+			$arrResult['distanceToClosestPointOnRoute'] = $objMath->distanceBetween( $arrPointOrigin, $closestPointBetween2['arrPointResult'] );
 			$arrResult['cntRoutesChecked'] = $cntRoutesChecked;
 		}
 

@@ -92,10 +92,12 @@ function isOccupied( x, y ){
         dataType: "json"
     }).done(function(data) {
         console.log( data );
-        debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[0], 'red' );
-		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[1], 'orange' );
-		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[2], 'yellow' );
-		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[3], 'green' );
+        if( data.isOccupied && data.occupationType === 'PROPERTY' ){
+            debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[0], 'red' );
+    		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[1], 'orange' );
+    		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[2], 'yellow' );
+    		debugPath( data.propertyInfo.arrAreaData.rightAngledTriangles[3], 'green' );
+        }
     });
 }
 

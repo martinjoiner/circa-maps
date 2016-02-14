@@ -7,9 +7,13 @@ class PropertyPlacer extends MapSection{
 
 
 	/**
-	 Places a property on the map if it's points do not collide
-	*/
-	public function placeProperty( $x, $y ){
+	 * Places a property on the map if it's points do not collide
+	 *
+	 * @param {Point} $point
+	 * 
+	 * @return {array}
+	 */
+	public function placeProperty( Point $point ){
 
 		$startTime = microtime(true);
 
@@ -18,7 +22,7 @@ class PropertyPlacer extends MapSection{
 		$objMath = new Math();
 
 		// Get the nearest route
-		$arrNearestRouteResult = $this->nearestRoute( $x, $y );
+		$arrNearestRouteResult = $this->nearestRoute( $point );
 		$closestPointOnRoute = $arrNearestRouteResult['closestPointOnRoute'];
 
 
@@ -27,7 +31,7 @@ class PropertyPlacer extends MapSection{
 		}
 
 		// Generate 4 points based on supplied x and y
-		$arrRearLeftPoint = array( 'x'=>$x, 'y'=>$y ); 
+		$arrRearLeftPoint = array( 'x'=>$point->x, 'y'=>$point->y ); 
 		$arrFrontLeftPoint = $objMath->pointDistanceBetweenPoints( $closestPointOnRoute['arrPointResult'], $arrRearLeftPoint, 8); 
 		$arrFrontRightPoint = $objMath->ninetyDeg( $arrRearLeftPoint, $arrFrontLeftPoint ); 
 		$arrRearRightPoint = $objMath->ninetyDeg( $arrFrontLeftPoint, $arrFrontRightPoint ); 

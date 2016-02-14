@@ -1,9 +1,21 @@
 <?php
 
+/** 
+ * MapComplete is the entire map! Memory intensive.
+ * Only instantiate if you genuinely need to perform operations on the whole area 
+ */
 class MapComplete extends Map{
 
 
+	/** {integer} Database ID of the map */
+	protected $id;
 
+
+	/** 
+	 * @constructor 
+	 *
+	 * @param {integer} $id 
+	 */
 	public function __construct( $id ){
 
 		$this->id = $id;

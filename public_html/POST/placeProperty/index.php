@@ -6,6 +6,8 @@ include($_SERVER['DOCUMENT_ROOT'] . '/autoloadRegister.inc.php');
 
 $objPropertyPlacer = new PropertyPlacer( $_GET['mapID'], $_GET['x'], $_GET['y'] );
 
-$arrResult = $objPropertyPlacer->placeProperty( $_GET['x'], $_GET['y'] );
+$point = new Point($_GET['x'], $_GET['y']);
+
+$arrResult = $objPropertyPlacer->placeProperty( $point );
 
 echo json_encode($arrResult);
