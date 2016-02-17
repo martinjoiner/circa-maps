@@ -186,12 +186,14 @@ abstract class Map{
 
 
 	/** 
-	 * Tests all properties on the Map against a provided object of class Property
+	 * Tests all properties on the Map against a provided object of class Property looking for collisions
 	 * (useful when checking for improved version of property)
 	 *
-	 * @param {object} $objPropertySubject
+	 * @param {Property} $objPropertySubject
+	 *
+	 * @return {boolean}
 	 */
-	protected function isCollisionWithMapProperties( $objPropertySubject ){
+	protected function isCollisionWithMapProperties( Property $objPropertySubject ){
 		
 		// Initialise an object of class PropertyCollision 
 		$objPropertyCollision = new PropertyCollision();
@@ -218,11 +220,13 @@ abstract class Map{
 	 * return true if any sides of the property intersect a segment of the route
 	 * (useful when checking for improved version of property)
 	 *
+	 * @param {Property} 
+	 *
 	 * @return {boolean}
 	 */
-	protected function isCollisionWithMapRoutes( $objPropertySubject ){
+	protected function isCollisionWithMapRoutes( Property $objPropertySubject ){
 		
-		$arrAllSegments = array();
+		$arrAllSegments = [];
 
 		$arrCenterData = $objPropertySubject->getCenterData();
 		$arrCenterPoint = $arrCenterData['arrCenterPoint'];

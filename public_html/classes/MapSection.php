@@ -179,7 +179,7 @@ class MapSection extends Map{
 
 		// Iterate over all the routes
 		foreach( $this->arrRoutes as $thisRoute ){
-			$thisResult = $thisRoute->gimme2NearestPoints( $point->x, $point->y );
+			$thisResult = $thisRoute->gimme2NearestPoints( $point );
 			if( $arrResult['closestDistance'] > $thisResult['closestDistance'] ){
 				$arrResult['closestDistance'] = $thisResult['closestDistance'];
 				$nearestRoute = $thisResult;

@@ -2,11 +2,25 @@
 
 class Route{
 
-	var $id = 0;
-	var $width = 8;
-	var $arrPoints = array();
+	/** {integer} Database ID of route */
+	private $id = 0;
 
-	function __construct( $id, $arrPoints ){
+	/** {integer} Stroke width (when rendered on SVG) */
+	private $width = 8;
+
+	/** {array}  */
+	private $arrPoints = [];
+
+
+
+
+	/**
+	 * @constructor 
+	 *
+	 * @param {integer} $id
+	 * @param {array} $arrPoints
+	 */
+	public function __construct( $id, $arrPoints ){
 
 		$this->id 			= intval($id);
 		$this->arrPoints 	= $arrPoints;
@@ -17,8 +31,10 @@ class Route{
 
 
 	/**
-	 Returns the markup representation of this path for inclusion in an SVG file 
-	*/
+	 * Makes the markup representation of this path for inclusion in an SVG file 
+	 *
+	 * @return {string} HTML markup
+	 */
 	public function printMarkup(){
 		$arrPath = $this->getPath();
 		$html = '<path class="' . $arrPath['class'] . '" stroke-width="' . $arrPath['stroke-width'] . '" d="' . $arrPath['d'] . '" id="' . $arrPath['id'] . '" />';
@@ -29,8 +45,10 @@ class Route{
 
 
 	/**
-	 Returns an associative array with 'class', 'id' and 'd' values
-	*/
+	 * Returns all the information for rendering the item on an SVG 
+	 *
+	 * @return {array} Containing 'class', 'id' and 'd' values
+	 */
 	public function getPath(){
 		$arrPath = array();
 		$arrPath['id'] = 'route' . $this->id;
@@ -47,8 +65,10 @@ class Route{
 
 
 	/**
-	 Walks the route, totallying up the distance between each point to get a total length
-	*/
+	 * Walks the route, totallying up the distance between each point to get a total length
+	 *
+	 * @return {integer} The total length of the whole route
+	 */
 	function calculateLength(){
 
 	}
@@ -57,11 +77,13 @@ class Route{
 
 
 	/**
-	 
-	*/
-	function gimme2NearestPoints( $x, $y ){
-
-		$arrPointTest = array( 'x'=>$x, 'y'=>$y );
+	 * Returns the 2 nearest points on a route
+	 *
+	 * @param {Point} The origin position from which to search
+	 *
+	 * @return {array} Contains 'top2NearestPoints', 'closestDistance' and 'routeID'
+	 */
+	public function gimme2NearestPoints( Point $point ){
 
 		$objMath = new Math();
 
@@ -70,8 +92,9 @@ class Route{
 		$arrScoreBoard[0] = array( 'distance'=>INF );
 		$arrScoreBoard[1] = array( 'distance'=>INF );
 
+		// Iterate over all points on a route
 		foreach( $this->arrPoints as $thisPoint ){
-			$thisDistance = $objMath->distanceBetween( $arrPointTest, $thisPoint );
+			$thisDistance = $objMath->distanceBetween( (array) $point, $thisPoint );
 			if( $arrScoreBoard[1]['distance'] > $thisDistance ){
 				$thisPoint['distance'] = $thisDistance;
 				array_unshift( $arrScoreBoard, $thisPoint);
@@ -79,7 +102,7 @@ class Route{
 			} 
 		}  
 
-		$arrResult = array();
+		$arrResult = [];
 		$arrResult['top2NearestPoints'] = array_slice( $arrScoreBoard, 0, 2 );
 		$arrResult['closestDistance'] = min( $arrScoreBoard[0]['distance'], $arrScoreBoard[1]['distance'] );
 		$arrResult['routeID'] = $this->id;
@@ -91,13 +114,19 @@ class Route{
 
 
 	/** 
-	 Returns any segments of the route that contain a point within distance limit
-	*/
-	function getSegmentsWithinRange( $arrPointOrigin, $distanceLimit = 200 ){
+	 * Returns any segments of the route that contain a point within distance limit
+	 * (Used by Map to only load data inside a limited area when checking for collisions)
+	 *
+	 * @param {array} $arrPointOrigin
+	 * @param {integer} $distanceLimit
+	 *
+	 * @return {array} The segments of this route within radius
+	 */
+	public function getSegmentsWithinRange( $arrPointOrigin, $distanceLimit = 200 ){
 		
 		$objMath = new Math();
 
-		$arrSegments = array();
+		$arrSegments = [];
 
 		// Because the loop takes the point at i *and* the next one we only need to go to 1 before end of array
 		$iLimit = sizeof($this->arrPoints) - 1;
