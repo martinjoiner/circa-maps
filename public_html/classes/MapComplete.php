@@ -34,7 +34,7 @@ class MapComplete extends Map{
 	/**
 	 * Extracts all the data for the routes on this map 
 	 */
-	private function extractRoutesFromDB(){
+	protected function extractRoutesFromDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
 

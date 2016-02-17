@@ -1,31 +1,35 @@
 <?php
 
+/**
+ * Map abstract class is inherited by instantiations of MapComplete or MapSection
+ */
 abstract class Map{
 
+	/** {integer} Database ID of the map */
 	protected $id = 0;
+
+	/** {string} Name of the map */
 	protected $name = ''; 
 
-	/**
-	 * The total width and height of the whole map
-	 */
+	/** {integer} The total width of the whole map */
 	protected $width = 0;
+
+	/** {integer} The total height of the whole map */
 	protected $height = 0;
 
-	/**
-	 * The upper limit for the width of a property
-	 */
+	/** {integer} The upper limit for the width of a property */
 	protected $maxPropertyWidth = 100;
 
+	/** {array} All the routes on this MapComplete or MapSection */
 	protected $arrRoutes =[];
 
+	/** {array} All the properties on this MapComplete or MapSection */
 	protected $arrProperties = [];
 
 
 
 
-	/**
-	 * Extracts the basic details for the map and sets the class variables
-	 */
+	/** Extracts the basic details for the map and sets the class variables */
 	protected function extractMapFromDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
@@ -81,6 +85,13 @@ abstract class Map{
 
 
 
+
+	/** MapComplete and MapSection both extract data differently */
+	abstract protected function extractRoutesFromDB();
+
+
+
+
 	/**
 	 * 
 	 *
@@ -119,6 +130,13 @@ abstract class Map{
 
 
 
+	/**
+	 * Takes a coordinate value, if it's outside the map boundaries it sets it to inside
+	 *
+	 * @param {integer} $x
+	 *
+	 * @return {integer} Coordinate value definitely inside map boundaries
+	 */
 	public function limitXToBoundaries( $x ){
 		if( $x < 0 ){
 			return 0;
@@ -131,6 +149,13 @@ abstract class Map{
 
 
 
+	/**
+	 * Takes a coordinate value, if it's outside the map boundaries it sets it to inside
+	 *
+	 * @param {integer} $y
+	 *
+	 * @return {integer} Coordinate value definitely inside map boundaries
+	 */
 	public function limitYToBoundaries( $y ){
 		if( $y < 0 ){
 			return 0;
@@ -144,14 +169,16 @@ abstract class Map{
 
 
 	/** 
-	 * Returns an array of arrays representing fronts
+	 * Returns an array of arrays representing properties
+	 *
+	 * @return {array} 
 	 */
 	public function getProperties(){
-		$arrFronts = array();
+		$arrProperties = [];
 		foreach( $this->arrProperties as $thisProperty ){
-			$arrFronts[] = $thisProperty->getPath();
+			$arrProperties[] = $thisProperty->getPath();
 		}
-		return $arrFronts;
+		return $arrProperties;
 	}
 
 
@@ -159,9 +186,11 @@ abstract class Map{
 
 	/** 
 	 * Returns an array of arrays representing fronts
+	 *
+	 * @return {array} 
 	 */
 	public function getPropertyFronts(){
-		$arrFronts = array();
+		$arrFronts = [];
 		foreach( $this->arrProperties as $thisProperty ){
 			$arrFronts[] = $thisProperty->getFront();
 		}
@@ -173,6 +202,8 @@ abstract class Map{
 
 	/** 
 	 * Returns an array of arrays representing properties
+	 *
+	 * @return {array} 
 	 */
 	public function getRoutes(){
 		$arrFronts = array();

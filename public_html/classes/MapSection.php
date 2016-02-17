@@ -41,7 +41,7 @@ class MapSection extends Map{
 	 * the reason we do this is because collision detection across the entire set of objects will be impossible when there are thousands of points
 	 * By leveraging a database index we can only run collission detection against objects that contain points that are resonably close
 	 */
-	private function extractRoutesFromDB(){
+	protected function extractRoutesFromDB(){
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
 
