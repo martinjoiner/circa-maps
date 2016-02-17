@@ -216,6 +216,97 @@ abstract class Map{
 
 
 
+	/**
+	 * Takes a co-ordinate and returns true if there is a property sitting on that point or a route intersecting
+	 *
+	 * @param {integer} $x
+	 * @param {integer} $y
+	 *
+	 * @return {array} Contains: 'cntProperties', 'cntRoutes', 'isOccupied', 'occupationType', 'message'
+	 */
+	public function isOccupied( $x, $y ){
+
+		$objMath = new Math();
+
+		$arrResult = [ 	'cntProperties' => sizeof($this->arrProperties), 
+						'cntRoutes' => sizeof($this->arrRoutes), 
+						'isOccupied' => false, 
+						'occupationType' => null,
+						'message' => '' 
+					];
+
+		// Iterate over properties, checking if point is inside it 
+		foreach( $this->arrProperties as $pointer => $thisProperty ){
+
+			$points_polygon = count($thisProperty->arrPoints);  // number vertices - zero-based array
+
+			if( $objMath->isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $x, $y) ){
+				$arrResult['isOccupied'] = true;
+				$arrResult['occupationType'] = 'PROPERTY';
+				$arrResult['arrPropertiesPointer'] = $pointer;
+				$arrResult['propertyInfo'] = $thisProperty->getInfo();
+				$arrResult['message'] .= $x . ',' . $y . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['arrAreaData']['area'] . ')';
+			} 
+
+		}
+
+		// Fetch the nearest Route
+		$point = new Point( $x, $y );
+		$nearestRouteResult = $this->nearestRoute( $point );
+		if( $nearestRouteResult['distanceToClosestPointOnRoute'] > 0 && $nearestRouteResult['distanceToClosestPointOnRoute'] < 10 ){
+			$arrResult['isOccupied'] = true;
+			$arrResult['occupationType'] = 'ROUTE';
+			$arrResult['message'] .= 'Point is ' . $nearestRouteResult['distanceToClosestPointOnRoute'] . ' units from a route';
+		}
+
+		return $arrResult;
+
+	}
+
+
+
+
+	/**
+	 * Returns an array of variables describing the nearest route, the closest point on that route, and the distance to that point
+	 *
+	 * @param {Point} $point
+	 *
+	 * @return {array} Contains: closestPointOnRoute, cntRoutesChecked, closestDistance (closestPointOnRoute, distanceToClosestPointOnRoute, cntRoutesChecked)
+	 */
+	public function nearestRoute( Point $point ){
+
+		$arrResult = [ 	'closestPointOnRoute' => null, 
+						'cntRoutesChecked' => 0, 
+						'closestDistance' => INF
+					];
+
+		$nearestRoute = array();
+		$cntRoutesChecked = 0;
+
+		// Iterate over all the routes
+		foreach( $this->arrRoutes as $thisRoute ){
+			$thisResult = $thisRoute->gimme2NearestPoints( $point );
+			if( $arrResult['closestDistance'] > $thisResult['closestDistance'] ){
+				$arrResult['closestDistance'] = $thisResult['closestDistance'];
+				$nearestRoute = $thisResult;
+			}
+			$cntRoutesChecked++;
+		}
+
+		if( $cntRoutesChecked ){
+			$objMath = new Math();
+			$closestPointBetween2 = $objMath->closestPointBetween2( $point, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
+			$arrResult['closestPointOnRoute'] = $closestPointBetween2;
+			$arrResult['distanceToClosestPointOnRoute'] = $objMath->distanceBetween( $point, $closestPointBetween2['arrPointResult'] );
+			$arrResult['cntRoutesChecked'] = $cntRoutesChecked;
+		}
+
+		return $arrResult;
+	}
+
+
+
+
 	/** 
 	 * Tests all properties on the Map against a provided object of class Property looking for collisions
 	 * (useful when checking for improved version of property)
