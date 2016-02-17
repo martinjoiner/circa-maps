@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Circa</title>
-	<meta charset="utf-8">
+
+	<title>Circa Maps - A generative design project by Martin Joiner</title>
 
 	<link rel="stylesheet" type="text/css" href="/css/circa.css">
 

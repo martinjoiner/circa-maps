@@ -35,15 +35,12 @@ function renderPath( skvPath ){
 
 
 
+mouseCoordInput = document.getElementById('mouseCoord');
 
-/* Populate input box with mouse coordinates for debugging ------------------------ */
-(function() {
-    window.onmousemove = handleMouseMove;
-    function handleMouseMove(event) {
-        event = event || window.event; // IE-ism
-        document.getElementById('mouseCoord').value = event.clientX + ',' + event.clientY;
-    }
-})();
+/** Populate input box with mouse coordinates for debugging ------------------------ */
+document.getElementById('mask').addEventListener('mousemove', function(e){
+    mouseCoordInput.value = ( e.pageX - this.offsetLeft ) + ',' + ( e.pageY - this.offsetTop );
+});
 
 
 
@@ -166,7 +163,6 @@ function nearestRoute( x, y ){
 		console.log( data );
 		$('svg .Dot').remove();
 
-		console.log( 'distanceToPointResult: ' + data.closestPointOnRoute.distanceToPointResult );
 		debugPath( data.closestPointOnRoute.arrOppAndAdjSidesToA, 'orange' );
 		debugPath( data.closestPointOnRoute.arrOppAndAdjSidesToC, 'green' );
 		debugDot( data.closestPointOnRoute.arrPointA['x'], data.closestPointOnRoute.arrPointA['y'], 'red' );
@@ -420,4 +416,23 @@ $('#btnDeleteFronts').click( function(){
 
 
 
+/**
+ * Just-for-fun self-executing function to log a colorful welcome message in the console
+ */
+(function(){
+
+    var style = 'color: #f78800; background: #333; padding: 6px; ';
+
+    console.log("%c%s",
+            style + 'font-size: 18px;',
+            ' Circa Maps  ');
+
+    console.log("%c%s",
+            style + 'font-size: 13px;',
+            '        by        ');
+
+    console.log("%c%s",
+            style + 'font-size: 18px;',
+            'Martin Joiner');
+})();
 
