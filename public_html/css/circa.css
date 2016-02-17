@@ -25,8 +25,10 @@ body{
 	height: 780px;
 }
 
-/* ------------------------- */
-/* ------------------------- */
+
+
+
+/** Controll panel ------------------------ */
 
 .controlPanel{
 	position: fixed;
@@ -39,17 +41,34 @@ body{
 	min-height: 800px;
 }
 
+fieldset{
+	margin-bottom: 10px;
+	border: 1px solid #888;
+}
+
 legend{
-	width: 100%;
+	font-size: 1.1em;
+	font-weight: normal;
+}
+
+.controlPanel input{
+	margin-bottom: 5px;
+}
+
+.controlPanel a{
+	color: white;
 }
 
 .mouseMode{
-	border: 1px solid #888;
-	margin-bottom: 1em;
+
 }
 
-.mouseMode > *{
+.mouseMode > label,
+.mouseMode > input{
 	float: left;
+}
+
+.mouseMode > label{
 	line-height: 20px;
 }
 
@@ -57,26 +76,53 @@ legend{
 	clear: left;
 }
 
-.controlPanel input{
-	margin-bottom: 1em;
-}
-
 .checkLabel:hover{
 	color: lightblue;
 	cursor: pointer;
 }
 
-.controlPanel a{
-	color: white;
+
+
+
+/** Actions field ------------------------ */
+
+.actionsField button,
+.actionsField input{
+	width: 100%;
+	margin-bottom: 5px;
 }
 
-#spawnNotify{
+.actionsField :last-child{
+	margin-bottom: 0;
+}
+
+#btnSpawnStartStop i,
+#btnSpawnStartStop.active i{
+	display: block;
 	background-image: url(/images/LoadingSpinner.gif);
 	background-repeat: no-repeat;
-	padding-left: 22px;
-	visibility: hidden;
+	width: 16px;
+	height: 16px;
+	margin-right: 4px;
+	float: left;
 
+	visibility: hidden;	
 }
-#spawnNotify.active{
+
+#btnSpawnStartStop.active i{
 	visibility: visible;
+}
+
+
+
+
+/** Render field ------------------------ */
+
+.renderField th{
+	font-weight: normal;
+	text-align: left;
+}
+
+.renderField input{
+	font-size: 0.9em;
 }

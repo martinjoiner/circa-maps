@@ -1,11 +1,18 @@
 <?php
 
 /**
- This is the very beginning of a settlement. It creates 2 routes that intersect. From there civilisation can begin
-*/
+ * This is the very beginning of a settlement. It creates 2 routes that intersect. From there civilisation can begin
+ */
 class MapInitCrossRoads extends Map{
 
 
+
+
+	/** 
+	 * @constructor
+	 *
+	 * @param {integer} $id 
+	 */
 	public function __construct( $id ){
 
 		$this->id = $id;
@@ -17,20 +24,28 @@ class MapInitCrossRoads extends Map{
 
 
 
+	/** Do nothing here */
+	protected function extractRoutesFromDB(){ }
+
+
+
+
 	/**
-	 * Places a property on the map if it's points do not collide
+	 * Draws 2 random (within constraints) routes that cross 
+	 *
+	 * @return {array}
 	 */
 	public function generateCrossRoads(){
 
 		$startTime = microtime(true);
 
 		// Select a random point on the east edge of the map
-		$startY = rand(0,$this->height);
-		$startPoint = array( 'x'=>0, 'y'=>intval($startY) );
+		$startY = rand(0, $this->height);
+		$startPoint = new Point( 0, $startY );
 
 		// Select the inverted equivilent on the west side the map
-		$endY = intval($this->height - $startPoint['y']);
-		$endPoint = array( 'x'=>$this->width, 'y'=>$endY );
+		$endY = intval($this->height - $startPoint->y);
+		$endPoint = new Point( $this->width, $endY );
 
 		$arrPoints = $this->generateRoute( $startPoint, $endPoint );
 
@@ -40,10 +55,10 @@ class MapInitCrossRoads extends Map{
 
 		// Repeat for the north and south edge
 		$startX = rand(0, $this->width);
-		$startPoint = array( 'x'=>intval($startX), 'y'=>0 );
+		$startPoint = new Point( $startX, 0 );
 
-		$endX = intval($this->width - $startPoint['x']);
-		$endPoint = array( 'x'=>$endX, 'y'=>$this->height );
+		$endX = intval($this->width - $startPoint->x);
+		$endPoint = new Point( $endX, $this->height );
 
 		$arrPoints = $this->generateRoute( $startPoint, $endPoint );
 
@@ -55,27 +70,34 @@ class MapInitCrossRoads extends Map{
 		
 
 		$arrResult['success'] = true;
-		$arrResult['arrPaths'] = array();
+		$arrResult['arrPaths'] = [];
 		$arrResult['arrPaths'][0] = $this->arrRoutes[0]->getPath();
 		$arrResult['arrPaths'][1] = $this->arrRoutes[1]->getPath();
 		
 
 		$arrResult['executionTime'] = microtime(true) - $startTime;
 
-		// Return result and arrPath
 		return $arrResult;
 	}
 
 
 
+
 	/**
-	 Returns an array of points between a start and end point
-	*/
-	function generateRoute( $startPoint, $endPoint ){
+	 * Returns an array of points between a start and end point
+	 *
+	 * @param {Point} $startPoint
+	 * @param {Point} $endPoint
+	 *
+	 * @return {array} Array of points
+	 */
+	private function generateRoute( Point $startPoint, Point $endPoint ){
 
 		$objMath = new Math();
 
-		$arrPoints = array();
+		$arrPoints = [];
+
+		// Set the first item as the start point
 		$arrPoints[] = $startPoint;
 
 		$routeSectionLength = 50;
@@ -83,6 +105,7 @@ class MapInitCrossRoads extends Map{
 		// Walk a varying path between start and end points
 		$pointer = 0;
 		$distanceLeft = $objMath->distanceBetween( $arrPoints[$pointer], $endPoint );
+
 		while( $distanceLeft > $routeSectionLength ){
 
 			$percentageStep = round( $routeSectionLength / $distanceLeft * 100, 2 );
@@ -91,12 +114,15 @@ class MapInitCrossRoads extends Map{
 
 			$perfectPoint = $objMath->pointPercentageBetweenPoints( $arrPoints[$pointer-1], $endPoint, $percentageStep );
 
-			$arrPoints[$pointer] = $objMath->randomVaryPoint($perfectPoint);
+			$arrPoints[$pointer] = $perfectPoint->randomVary();
 
-			// Set distance between last point and endPoint
+			// Update how much distance left until we reach the endPoint
 			$distanceLeft = $objMath->distanceBetween( $arrPoints[$pointer], $endPoint );
 
 		}
+
+		// Finally, add the $endPoint here
+		$arrPoints[] = $endPoint;
 
 		return $arrPoints;
 	}
@@ -105,9 +131,13 @@ class MapInitCrossRoads extends Map{
 
 
 	/**
-	 Saves path in database and returns the newly created database ID
-	*/
-	function saveRouteInDB( $arrPoints ){
+	 * Saves path in database and returns the newly created database ID
+	 *
+	 * @param {array} $arrPoints Array of instances of Point class
+	 *
+	 * @return {integer} Database ID of newly saved row
+	 */
+	private function saveRouteInDB( $arrPoints ){
 		
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
 
@@ -125,8 +155,8 @@ class MapInitCrossRoads extends Map{
 								");
 			$qry->bindValue('routeID', 	$routeID, 			PDO::PARAM_INT);
 			$qry->bindValue('order', 	$cnt++, 			PDO::PARAM_INT);
-			$qry->bindValue('x', 		$thisPoint['x'], 	PDO::PARAM_INT);
-			$qry->bindValue('y', 		$thisPoint['y'], 	PDO::PARAM_INT);
+			$qry->bindValue('x', 		$thisPoint->x, 	PDO::PARAM_INT);
+			$qry->bindValue('y', 		$thisPoint->y, 	PDO::PARAM_INT);
 			$qry->execute();
 		}
 		$qry->closeCursor();

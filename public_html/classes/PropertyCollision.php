@@ -40,17 +40,17 @@ class PropertyCollision{
 		}
 
 		// Next check if any of $arrPoints1's points are inside $arrPoints2, If so: return true;
-		foreach( $property1->arrPoints as $arrThisPoint ){
+		foreach( $property1->arrPoints as $thisPoint ){
 			$points_polygon = count($property2->arrPoints);  // number vertices - zero-based array
-			if( $objMath->isInPolygon($points_polygon, $property2->arrVerticesX, $property2->arrVerticesY, $arrThisPoint['x'], $arrThisPoint['y'] ) ){
+			if( $objMath->isInPolygon($points_polygon, $property2->arrVerticesX, $property2->arrVerticesY, $thisPoint->x, $thisPoint->y ) ){
 				return true;
 			}
 		}
 
 		// Next check if any of $arrPoints1's points are inside $arrPoints2, If so: return true;
-		foreach( $property2->arrPoints as $arrThisPoint ){
+		foreach( $property2->arrPoints as $thisPoint ){
 			$points_polygon = count($property1->arrPoints);  // number vertices - zero-based array
-			if( $objMath->isInPolygon($points_polygon, $property1->arrVerticesX, $property1->arrVerticesY, $arrThisPoint['x'], $arrThisPoint['y'] ) ){
+			if( $objMath->isInPolygon($points_polygon, $property1->arrVerticesX, $property1->arrVerticesY, $thisPoint->x, $thisPoint->y ) ){
 				return true;
 			}
 		}

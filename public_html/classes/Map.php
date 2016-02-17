@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Map abstract class is inherited by instantiations of MapComplete or MapSection
+ * Map abstract class is inherited by instantiations of MapComplete, MapInitCrossRoads or MapSection
  */
 abstract class Map{
 
@@ -20,7 +20,7 @@ abstract class Map{
 	/** {integer} The upper limit for the width of a property */
 	protected $maxPropertyWidth = 100;
 
-	/** {array} All the routes on this MapComplete or MapSection */
+	/** {array} All the routes on this map */
 	protected $arrRoutes =[];
 
 	/** {array} All the properties on this MapComplete or MapSection */
@@ -56,7 +56,7 @@ abstract class Map{
 	/** 
 	 * Takes a db query result and loops through creating the route objects in the arrRoutes array
 	 *
-	 * @param 
+	 * @param {array} $rslt
 	 * @param {string} $pathType 
 	 */
 	protected function processDBResult( $rslt, $pathType = 'ROUTE' ){
@@ -75,7 +75,7 @@ abstract class Map{
 				$curID = intval($thisResult['id']);
 			}
 
-			$arrPoints[] = array( 'x'=>intval($thisResult['x']), 'y'=>intval($thisResult['y']) );
+			$arrPoints[] = new Point( $thisResult['x'], $thisResult['y'] );
 			
 		}
 		if( $curID != 0 ){
@@ -96,7 +96,7 @@ abstract class Map{
 	 * 
 	 *
 	 * @param {integer} $id
-	 * @param {array} $arrPoints
+	 * @param {array} $arrPoints Array of instances of Point class
 	 * @param {string} $pathType
 	 */
 	private function makePathType( $id, $arrPoints, $pathType ){

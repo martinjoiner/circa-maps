@@ -1,8 +1,8 @@
 <?php
 
 /**
- This class is a map but with only the routes and properties in proximity to given coordinates
-*/
+ * This class is a map but with only the routes and properties in proximity to given coordinates
+ */
 class PropertyPlacer extends MapSection{
 
 
@@ -11,13 +11,13 @@ class PropertyPlacer extends MapSection{
 	 *
 	 * @param {Point} $point
 	 * 
-	 * @return {array}
+	 * @return {array} Contains: 'arrPath', {boolean} 'success'
 	 */
 	public function placeProperty( Point $point ){
 
 		$startTime = microtime(true);
 
-		$arrResult = array( 'arrPath'=>null, 'success'=>false );
+		$arrResult = [ 'arrPath'=>null, 'success'=>false ];
 
 		$objMath = new Math();
 
@@ -31,15 +31,15 @@ class PropertyPlacer extends MapSection{
 		}
 
 		// Generate 4 points based on supplied x and y
-		$arrRearLeftPoint = array( 'x'=>$point->x, 'y'=>$point->y ); 
-		$arrFrontLeftPoint = $objMath->pointDistanceBetweenPoints( $closestPointOnRoute['arrPointResult'], $arrRearLeftPoint, 8); 
-		$arrFrontRightPoint = $objMath->ninetyDeg( $arrRearLeftPoint, $arrFrontLeftPoint ); 
+
+		$arrFrontLeftPoint = $objMath->pointDistanceBetweenPoints( $closestPointOnRoute['arrPointResult'], $point, 8); 
+		$arrFrontRightPoint = $objMath->ninetyDeg( $point, $arrFrontLeftPoint ); 
 		$arrRearRightPoint = $objMath->ninetyDeg( $arrFrontLeftPoint, $arrFrontRightPoint ); 
 
-		$arrRearLeftPoint = $objMath->randomVaryPoint( $arrRearLeftPoint, 5 );
-		$arrRearRightPoint = $objMath->randomVaryPoint( $arrRearRightPoint, 5 );
+		$point = $point->randomVary( 5 );
+		$arrRearRightPoint = $arrRearRightPoint->randomVary( 5 );
 
-		$arrPoints = array( $arrFrontLeftPoint, $arrFrontRightPoint, $arrRearRightPoint, $arrRearLeftPoint );
+		$arrPoints = [ $arrFrontLeftPoint, $arrFrontRightPoint, $arrRearRightPoint, $point ];
 
 		// Initialise an object to represent our proposed property 
 		$objProposedProperty = new Property( $arrPoints, $this->id );
@@ -75,7 +75,6 @@ class PropertyPlacer extends MapSection{
 
 		$arrResult['executionTime'] = microtime(true) - $startTime;
 
-		// Return result and arrPath
 		return $arrResult;
 	}
 

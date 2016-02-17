@@ -18,7 +18,7 @@ class Route{
 	 * @constructor 
 	 *
 	 * @param {integer} $id
-	 * @param {array} $arrPoints
+	 * @param {array} $arrPoints Array of instances of Point class
 	 */
 	public function __construct( $id, $arrPoints ){
 
@@ -56,7 +56,7 @@ class Route{
 		$arrPath['stroke-width'] = $this->width;
 		$arrPath['d'] = 'M ';
 		foreach( $this->arrPoints as $thisPoint ){
-			$arrPath['d'] .= $thisPoint['x'] . ',' . $thisPoint['y'] . ' ';
+			$arrPath['d'] .= $thisPoint->x . ',' . $thisPoint->y . ' ';
 		} 
 		return $arrPath;
 	}
@@ -88,15 +88,15 @@ class Route{
 		$objMath = new Math();
 
 		// Loop through all the points in arrPoints
-		$arrScoreBoard = array();
-		$arrScoreBoard[0] = array( 'distance'=>INF );
-		$arrScoreBoard[1] = array( 'distance'=>INF );
+		$arrScoreBoard = [];
+		$arrScoreBoard[0] = new Point();
+		$arrScoreBoard[1] = new Point();
 
 		// Iterate over all points on a route
 		foreach( $this->arrPoints as $thisPoint ){
-			$thisDistance = $objMath->distanceBetween( (array) $point, $thisPoint );
-			if( $arrScoreBoard[1]['distance'] > $thisDistance ){
-				$thisPoint['distance'] = $thisDistance;
+			$thisDistance = $objMath->distanceBetween( $point, $thisPoint );
+			if( $arrScoreBoard[1]->distance > $thisDistance ){
+				$thisPoint->distance = $thisDistance;
 				array_unshift( $arrScoreBoard, $thisPoint);
 				$closestDistance = $thisDistance;
 			} 
@@ -104,7 +104,7 @@ class Route{
 
 		$arrResult = [];
 		$arrResult['top2NearestPoints'] = array_slice( $arrScoreBoard, 0, 2 );
-		$arrResult['closestDistance'] = min( $arrScoreBoard[0]['distance'], $arrScoreBoard[1]['distance'] );
+		$arrResult['closestDistance'] = min( $arrScoreBoard[0]->distance, $arrScoreBoard[1]->distance );
 		$arrResult['routeID'] = $this->id;
 
 		return $arrResult;

@@ -33,47 +33,71 @@
 
 		<fieldset class="mouseMode">
 			<legend>Mouse Mode</legend>
-			<input type="radio" name="mouseMode" value="isOccupied" id="chkIsOccupied" checked><label for="chkIsOccupied" class="checkLabel">&quot;Is occupied?&quot; query</label>
-			<input type="radio" name="mouseMode" value="redDot" id="chkRedDot"><label for="chkRedDot" class="checkLabel">Red dot</label>
-			<input type="radio" name="mouseMode" value="nearestRoute" id="chkNearestRoute"><label for="chkNearestRoute" class="checkLabel">Nearest route</label>
-			<input type="radio" name="mouseMode" value="placeProperty" id="chkPlaceProperty"><label for="chkPlaceProperty" class="checkLabel">Place property</label>
-			<input type="radio" name="mouseMode" value="deleteProperty" id="chkDeleteProperty"><label for="chkDeleteProperty" class="checkLabel">Delete property</label>
-			<input type="radio" name="mouseMode" value="offsetSides" id="chkOffsetSides"><label for="chkOffsetSides" class="checkLabel">Offset Sides</label>
-			<input type="radio" name="mouseMode" value="improvePropertyAtPoint" id="chkImprovePropertyAtPoint"><label for="chkImprovePropertyAtPoint" class="checkLabel">Improve property</label>
+
+			<input type="radio" name="mouseMode" value="isOccupied" id="chkIsOccupied" checked>
+			<label for="chkIsOccupied" class="checkLabel">&quot;Is occupied?&quot; query</label>
+
+			<input type="radio" name="mouseMode" value="redDot" id="chkRedDot">
+			<label for="chkRedDot" class="checkLabel">Red dot</label>
+
+			<input type="radio" name="mouseMode" value="nearestRoute" id="chkNearestRoute">
+			<label for="chkNearestRoute" class="checkLabel">Nearest route</label>
+
+			<input type="radio" name="mouseMode" value="placeProperty" id="chkPlaceProperty">
+			<label for="chkPlaceProperty" class="checkLabel">Place property</label>
+
+			<input type="radio" name="mouseMode" value="deleteProperty" id="chkDeleteProperty">
+			<label for="chkDeleteProperty" class="checkLabel">Delete property</label>
+
+			<input type="radio" name="mouseMode" value="offsetSides" id="chkOffsetSides">
+			<label for="chkOffsetSides" class="checkLabel">Offset Sides</label>
+
+			<input type="radio" name="mouseMode" value="improvePropertyAtPoint" id="chkImprovePropertyAtPoint">
+			<label for="chkImprovePropertyAtPoint" class="checkLabel">Improve property</label>
+			
 		</fieldset>
 
-		<p id="spawnNotify">Spawning</p>
-		<input type="button" id="btnSpawnStart" value="Spawn">
-		<input type="button" id="btnSpawnStop" value="Stop spawning">
+
+		<fieldset class="actionsField">
+			<legend>Actions</legend>
+
+			<button id="btnSpawnStartStop">
+				<i></i>
+				<span>Start Spawning</span>
+			</button>
+			
+			<input type="button" id="btnInitXRoads" value="Init X-roads">
+
+		</fieldset>
 		
-		
-		<table>
-			<tbody>
-				<tr>
-					<th></th>
-					<td colspan="2"><input type="button" id="btnInitXRoads" value="Init X-roads"></td>
-					<td>&nbsp;</td>
-				</tr>
-				<tr>
-					<th>Routes</th>
-					<td><input type="button" id="btnDrawRoutes" value="Draw"></td>
-					<td><input type="button" id="btnDeleteRoutes" value="Delete"></td>
-				</tr>
-				<tr>
-					<th>Properties</th>
-					<td><input type="button" id="btnDrawProperties" value="Draw"></td>
-					<td><input type="button" id="btnDeleteProperties" value="Delete"></td>
-				</tr>
-				<tr>
-					<th>Fronts</th>
-					<td><input type="button" id="btnDrawFronts" value="Draw"></td>
-					<td><input type="button" id="btnDeleteFronts" value="Delete"></td>
-				</tr>
-			</tbody>
-		</table>
+
+		<fieldset class="renderField">
+			<legend>Render</legend>
+
+			<table>
+				<tbody>
+					<tr>
+						<th>Routes</th>
+						<td><input type="button" id="btnDrawRoutes" value="Draw"></td>
+						<td><input type="button" id="btnDeleteRoutes" value="Delete"></td>
+					</tr>
+					<tr>
+						<th>Properties</th>
+						<td><input type="button" id="btnDrawProperties" value="Draw"></td>
+						<td><input type="button" id="btnDeleteProperties" value="Delete"></td>
+					</tr>
+					<tr>
+						<th>Fronts</th>
+						<td><input type="button" id="btnDrawFronts" value="Draw"></td>
+						<td><input type="button" id="btnDeleteFronts" value="Delete"></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</fieldset>
 
 
-		<fieldset class="mouseMode">
+		<fieldset>
 			<legend>Maps</legend>
 			<ul>
 				<?php

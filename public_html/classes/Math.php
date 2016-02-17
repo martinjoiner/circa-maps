@@ -5,31 +5,31 @@ class Math{
 
 
 	/**
-	 * Returns the a point between 2 points 
+	 * Returns a new point that is a certain distance between 2 points 
 	 *
-	 * @param {array} $arrPointA, 
-	 * @param {array} $arrPointB associative array with 'x' and 'y' values
+	 * @param {Point} $pointA 
+	 * @param {Point} $pointB 
 	 * @param {integer} $distance How far from pointA toward pointB should the result be
 	 * 
-	 * @return {array} A point between 2 points 
+	 * @return {Point} A point between 2 points 
 	 */
-	public function pointDistanceBetweenPoints( $arrPointA, $arrPointB, $distance ){
+	public function pointDistanceBetweenPoints( Point $pointA, Point $pointB, $distance ){
 
-		$arrResultPoint = [ 'x' => null, 'y' => null ]; 
+		$resultPoint = new Point(); 
 
 		// If the Xs are equal the line is vertical so just add or subtract distance depending on orientation
-		if( $arrPointA['x'] == $arrPointB['x'] ){
-			$arrResultPoint['x'] = $arrPointA['x'];
-			if( $arrPointB['y'] > $arrPointA['y'] ){
-				$arrResultPoint['y'] = $arrPointA['y'] + $distance;
+		if( $pointA->x == $pointB->x ){
+			$resultPoint->x = $pointA->x;
+			if( $pointB->y > $pointA->y ){
+				$resultPoint->y = $pointA->y + $distance;
 			} else {
-				$arrResultPoint['y'] = $arrPointA['y'] - $distance;
+				$resultPoint->y = $pointA->y - $distance;
 			}
-			return $arrResultPoint;
+			return $resultPoint;
 		}
 
-		$oppositeSideToAngle = $arrPointA['y'] - $arrPointB['y'];
-		$adjascentSideToAngle = $arrPointB['x'] - $arrPointA['x'];
+		$oppositeSideToAngle = $pointA->y - $pointB->y;
+		$adjascentSideToAngle = $pointB->x - $pointA->x;
 
 		$tan = $oppositeSideToAngle / $adjascentSideToAngle;
 
@@ -39,57 +39,53 @@ class Math{
 		$yDiff = sin( deg2rad($angle) ) * $distance;
 
 
-		if( $arrPointA['y'] > $arrPointB['y'] ){
-			if( $arrPointA['x'] > $arrPointB['x'] ){
+		if( $pointA->y > $pointB->y ){
+			if( $pointA->x > $pointB->x ){
 				// Above and left (working!)
-				$newX = $arrPointA['x'] - $xDiff;
-				$newY = $arrPointA['y'] + $yDiff;
+				$newX = $pointA->x - $xDiff;
+				$newY = $pointA->y + $yDiff;
 			} else {
 
-				$newX = $arrPointA['x'] + $xDiff;
-				$newY = $arrPointA['y'] - $yDiff;
+				$newX = $pointA->x + $xDiff;
+				$newY = $pointA->y - $yDiff;
 			}
 		} else {
-			if( $arrPointA['x'] > $arrPointB['x'] ){
+			if( $pointA->x > $pointB->x ){
 				// Below and left (working!)
-				$newX = $arrPointA['x'] - $xDiff;
-				$newY = $arrPointA['y'] + $yDiff;
+				$newX = $pointA->x - $xDiff;
+				$newY = $pointA->y + $yDiff;
 			} else {
 				// Below and right (working!)
-				$newX = $arrPointA['x'] + $xDiff;
-				$newY = $arrPointA['y'] - $yDiff;
+				$newX = $pointA->x + $xDiff;
+				$newY = $pointA->y - $yDiff;
 			}
 		}
-		$arrResultPoint['x'] = round( $newX, 2 );
-		$arrResultPoint['y'] = round( $newY, 2 );
+		$resultPoint->x = round( $newX, 2 );
+		$resultPoint->y = round( $newY, 2 );
 
-		return $arrResultPoint;
+		return $resultPoint;
 	}
 
 
 
 
 	/**
-	 Returns a midway point between 2 points 
-	 $arrPointA, $arrPointB associative array with 'x' and 'y' values
-	 $percent How far along the route from pointA the result should be
-	*/
-	function pointPercentageBetweenPoints( $arrPointA, $arrPointB, $percent ){
-
-		$x1 = $arrPointA['x']; 
-		$y1 = $arrPointA['y']; 
-
-		$x2 = $arrPointB['x']; 
-		$y2 = $arrPointB['y']; 
+	 * Returns a midway point between 2 points 
+	 *
+	 * @param {Point} $pointA 
+	 * @param {Point} $pointB 
+	 * @param {integer} $percent How far along the route from pointA the result should be
+	 *
+	 * @return {Point}
+	 */
+	public function pointPercentageBetweenPoints( Point $pointA, Point $pointB, $percent ){
 
 		$percAsDec = 100 / $percent;
 
-		$avX = $x1 + ( ($x2 - $x1) / $percAsDec );
-		$avY = $y1 + ( ($y2 - $y1) / $percAsDec );
+		$avX = $pointA->x + ( ($pointB->x - $pointA->x) / $percAsDec );
+		$avY = $pointA->y + ( ($pointB->y - $pointA->y) / $percAsDec );
 
-		$arrReturnPoint = array( 'x'=>$avX, 'y'=>$avY );
-
-		return $arrReturnPoint;
+		return new Point( $avX, $avY );
 	} 
 
 
@@ -98,35 +94,16 @@ class Math{
 	/**
 	 Returns the a point that is some percentage along the path between arrPointA and arrPointB
 	*/
-	function midPoint( $arrPointA, $arrPointB ){
-		return $this->pointPercentageBetweenPoints( $arrPointA, $arrPointB, 50 );
+	function midPoint( $pointA, $pointB ){
+		return $this->pointPercentageBetweenPoints( $pointA, $pointB, 50 );
 	}
 
 
 
 
 	/**
-	 Alters the location of a point by a random amount to fake organic positioning
-	 $maxVary Maximum number of units by which the point can vary on the x or y axis
-	*/
-	function randomVaryPoint( $arrPoint, $maxVary = 10 ){
-		
-		$x = $arrPoint['x'];
-		$y = $arrPoint['y'];
-		
-		$newX = $x + ( rand(0,$maxVary) - ($maxVary/2) );
-		$newY = $y + ( rand(0,$maxVary) - ($maxVary/2) );
-		
-		$arrReturnPoint = array( 'x'=>$newX, 'y'=>$newY );
-		return $arrReturnPoint;
-	}
-
-
-
-
-	/**
-	 Returns the a point that is midway between arrPointA and arrPointB
-	*/
+	 * Returns the a point that is midway between arrPointA and arrPointB
+	 */
 	function isInPolygon($cntPolygonPoints, $arrVerticesX, $arrVerticesY, $x, $y){
 
 		$i = $j = $c = $point = 0;
@@ -150,17 +127,20 @@ class Math{
 
 
 	/**
-	 Return the distance between 2 points
-	 $arrPointA - Associative array with 2 elements with the keys 'x' and 'y'
-	 $arrPointB - Same as above
-	*/
-	function distanceBetween( $arrPointA, $arrPointB ){
+	 * Return the distance between 2 points#
+	 *
+	 * @param {Point} $pointA 
+	 * @param {Point} $pointB 
+	 *
+	 * @return {float} Distance between points
+	 */
+	function distanceBetween( Point $pointA, Point $pointB ){
 
-		$x1 = floatval($arrPointA['x']);
-		$y1 = floatval($arrPointA['y']);
+		$x1 = floatval($pointA->x);
+		$y1 = floatval($pointA->y);
 
-		$x2 = floatval($arrPointB['x']);
-		$y2 = floatval($arrPointB['y']);
+		$x2 = floatval($pointB->x);
+		$y2 = floatval($pointB->y);
 
 		$xs = $x2 - $x1;
 		$xs = $xs * $xs;
@@ -197,39 +177,49 @@ class Math{
 
 
 	/**
-	 Returns the adjascent point based on 2 points 	
-	 @arrPointA, @arrPointB - associative array describing a point											
-	 @clockwide *Optional* - Boolean - Defaults to true 	
-	*/
-	function ninetyDeg( $arrPointA, $arrPointB, $clockwise = true ){
+	 * Returns the adjascent point based on 2 points 	
+	 *
+	 * @param {Point} arrPointA 
+	 * @param {Point} arrPointB 										
+	 * @param {boolean} clockwide *Optional* - Defaults to true 	
+	 *
+	 * @return {Point}
+	 */
+	function ninetyDeg( Point $pointA, Point $pointB, $clockwise = true ){
 
-		$arrPointResult = array();
+		$pointResult = new Point();
 
 		if( $clockwise ){
-			$arrPointResult['x'] = $arrPointB['x'] + ( $arrPointB['y'] - $arrPointA['y'] );
-			$arrPointResult['y'] = $arrPointB['y'] - ( $arrPointB['x'] - $arrPointA['x'] );
+			$pointResult->x = $pointB->x + ( $pointB->y - $pointA->y );
+			$pointResult->y = $pointB->y - ( $pointB->x - $pointA->x );
 		} else {
-			$arrPointResult['x'] = $arrPointB['x'] - ( $arrPointB['y'] - $arrPointA['y'] );
-			$arrPointResult['y'] = $arrPointB['y'] + ( $arrPointB['x'] - $arrPointA['x'] );
+			$pointResult->x = $pointB->x - ( $pointB->y - $pointA->y );
+			$pointResult->y = $pointB->y + ( $pointB->x - $pointA->x );
 		}
 
-		return $arrPointResult;
+		return $pointResult;
 	}
 
 
 
 
 	/**
-	 Returns true or false depending whether the $arrPointOrigin is above or below line
-	 (assumes pointA is to the left of pointB)
+	 * Returns true or false depending whether the $pointOrigin is above or below line
+	 * (assumes pointA is to the left of pointB)
+	 *
+	 * @param {Point} $pointOrigin
+	 * @param {Point} $pointA
+	 * @param {Point} $pointB
+	 *
+	 * @return {boolean}
 	 */
-	function isOriginAboveLine( $arrPointOrigin, $arrPointA, $arrPointB ){
+	function isOriginAboveLine( Point $pointOrigin, Point $pointA, Point $pointB ){
 		// Discover if the line is ascending or descending
-		$abOrientation = $this->abOrientation( $arrPointA, $arrPointB );
+		$abOrientation = $this->abOrientation( $pointA, $pointB );
 
 		if( $abOrientation === 'flat' ){
 
-			if( $arrPointOrigin['y'] < $arrPointB['y'] ){
+			if( $pointOrigin->y < $pointB->y ){
 				return true;
 			} else {
 				return false;
@@ -238,19 +228,19 @@ class Math{
 		} else if( $abOrientation === 'descending' ){
 
 			// If origin is left of A or below B in a descending line it is definitely below, return false.
-			if( $arrPointOrigin['x'] <= $arrPointA['x'] || $arrPointOrigin['y'] >= $arrPointB['y'] ){
+			if( $pointOrigin->x <= $pointA->x || $pointOrigin->y >= $pointB->y ){
 				return false;
 			}
 
 			// If origin is right of B or above A in a descending line it is definitely above, return true.
-			if( $arrPointOrigin['x'] >= $arrPointB['x'] || $arrPointOrigin['y'] < $arrPointA['y'] ){
+			if( $pointOrigin->x >= $pointB->x || $pointOrigin->y < $pointA->y ){
 				return true;
 			}
 
 			// If we've reached this point of the function, origin must be inside the bounding box so we need to compare angles
-			$oppositeSideToBLength = $arrPointOrigin['x'] - $arrPointA['x'];
+			$oppositeSideToBLength = $pointOrigin->x - $pointA->x;
 
-			$hypotenuseToBLength = $this->distanceBetween( $arrPointOrigin, $arrPointA );
+			$hypotenuseToBLength = $this->distanceBetween( $pointOrigin, $pointA );
 
 			$sinB = $oppositeSideToBLength / $hypotenuseToBLength;
 			$angleB = rad2deg( asin( $sinB ) );
@@ -258,18 +248,18 @@ class Math{
 		} else if( $abOrientation === 'ascending' ) {
 
 			// If origin is right of B or below A in an ascending line it is definitely below, return false.
-			if( $arrPointOrigin['x'] > $arrPointB['x'] || $arrPointOrigin['y'] > $arrPointA['y'] ){
+			if( $pointOrigin->x > $pointB->x || $pointOrigin->y > $pointA->y ){
 				return false;
 			}
 
 			// If origin is left of A or above B in an ascending line it is definitely above, return true.
-			if( $arrPointOrigin['x'] < $arrPointA['x'] || $arrPointOrigin['y'] < $arrPointB['y'] ){
+			if( $pointOrigin->x < $pointA->x || $pointOrigin->y < $pointB->y ){
 				return true;
 			}
 
 			// If we've reached this point of the function, origin must be inside the bounding box so we need to compare angles
-			$oppositeSideToBLength = $arrPointB['x'] - $arrPointOrigin['x'];
-			$hypotenuseToBLength = $this->distanceBetween( $arrPointB, $arrPointOrigin );
+			$oppositeSideToBLength = $pointB->x - $pointOrigin->x;
+			$hypotenuseToBLength = $this->distanceBetween( $pointB, $pointOrigin );
 			if( $hypotenuseToBLength == 0 ){
 				$sinB = 0;
 			} else {
@@ -279,8 +269,8 @@ class Math{
 
 		}
 
-		$oppositeSideToALength = $arrPointB['x'] - $arrPointA['x'];
-		$hypotenuseToALength = $this->distanceBetween( $arrPointB, $arrPointA );
+		$oppositeSideToALength = $pointB->x - $pointA->x;
+		$hypotenuseToALength = $this->distanceBetween( $pointB, $pointA );
 		$sinA = $oppositeSideToALength / $hypotenuseToALength;
 		$angleA = rad2deg( asin( $sinA ) );
 
@@ -296,13 +286,18 @@ class Math{
 
 
 	/**
-	 There are only 2 orientations between A and B, ascending (B is higher) or descending (B is lower)
-	 (assumes pointA is to the left of pointB)
-	*/
-	function abOrientation( $arrPointA, $arrPointB ){
-		if( $arrPointA['y'] === $arrPointB['y'] ){
+	 * There are only 2 orientations between A and B, ascending (B is higher) or descending (B is lower)
+	 * (assumes pointA is to the left of pointB)
+	 *
+	 * @param {Point}
+	 * @param {Point}
+	 *
+	 * @return {string}
+	 */
+	function abOrientation( Point $pointA, Point $pointB ){
+		if( $pointA->y === $pointB->y ){
 			return 'flat';
-		} else if( $arrPointA['y'] < $arrPointB['y'] ){
+		} else if( $pointA->y < $pointB->y ){
 			return 'descending';
 		} else {
 			return 'ascending';
@@ -312,13 +307,16 @@ class Math{
 
 
 	/** 
-	 Swaps 2 points if required to ensure the left most point is point A
-	*/
-	function orientSoLeftmostIsFirst( &$arrPointA, &$arrPointB ){
-		if( $arrPointA['x'] > $arrPointB['x'] ){
-			$tempB = $arrPointB;
-			$arrPointB = $arrPointA;
-			$arrPointA = $tempB;
+	 * Swaps 2 points if required to ensure the left most point is point A
+	 *
+	 * @param {Point}
+	 * @param {Point}
+	 */
+	function orientSoLeftmostIsFirst( Point &$pointA, Point &$pointB ){
+		if( $pointA->x > $pointB->x ){
+			$tempB = $pointB;
+			$pointB = $pointA;
+			$pointA = $tempB;
 		}
 	}
 
@@ -326,36 +324,39 @@ class Math{
 
 
 	/**
-	 Imagine you are stood looking at the side of a straight road that travels across your field of vision
-	 You know the coordinates of where you are, where the straight road starts and where it ends 
-	 What is the coordinate of the point on that straight road that is directly infront of you, aka closest to you. 
-	 $arrOriginPoint - associative array with 'x' and 'y' values
-	 $arrPointA - Same as above
-	 $arrPointB - Same as above
-	*/
-	function closestPointBetween2( $arrPointOrigin, $arrPointA, $arrPointB ){
+	 * Imagine you are stood looking at the side of a straight road that travels across your field of vision
+	 * You know the coordinates of where you are ($pointOrigin), where the straight road starts and where it ends ($pointA and $pointB). 
+	 * What is the coordinate of the point on that straight road that is directly infront of you, aka closest to you. 
+	 *
+	 * @param {Point} $pointOrigin 
+	 * @param {Point} $pointA 
+	 * @param {Point} $pointB 
+	 *
+	 * @return {array}
+	 */
+	function closestPointBetween2( Point $pointOrigin, Point $pointA, Point $pointB ){
 
 		// Orient the points so that A is on the left
-		$this->orientSoLeftmostIsFirst( $arrPointA, $arrPointB );
+		$this->orientSoLeftmostIsFirst( $pointA, $pointB );
 
-		$abOrientation = $this->abOrientation( $arrPointA, $arrPointB );
-		$isOriginAboveLine = $this->isOriginAboveLine( $arrPointOrigin, $arrPointA, $arrPointB );
+		$abOrientation = $this->abOrientation( $pointA, $pointB );
+		$isOriginAboveLine = $this->isOriginAboveLine( $pointOrigin, $pointA, $pointB );
 
 		$arrReturn = array();
 
 		// Angle a (Orange in docs) Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointB as it's hypotenuse
 		if( ( $abOrientation ==  'ascending' &&  $isOriginAboveLine ) || 
 			( $abOrientation == 'descending' && !$isOriginAboveLine ) ){
-			$arrRightAngleCornerPointToA = array('x'=>$arrPointB['x'], 'y'=>$arrPointA['y']);
+			$arrRightAngleCornerPointToA = new Point($pointB->x, $pointA->y);
 		} else { 
-			$arrRightAngleCornerPointToA = array('x'=>$arrPointA['x'], 'y'=>$arrPointB['y']);
+			$arrRightAngleCornerPointToA = new Point($pointA->x, $pointB->y);
 		}
-		$arrReturn['arrOppAndAdjSidesToA'] = array( 	$arrPointB,
-														$arrRightAngleCornerPointToA, 
-														$arrPointA
-												);
-		$oppositeSideToALength = $this->distanceBetween( $arrPointB, $arrRightAngleCornerPointToA );
-		$hypotenuseToALength = $this->distanceBetween( $arrPointA, $arrPointB );
+		$arrReturn['arrOppAndAdjSidesToA'] = [ 	$pointB,
+												$arrRightAngleCornerPointToA, 
+												$pointA
+											];
+		$oppositeSideToALength = $this->distanceBetween( $pointB, $arrRightAngleCornerPointToA );
+		$hypotenuseToALength = $this->distanceBetween( $pointA, $pointB );
 		if( $hypotenuseToALength == 0 ){
 			$sinA = 0;
 		} else {
@@ -364,20 +365,20 @@ class Math{
 		$angleA = rad2deg( asin( $sinA ) );
 
 		// Calculate the angle of the corner nearest to pointA of a right-angled triangle with line between pointA and pointOrigin as it's hypotenuse
-		if( ( $abOrientation ==  'ascending' &&  $isOriginAboveLine && $arrPointOrigin['x'] > $arrPointA['x'] ) || 
-			( $abOrientation ==  'ascending' && !$isOriginAboveLine && $arrPointOrigin['y'] > $arrPointA['y'] ) || 
-			( $abOrientation == 'descending' &&  $isOriginAboveLine && $arrPointOrigin['y'] < $arrPointA['y'] ) || 
-			( $abOrientation == 'descending' && !$isOriginAboveLine && $arrPointOrigin['x'] > $arrPointA['x'] ) ){
-			$arrRightAngleCornerPointToC = array('x'=>$arrPointA['x'], 'y'=>$arrPointOrigin['y']);
+		if( ( $abOrientation ==  'ascending' &&  $isOriginAboveLine && $pointOrigin->x > $pointA->x ) || 
+			( $abOrientation ==  'ascending' && !$isOriginAboveLine && $pointOrigin->y > $pointA->y ) || 
+			( $abOrientation == 'descending' &&  $isOriginAboveLine && $pointOrigin->y < $pointA->y ) || 
+			( $abOrientation == 'descending' && !$isOriginAboveLine && $pointOrigin->x > $pointA->x ) ){
+			$arrRightAngleCornerPointToC = new Point($pointA->x, $pointOrigin->y);
 		} else {
-			$arrRightAngleCornerPointToC = array('x'=>$arrPointOrigin['x'], 'y'=>$arrPointA['y']);
+			$arrRightAngleCornerPointToC = new Point($pointOrigin->x, $pointA->y);
 		}
-		$arrReturn['arrOppAndAdjSidesToC'] = array( 	$arrPointOrigin,
+		$arrReturn['arrOppAndAdjSidesToC'] = array( 	$pointOrigin,
 														$arrRightAngleCornerPointToC, 
-														$arrPointA
+														$pointA
 												);
-		$oppositeSideToCLength = $this->distanceBetween( $arrPointOrigin, $arrRightAngleCornerPointToC );
-		$hypotenuseToCLength = $this->distanceBetween( $arrPointOrigin, $arrPointA );
+		$oppositeSideToCLength = $this->distanceBetween( $pointOrigin, $arrRightAngleCornerPointToC );
+		$hypotenuseToCLength = $this->distanceBetween( $pointOrigin, $pointA );
 		if( $hypotenuseToCLength == 0 ){
 			$sinC = 0;
 		} else {
@@ -385,8 +386,8 @@ class Math{
 		}
 		$angleC = rad2deg( asin( $sinC ) );
 
-		if( ( $abOrientation ==  'ascending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] <= $arrPointA['y'] ) ||
-			( $abOrientation == 'descending' && $arrPointOrigin['x'] > $arrPointA['x'] && $arrPointOrigin['y'] >= $arrPointA['y'] ) ){
+		if( ( $abOrientation ==  'ascending' && $pointOrigin->x > $pointA->x && $pointOrigin->y <= $pointA->y ) ||
+			( $abOrientation == 'descending' && $pointOrigin->x > $pointA->x && $pointOrigin->y >= $pointA->y ) ){
 			$totalAngle = 90;
 		} else {
 			$totalAngle = 180;
@@ -405,30 +406,30 @@ class Math{
 
 		if( $abOrientation == 'ascending' ){
 			if( $isOriginAboveLine ){
-				$resultX = $arrPointA['x'] + $side1Length;
-				$resultY = $arrPointA['y'] - $side2Length;
+				$resultX = $pointA->x + $side1Length;
+				$resultY = $pointA->y - $side2Length;
 			} else {
-				$resultX = $arrPointA['x'] + $side2Length;
-				$resultY = $arrPointA['y'] - $side1Length;
+				$resultX = $pointA->x + $side2Length;
+				$resultY = $pointA->y - $side1Length;
 			}
 		} else if( $abOrientation == 'descending' ) {
 			if( $isOriginAboveLine ){
-				$resultX = $arrPointA['x'] + $side2Length;
-				$resultY = $arrPointA['y'] + $side1Length;
+				$resultX = $pointA->x + $side2Length;
+				$resultY = $pointA->y + $side1Length;
 			} else {
-				$resultX = $arrPointA['x'] + $side1Length;
-				$resultY = $arrPointA['y'] + $side2Length;
+				$resultX = $pointA->x + $side1Length;
+				$resultY = $pointA->y + $side2Length;
 			}
 		}
 
-		$arrPointResult = array( 'x'=>$resultX, 'y'=>$resultY );
+		$arrPointResult = new Point( $resultX, $resultY );
 
 		// Return some debugging
 		$arrReturn['arrPointResult'] = $arrPointResult;
-		$arrReturn['distanceToPointResult'] = $this->distanceBetween( $arrPointOrigin, $arrPointResult );
+		$arrReturn['distanceToPointResult'] = $this->distanceBetween( $pointOrigin, $arrPointResult );
 
-		$arrReturn['arrPointA'] = $arrPointA;
-		$arrReturn['arrPointB'] = $arrPointB;
+		$arrReturn['arrPointA'] = $pointA;
+		$arrReturn['arrPointB'] = $pointB;
 		$arrReturn['abOrientation'] = $abOrientation;
 		$arrReturn['isOriginAboveLine'] = $isOriginAboveLine;
 		$arrReturn['oppositeSideToALength'] = $oppositeSideToALength;
@@ -453,21 +454,28 @@ class Math{
 
 
 	/**
-	 Returns an associative array containing area and for debugging purposes, the rightAngledTriangles used to calculate
-	*/
-	public function areaOfTriangle( $arrPointA, $arrPointB, $arrPointC ){
+	 * Calculates area of a triangle. 
+	 * for debugging purposes also returns the rightAngledTriangles used to calculate.
+	 *
+	 * @param {Point} $pointA
+	 * @param {Point} $pointB
+	 * @param {Point} $pointC
+	 *
+	 * @return {array} Contains: 'area' and 'rightAngledTriangles'
+	 */
+	public function areaOfTriangle( Point $pointA, Point $pointB, Point $pointC ){
 
 		$arrReturn['area'] = 0;
-		$arrReturn['rightAngledTriangles'] = array();
+		$arrReturn['rightAngledTriangles'] = [ null, null ];
 
-		$arrClosestPointBetween2 = $this->closestPointBetween2( $arrPointA, $arrPointB, $arrPointC );
+		$arrClosestPointBetween2 = $this->closestPointBetween2( $pointA, $pointB, $pointC );
 
-		$arrReturn['rightAngledTriangles'][0] = array( $arrPointA, $arrClosestPointBetween2['arrPointResult'], $arrPointB );
-		$lengthOfBase = $this->distanceBetween( $arrClosestPointBetween2['arrPointResult'], $arrPointB );
+		$arrReturn['rightAngledTriangles'][0] = array( $pointA, $arrClosestPointBetween2['arrPointResult'], $pointB );
+		$lengthOfBase = $this->distanceBetween( $arrClosestPointBetween2['arrPointResult'], $pointB );
 		$arrReturn['area'] += $lengthOfBase * $arrClosestPointBetween2['distanceToPointResult'] / 2;
 
-		$arrReturn['rightAngledTriangles'][1] = array( $arrPointA, $arrClosestPointBetween2['arrPointResult'], $arrPointC );
-		$lengthOfBase = $this->distanceBetween( $arrClosestPointBetween2['arrPointResult'], $arrPointC );
+		$arrReturn['rightAngledTriangles'][1] = array( $pointA, $arrClosestPointBetween2['arrPointResult'], $pointC );
+		$lengthOfBase = $this->distanceBetween( $arrClosestPointBetween2['arrPointResult'], $pointC );
 		$arrReturn['area'] += $lengthOfBase * $arrClosestPointBetween2['distanceToPointResult'] / 2;
 
 		$arrReturn['area'] = round( $arrReturn['area'], 2 );
@@ -480,16 +488,16 @@ class Math{
 
 
 	/** 
-	 Takes a single point and searches an array of points to return the top n nearest
-	*/
-	public function nearestPointsInArray( $arrPointOrigin, $arrPoints, $resultLimit = 5, $distanceLimit = 100 ){
+	 * Takes a single point and searches an array of points to return the top n nearest
+	 */
+	public function nearestPointsInArray( $pointOrigin, $arrPoints, $resultLimit = 5, $distanceLimit = 100 ){
 		
 		$arrPointsWithinLimit = array();
 
 		// Loop over $arrPoints calculating distance and assigning them to $arrPointsWithinLimit if within limit
 		$iLimit = sizeof($arrPoints);
 		for( $i = 0; $i < $iLimit; $i++ ){
-			$arrPoints[$i]['distance'] = $this->distanceBetween( $arrPointOrigin, $arrPoints[$i] );
+			$arrPoints[$i]['distance'] = $this->distanceBetween( $pointOrigin, $arrPoints[$i] );
 			if( $arrPoints[$i]['distance'] < $distanceLimit ){
 				$arrPointsWithinLimit[] = $arrPoints[$i];
 			}

@@ -123,9 +123,12 @@ function debugDot( x, y, colour ){
 
 
 
-/* Places a path on the canvas for debugging purposes---------------------------- */
-/* @arrPoints Array of points representing the path ----------------------------- */
-/* @colour *Optional* - Defaults to 'red' --------------------------------------- */
+/**
+ * Places a path on the canvas for debugging purposes
+ * 
+ * @param {array} arrPoints of points representing the path 
+ * @param {string} colour *Optional* - Defaults to 'red' 
+ */
 function debugPath( arrPoints, colour ){
 
 	if(typeof colour === 'undefined'){
@@ -134,7 +137,8 @@ function debugPath( arrPoints, colour ){
 
 	var d = 'M ';
 	for( var i = 0, iLimit = arrPoints.length; i < iLimit; i++ ){
-		d += ' ' + arrPoints[i].x + ',' + arrPoints[i].y;
+        console.log( arrPoints[i] );
+        d += ' ' + arrPoints[i].x + ',' + arrPoints[i].y;
 	}
 
 	var debugPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -229,6 +233,7 @@ function offsetSides( x, y ){
         	},
         dataType: "json"
     }).done(function(data) {
+        console.log(data);
     	renderSides( data );
     });
 }
@@ -273,15 +278,25 @@ function renderSides( arrSides ){
 
 
 /* Handles click event to start spawning 	*/
-$('#btnSpawnStart').click( spawn );
+$('#btnSpawnStartStop').click( function(e){
+
+    e.preventDefault();
+
+    if( $(this).hasClass('active') ){
+        $(this).removeClass('active').find('span').html('Start Spawning');
+        stopSpawning();
+    } else {
+        $(this).addClass('active').find('span').html('Stop Spawning');
+        startSpawning()
+    }
+
+});
 
 
 
 
-/* A function that creates buildings. Then calls itself.	*/
-function spawn(){
-
-	$('#spawnNotify').addClass('active');
+/** A function that creates buildings. Then calls itself. */
+function startSpawning(){
 
 	// Generate a pointer to a random existing path (property) to build next to
 
@@ -297,20 +312,19 @@ function spawn(){
 
 	// Make it a permenant change if it's all good
 
-	window.setTimeout( spawn, 10);
+	//window.setTimeout( spawn, 10);
 }
 
 
 
 
-/* Handles click event to stop spawning 	*/
-$('#btnSpawnStop').click( function(){
-	var id = window.setTimeout(function() {}, 0);
-	while (id--) {
-	    window.clearTimeout(id);
-	}
-	$('#spawnNotify').removeClass('active');
-});
+/** Handles click event to stop spawning */
+function stopSpawning(){
+	// var id = window.setTimeout(function() {}, 0);
+	// while (id--) {
+	//     window.clearTimeout(id);
+	// }
+}
 
 
 

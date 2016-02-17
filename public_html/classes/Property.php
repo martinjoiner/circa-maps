@@ -2,8 +2,11 @@
 
 class Property{
 
-	var $arrPoints = array();
-	var $id;
+	public $arrPoints = [];
+
+	/** Database ID of the property (public so CoordinateGeometry can access it) */
+	public $id;
+
 	var $mapID; 
 
 	var $arrVerticesX = array(); // An array of just the x values (Useful for basic sanity checking in collision detection)
@@ -16,7 +19,7 @@ class Property{
 	 * A property can be constructed with just an array of points and a mapID
 	 * passing and an id is optional
 	 *
-	 * @param {array} $arrPoints
+	 * @param {array} $arrPoints Array of instances of Point class
 	 * @param {integer} $mapID
 	 * @param {integer} $id
 	 */
@@ -47,8 +50,8 @@ class Property{
 		$this->arrVerticesY = array();
 
 		foreach( $this->arrPoints as $thisPoint ){
-			$this->arrVerticesX[] = $thisPoint['x'];
-			$this->arrVerticesY[] = $thisPoint['y'];
+			$this->arrVerticesX[] = $thisPoint->x;
+			$this->arrVerticesY[] = $thisPoint->y;
 		}
 
 	}
@@ -87,7 +90,7 @@ class Property{
 		$arrPath['class'] = 'Property';
 		$arrPath['d'] = 'M ';
 		foreach( $this->arrPoints as $thisPoint ){
-			$arrPath['d'] .= $thisPoint['x'] . ',' . $thisPoint['y'] . ' ';
+			$arrPath['d'] .= $thisPoint->x . ',' . $thisPoint->y . ' ';
 		} 
 		$arrPath['d'] .= 'z';
 		return $arrPath;
@@ -134,15 +137,14 @@ class Property{
 
 
 	/** 
-	 * Returns an associative array with 'class', 'd' values 
-	 * The front of a property is the 
+	 * Returns data needed to render fronts on SVG canvas
+	 * The front of a property is the 1st and 2nd points in arrPoints
 	 *
-	 * @return {array}
+	 * @return {array} Contains: 'class' and 'd'
 	 */
 	public function getFront(){
-		$arrFront = array();
-		$arrFront['class'] = 'Front';
-		$arrFront['d'] = 'M ' . $this->arrPoints[0]['x'] . ',' . $this->arrPoints[0]['y'] . ' ' . $this->arrPoints[1]['x'] . ',' . $this->arrPoints[1]['y'];
+		$arrFront = [ 'class' => 'Front', 'd'=>'' ];
+		$arrFront['d'] = 'M ' . $this->arrPoints[0]->x . ',' . $this->arrPoints[0]->y . ' ' . $this->arrPoints[1]->x . ',' . $this->arrPoints[1]->y;
 		return $arrFront;
 	}
 
@@ -153,11 +155,11 @@ class Property{
 	 * Returns an associative array of information about the property
 	 * Runs a series of checks to determine if the property is a standard (sensible) shape
 	 *
-	 * @return {array}
+	 * @return {array} Contains: 'arrAreaData', 'id', 'isStandard'
 	 */
 	public function getInfo(){
 
-		$arrReturn = array();
+		$arrReturn = [];
 		$arrReturn['arrAreaData'] = $this->getAreaData();
 		$arrReturn['id'] = $this->id;
 		$arrReturn['isStandard'] = true;
@@ -189,14 +191,16 @@ class Property{
 
 
 	/**
-	 Returns an associative array containing area of the property and for debugging purpsoses the right-angled triangles that were used to calculate it
-	*/
+	 * Returns an associative array containing area of the property and for debugging purpsoses the right-angled triangles that were used to calculate it
+	 *
+	 * @return {array} Contains: {float} 'area', {array} 'rightAngledTriangles'
+	 */
 	public function getAreaData(){
 
 		$objMath = new Math();
 
 		$arrReturn['area'] = 0;
-		$arrReturn['rightAngledTriangles'] = array();
+		$arrReturn['rightAngledTriangles'] = [];
 
 		$disection1Length = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
 
@@ -456,14 +460,14 @@ class Property{
 										( :propertyID, 4, :x4, :y4 );
 							");
 		$qry->bindValue('propertyID', $this->id, PDO::PARAM_INT);
-		$qry->bindValue('x1', $this->arrPoints[0]['x'], PDO::PARAM_INT);
-		$qry->bindValue('y1', $this->arrPoints[0]['y'], PDO::PARAM_INT);
-		$qry->bindValue('x2', $this->arrPoints[1]['x'], PDO::PARAM_INT);
-		$qry->bindValue('y2', $this->arrPoints[1]['y'], PDO::PARAM_INT);
-		$qry->bindValue('x3', $this->arrPoints[2]['x'], PDO::PARAM_INT);
-		$qry->bindValue('y3', $this->arrPoints[2]['y'], PDO::PARAM_INT);
-		$qry->bindValue('x4', $this->arrPoints[3]['x'], PDO::PARAM_INT);
-		$qry->bindValue('y4', $this->arrPoints[3]['y'], PDO::PARAM_INT);
+		$qry->bindValue('x1', $this->arrPoints[0]->x, PDO::PARAM_INT);
+		$qry->bindValue('y1', $this->arrPoints[0]->y, PDO::PARAM_INT);
+		$qry->bindValue('x2', $this->arrPoints[1]->x, PDO::PARAM_INT);
+		$qry->bindValue('y2', $this->arrPoints[1]->y, PDO::PARAM_INT);
+		$qry->bindValue('x3', $this->arrPoints[2]->x, PDO::PARAM_INT);
+		$qry->bindValue('y3', $this->arrPoints[2]->y, PDO::PARAM_INT);
+		$qry->bindValue('x4', $this->arrPoints[3]->x, PDO::PARAM_INT);
+		$qry->bindValue('y4', $this->arrPoints[3]->y, PDO::PARAM_INT);
 		$qry->execute();
 		$qry->closeCursor();
 

@@ -116,7 +116,7 @@ class MapSection extends Map{
 	 * @param {integer} $x
 	 * @param {integer} $y
 	 *
-	 * @return {array} Contains: occupationType, message
+	 * @return {array} Contains: 'cntProperties', 'cntRoutes', 'isOccupied', 'occupationType', 'message'
 	 */
 	public function isOccupied( $x, $y ){
 
@@ -128,7 +128,7 @@ class MapSection extends Map{
 						'occupationType' => null,
 						'message' => '' 
 					];
-		
+
 		// Iterate over properties, checking if point is inside it 
 		foreach( $this->arrProperties as $pointer => $thisProperty ){
 
@@ -189,10 +189,9 @@ class MapSection extends Map{
 
 		if( $cntRoutesChecked ){
 			$objMath = new Math();
-			$arrPointOrigin = array('x'=>$point->x,'y'=>$point->y);
-			$closestPointBetween2 = $objMath->closestPointBetween2( $arrPointOrigin, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
+			$closestPointBetween2 = $objMath->closestPointBetween2( $point, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
 			$arrResult['closestPointOnRoute'] = $closestPointBetween2;
-			$arrResult['distanceToClosestPointOnRoute'] = $objMath->distanceBetween( $arrPointOrigin, $closestPointBetween2['arrPointResult'] );
+			$arrResult['distanceToClosestPointOnRoute'] = $objMath->distanceBetween( $point, $closestPointBetween2['arrPointResult'] );
 			$arrResult['cntRoutesChecked'] = $cntRoutesChecked;
 		}
 
@@ -227,6 +226,8 @@ class MapSection extends Map{
 	 * Then attempts to improve that property by changing it's shape
 	 *
 	 * @param {Point} 
+	 *
+	 * @return {array} Contains: 'cntSidesReplaced', 'path' and 'arrNeighboursOffsetSides'
 	 */
 	public function improvePropertyAtPoint( Point $point ){
 		$arrIsOccupiedResult = $this->isOccupied( $point->x, $point->y );
@@ -352,7 +353,7 @@ class MapSection extends Map{
 			$thisPropertyToBeImproved->saveInDB();
 		}
 
-		$arrReturn = array();
+		$arrReturn = [];
 		$arrReturn['cntSidesReplaced'] = $cntSidesReplaced;
 		$arrReturn['path'] = $thisPropertyToBeImproved->getPath();
 		$arrReturn['arrNeighboursOffsetSides'] = $arrNeighboursOffsetSides;

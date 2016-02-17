@@ -3,37 +3,38 @@
 Class CoordinateGeometry extends Math{
 
 	/**
-	 Calculates the equation of the line segment as if it continues forever
-	 y = mx + b
-	 Returns array with keys 'm', 'b', 'x', 'equation' and 'isVertical'
-	*/
-	function equationOfLine( $arrPointA, $arrPointB ){
+	 * Calculates the equation of the line segment as if it continues forever
+	 * y = mx + b
+	 *
+	 * @return {array} with keys 'm', 'b', 'x', 'equation' and 'isVertical'
+	 */
+	function equationOfLine( Point $pointA, Point $pointB ){
 
 		// Set up the return array with all possible elements
 		$arrReturn = array( 'm'=>null, 'b'=>null, 'x'=>null, 'equation'=>'y = mx + b', 'isVertical'=>false );
 
 		// Arrange the points so that point A is on the left
-		parent::orientSoLeftmostIsFirst( $arrPointA, $arrPointB );
+		parent::orientSoLeftmostIsFirst( $pointA, $pointB );
 
 		// If the line is horizontal the equation is easy! 
-		if( $arrPointA['y'] === $arrPointB['y'] ){
+		if( $pointA->y === $pointB->y ){
 			$arrReturn['m'] = 0;
-			$arrReturn['b'] = $arrPointA['y'];
+			$arrReturn['b'] = $pointA->y;
 			return $arrReturn;
 		}
 
 		// If the line is vertical the equation is easy!
-		if( $arrPointA['x'] === $arrPointB['x'] ){
+		if( $pointA->x === $pointB->x ){
 			$arrReturn['isVertical'] = true;
-			$arrReturn['equation'] = 'x = ' . $arrPointA['x'];
-			$arrReturn['x'] = $arrPointA['x'];
+			$arrReturn['equation'] = 'x = ' . $pointA->x;
+			$arrReturn['x'] = $pointA->x;
 			return $arrReturn;
 		}
 
 		// Calculate theta 
-		$oppositeToTheta = $arrPointB['y'] - $arrPointA['y'];
+		$oppositeToTheta = $pointB->y - $pointA->y;
 
-		$adjacentToTheta = $arrPointB['x'] - $arrPointA['x'];
+		$adjacentToTheta = $pointB->x - $pointA->x;
 
 		$tanTheta = $oppositeToTheta / $adjacentToTheta;
 
@@ -42,16 +43,15 @@ Class CoordinateGeometry extends Math{
 		$degTheta = rad2deg( $radTheta );
 
 		// Now project a triangle from 0,0 and use opposite side to calculate m and b
-		$oppositeToDelta = tan( deg2rad( $degTheta ) ) * $arrPointA['x'];
+		$oppositeToDelta = tan( deg2rad( $degTheta ) ) * $pointA->x;
 
-		$arrReturn['b'] = $arrPointA['y'] - round( $oppositeToDelta, 2);
+		$arrReturn['b'] = $pointA->y - round( $oppositeToDelta, 2);
 
-		if( $arrPointA['x'] === 0 ){
+		if( $pointA->x === 0 ){
 			// TODO: If one of the points provided is on the y axis then we have to use y = m(x-Px) + Py equation 
 		} 
 
-		$arrReturn['m'] = $oppositeToDelta / $arrPointA['x'];
-
+		$arrReturn['m'] = $oppositeToDelta / $pointA->x;
 
 		return $arrReturn;
 
@@ -61,8 +61,13 @@ Class CoordinateGeometry extends Math{
 
 
 	/**
-	 Returns a simple true or false from the more complicated lineSegmentIntersectionPoint() method
-	*/
+	 * Returns a simple true or false from the more complicated lineSegmentIntersectionPoint() method
+	 *
+	 * @param {array} $lineSegmentA Containing 2 instances of Point class
+	 * @param {array} $lineSegmentB Containing 2 instances of Point class
+	 *
+	 * @return {boolean} 
+	 */
 	function doSegmentsIntersect( $lineSegmentA, $lineSegmentB ){
 		$result = self::lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB );
 		return $result['intersectionOnSegment'];
@@ -72,10 +77,15 @@ Class CoordinateGeometry extends Math{
 
 
 	/**
-	 Returns the point at which the lines of 2 line segments intersect
-	 and if whether that point is on the segments
-	*/
-	function lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB ){
+	 * Returns the point at which the lines of 2 line segments intersect
+	 * and if whether that point is on the segments
+	 *
+	 * @param {array} $lineSegmentA Containing 2 instances of Point class
+	 * @param {array} $lineSegmentB Containing 2 instances of Point class
+	 *
+	 * @return {array} 
+	 */
+	private function lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB ){
 
 		$arrReturn = array( 'x'=>null, 'y'=>null, 'intersectionOnSegment'=>false, 'lineAreParallel'=>false );
 
@@ -116,7 +126,7 @@ Class CoordinateGeometry extends Math{
 			}
 
 			// Check if the intersection point is within the vertical segments y limits
-			if( $y >= min( $verticalSegment[0]['y'], $verticalSegment[1]['y'] ) && $y <= max( $verticalSegment[0]['y'], $verticalSegment[1]['y'] ) ){
+			if( $y >= min( $verticalSegment[0]->y, $verticalSegment[1]->y ) && $y <= max( $verticalSegment[0]->y, $verticalSegment[1]->y ) ){
 				$arrReturn['intersectionOnSegment'] = true;
 			} else {
 				$arrReturn['intersectionOnSegment'] = false;
@@ -134,7 +144,7 @@ Class CoordinateGeometry extends Math{
 			$y = ( $equationOfLineA['m'] * $x ) + $equationOfLineA['b'];
 
 			// Check if the intersection point is within one of the line segment's x limits
-			if( $x >= $lineSegmentA[0]['x'] && $x <= $lineSegmentA[1]['x'] ){
+			if( $x >= $lineSegmentA[0]->x && $x <= $lineSegmentA[1]->x ){
 				$arrReturn['intersectionOnSegment'] = true;
 			} else {
 				$arrReturn['intersectionOnSegment'] = false;
