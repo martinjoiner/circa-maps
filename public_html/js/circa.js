@@ -10,7 +10,7 @@ Map = function(){
     this.mask = $('#mask');
 
     /** {integer} database ID of the map */
-    this.id = $('input#mapID').val();
+    this.id = parseInt( $('input#mapID').val() );
 
     /** {string} Can be 'isOccupied'... */
     this.mode = '';
