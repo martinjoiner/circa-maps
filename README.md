@@ -3,6 +3,10 @@
 
 Generative design code to produce large map-like artworks. Database-backed for saving and efficient collision detection during generation by limiting run-time objects to a section of the map. 
 
+![Photographed segment of a print by Ashley Thomas](/docs/Segment-of-AT-Print.jpg)
+
+The above image is a section of a print by Ashley Thomas. The inspiration for this project is to explore the question of what a code version of Ashley's very slow manual process could look like? 
+
 ![Screenshot of Circa at end of 2015](/docs/screenshot-2015.jpg)
 
 The above image shows the level of complexity that the project is able to generate at end of 2015
