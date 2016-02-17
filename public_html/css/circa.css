@@ -29,12 +29,17 @@ body{
 /* ------------------------- */
 
 .controlPanel{
-	background-color: #333;
+	position: absolute;
+	right: 0;
+	background-color: rgba(0,0,0,0.8);
 	color: #CCC;
-	padding: 1em;
+	padding: 5px;
 	width: 180px;
-	float: left;
-	min-height: 700px;
+	min-height: 800px;
+}
+
+legend{
+	width: 100%;
 }
 
 .mouseMode{

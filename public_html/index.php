@@ -72,7 +72,19 @@
 			</tbody>
 		</table>
 
-		<a href="?mapID=1">Map 1</a> <a href="?mapID=2">Map 2</a> <a href="?mapID=3">Map 3</a> 
+
+		<fieldset class="mouseMode">
+			<legend>Maps</legend>
+			<ul>
+				<?php
+				for( $i=1; $i < 5; $i++ ){
+					?>
+					<li><a href="?mapID=<?=$i?>">Map <?=$i?></a></li>
+					<?php
+				}
+				?>
+			</ul>
+		</fieldset>
 
 	</form>
 
