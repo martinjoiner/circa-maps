@@ -4,6 +4,7 @@
 Generative design code to produce large map-like artworks. Database-backed for saving and efficient collision detection during generation by limiting run-time objects to a section of the map. 
 
 ![Screenshot of Circa at end of 2015](/docs/screenshot-2015.jpg)
+
 The above image shows the level of complexity that the project is able to generate at end of 2015
 
 Live at: http://circa.butterscotchworld.co.uk
