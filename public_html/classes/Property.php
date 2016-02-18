@@ -100,22 +100,24 @@ class Property{
 
 
 	/**
-	 Takes an array of points, return the centre of them and the maximum radius
-	*/
+	 * Takes an array of points, return the centre of them and the maximum radius
+	 *
+	 * @return {array} Contains: 'centerPoint', 'nearestRadius' and 'farthestRadius'
+	 */
 	function getCenterData(){
 
 		$objMath = new Math();
 
-		$arrFirstAveragePoint = $objMath->midPoint( $this->arrPoints[0], $this->arrPoints[2] );
-		$arrSecondAveragePoint = $objMath->midPoint( $this->arrPoints[1], $this->arrPoints[3] );
-		$arrCenterPoint = $objMath->midPoint( $arrFirstAveragePoint, $arrSecondAveragePoint );
+		$firstAveragePoint = $objMath->midPoint( $this->arrPoints[0], $this->arrPoints[2] );
+		$secondAveragePoint = $objMath->midPoint( $this->arrPoints[1], $this->arrPoints[3] );
+		$centerPoint = $objMath->midPoint( $firstAveragePoint, $secondAveragePoint );
 
 		// Use the mid point to calculate which point is farthest away from center and define that as the radius 
 		$farthestPointDistance = 0;
 		$nearestPointDistance = INF;
 		// Loop through all points finding the farthest
 		foreach( $this->arrPoints as $thisPoint ){
-			$thisDistance = $objMath->distanceBetween( $arrCenterPoint, $thisPoint );
+			$thisDistance = $objMath->distanceBetween( $centerPoint, $thisPoint );
 
 			if( $nearestPointDistance > $thisDistance ){
 				$nearestPointDistance = $thisDistance;
@@ -125,8 +127,8 @@ class Property{
 			}
 		}
 
-		$arrReturn = array();
-		$arrReturn['arrCenterPoint'] = $arrCenterPoint;
+		$arrReturn = [];
+		$arrReturn['centerPoint'] = $centerPoint;
 		$arrReturn['nearestRadius'] = $nearestPointDistance;
 		$arrReturn['farthestRadius'] = $farthestPointDistance;
 

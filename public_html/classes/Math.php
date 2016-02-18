@@ -70,7 +70,7 @@ class Math{
 
 
 	/**
-	 * Returns a midway point between 2 points 
+	 * Returns the point that is some percentage along the path between arrPointA and arrPointB 
 	 *
 	 * @param {Point} $pointA 
 	 * @param {Point} $pointB 
@@ -92,8 +92,13 @@ class Math{
 
 
 	/**
-	 Returns the a point that is some percentage along the path between arrPointA and arrPointB
-	*/
+	 * Returns the midway point between 2 given points
+	 *
+	 * @param {Point} $pointA 
+	 * @param {Point} $pointB 
+	 *
+	 * @return {Point}
+	 */
 	function midPoint( $pointA, $pointB ){
 		return $this->pointPercentageBetweenPoints( $pointA, $pointB, 50 );
 	}
@@ -102,9 +107,17 @@ class Math{
 
 
 	/**
-	 * Returns the a point that is midway between arrPointA and arrPointB
+	 * Returns weather a point is inside a polygon
+	 *
+	 * @param {integer} $cntPolygonPoints
+	 * @param {array} $arrVerticesX
+	 * @param {array} $arrVerticesY
+	 * @param {integer} $x
+	 * @param {integer} $y
+	 *
+	 * @return {boolean} 0 or 1
 	 */
-	function isInPolygon($cntPolygonPoints, $arrVerticesX, $arrVerticesY, $x, $y){
+	public function isInPolygon($cntPolygonPoints, $arrVerticesX, $arrVerticesY, $x, $y){
 
 		$i = $j = $c = $point = 0;
 
@@ -119,15 +132,15 @@ class Math{
 				$c = !$c;
 			}
 		}
-		return $c;
 
+		return $c;
 	}
 
 
 
 
 	/**
-	 * Return the distance between 2 points#
+	 * Return the distance between 2 points
 	 *
 	 * @param {Point} $pointA 
 	 * @param {Point} $pointB 

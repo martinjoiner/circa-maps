@@ -93,6 +93,11 @@
 						<td><input type="button" id="btnDrawFronts" value="Draw"></td>
 						<td><input type="button" id="btnDeleteFronts" value="Delete"></td>
 					</tr>
+					<tr>
+						<th>Junctions</th>
+						<td><input type="button" id="btnDrawJunctions" value="Draw"></td>
+						<td><input type="button" id="btnDeleteJunctions" value="Delete"></td>
+					</tr>
 				</tbody>
 			</table>
 

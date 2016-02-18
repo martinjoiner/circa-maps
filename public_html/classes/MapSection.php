@@ -134,15 +134,27 @@ class MapSection extends Map{
 	 * Uses the isOccupied() function to find if a property is in this location 
 	 * Then attempts to improve that property by changing it's shape
 	 *
-	 * @param {Point} 
+	 * @param {Point} $point
 	 *
-	 * @return {array} Contains: 'cntSidesReplaced', 'path' and 'arrNeighboursOffsetSides'
+	 * @return {array} Contains: 'isOccupiedResult', 'cntSidesReplaced', 'path' and {array} 'arrNeighboursOffsetSides'
 	 */
 	public function improvePropertyAtPoint( Point $point ){
+
+		$arrResult = [ 	'cntSidesReplaced' => 0,
+						'isOccupiedResult' => null,
+						'path' => null,
+						'arrNeighboursOffsetSides' => [],
+						'message' => '',
+						'cntPotentialImprovements' => 0
+					];
+
 		$arrIsOccupiedResult = $this->isOccupied( $point->x, $point->y );
 
+		$arrResult['isOccupiedResult'] = $arrIsOccupiedResult;
+
 		if( !$arrIsOccupiedResult['isOccupied'] ){
-			return false;
+			// Return result early, there's nowt we can do :-(
+			return $arrResult;
 		} else {
 			$thisPropertyToBeImproved = $this->arrProperties[ $arrIsOccupiedResult['arrPropertiesPointer'] ];
 		}
@@ -165,7 +177,6 @@ class MapSection extends Map{
 
 		$objCoordinateGeometry = new CoordinateGeometry();
 
-		$cntSidesReplaced = 0;
 		$arrPotentialImprovements = array();
 
 		// Loop over all 4 sides of the property, testing if replacing them with a neighbour's offset side would be an improvement in area
@@ -250,32 +261,39 @@ class MapSection extends Map{
 		// Apply the improvement with the biggest gain
 		if( sizeof($arrPotentialImprovements) ){
 
+			$arrResult['cntPotentialImprovements'] = count($arrPotentialImprovements);
+
 			// Sort $arrPotentialImprovements by "area" to see which replacement makes the biggest gain
 			usort( $arrPotentialImprovements, array( $this, "compareImprovements") );
 
 			// Apply the first item in the arrPotentialImprovements array which will by definition be the best
 			$thisPropertyToBeImproved->replaceSide( $arrPotentialImprovements[0]['numSide'], $arrPotentialImprovements[0]['arrSideNew'] );
 
-			$cntSidesReplaced++;
+			$arrResult['cntSidesReplaced']++;
+
+			$arrResult['message'] .= 'Replaced side ' . $arrPotentialImprovements[0]['numSide'];
 
 			// Save the new points in database
 			$thisPropertyToBeImproved->saveInDB();
 		}
 
-		$arrReturn = [];
-		$arrReturn['cntSidesReplaced'] = $cntSidesReplaced;
-		$arrReturn['path'] = $thisPropertyToBeImproved->getPath();
-		$arrReturn['arrNeighboursOffsetSides'] = $arrNeighboursOffsetSides;
+		$arrResult['path'] = $thisPropertyToBeImproved->getPath();
+		$arrResult['arrNeighboursOffsetSides'] = $arrNeighboursOffsetSides;
 
-		return $arrReturn;
-
+		return $arrResult;
 	}
 
 
 
+
 	/**
-	 Comparison function used by the method above
-	*/
+	 * Comparison function used by the method above
+	 *
+	 * @param {array} $arrImprovement1
+	 * @param {array} $arrImprovement2
+	 *
+	 * @return {integer} 0 or 1
+	 */
 	private static function compareImprovements( $arrImprovement1, $arrImprovement2 ){
 		if( $arrImprovement1['area'] < $arrImprovement2['area'] ){
 			return 1;

@@ -49,7 +49,9 @@ Class CoordinateGeometry extends Math{
 
 		if( $pointA->x === 0 ){
 			// TODO: If one of the points provided is on the y axis then we have to use y = m(x-Px) + Py equation 
-		} 
+			error_log( 'coordinateGeometry->equationOfLine() says: Oh no, $pointA->x === 0', 0 );
+			return null;
+		}
 
 		$arrReturn['m'] = $oppositeToDelta / $pointA->x;
 
@@ -61,7 +63,7 @@ Class CoordinateGeometry extends Math{
 
 
 	/**
-	 * Returns a simple true or false from the more complicated lineSegmentIntersectionPoint() method
+	 * Returns true if intersection from lineSegmentIntersectionPoint() occurs on first segment
 	 *
 	 * @param {array} $lineSegmentA Containing 2 instances of Point class
 	 * @param {array} $lineSegmentB Containing 2 instances of Point class
@@ -70,24 +72,31 @@ Class CoordinateGeometry extends Math{
 	 */
 	function doSegmentsIntersect( $lineSegmentA, $lineSegmentB ){
 		$result = self::lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB );
-		return $result['intersectionOnSegment'];
+		if( $result['intersectionOnSegment'] == 'A' ){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 
 
 
 	/**
-	 * Returns the point at which the lines of 2 line segments intersect
-	 * and if whether that point is on the segments
+	 * Returns the theoretical point at which the equations of the lines of 2 line segments intersect
+	 * and if whether that theoretical intersection point is actually on the first segment, second, both or neither
 	 *
 	 * @param {array} $lineSegmentA Containing 2 instances of Point class
 	 * @param {array} $lineSegmentB Containing 2 instances of Point class
 	 *
-	 * @return {array} 
+	 * @return {array} Contains 'point', {string} 'intersectionOnSegment' ('NEITHER','A','B','BOTH'), 'linesAreParallel'
 	 */
-	private function lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB ){
+	public function lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB ){
 
-		$arrReturn = array( 'x'=>null, 'y'=>null, 'intersectionOnSegment'=>false, 'lineAreParallel'=>false );
+		$arrReturn = [ 	'point' => null, 
+						'intersectionOnSegment' => 'NEITHER',
+						'linesAreParallel' => false 
+					];
 
 		// Arrange the points in both segments so that the first point is on the left
 		parent::orientSoLeftmostIsFirst( $lineSegmentA[0], $lineSegmentA[1] );
@@ -99,7 +108,7 @@ Class CoordinateGeometry extends Math{
 
 		// If the slopiness of both lines is equal or both m values are null, they will never intersect
 		if( $equationOfLineA['m'] === $equationOfLineB['m'] ){ 
-			$arrReturn['lineAreParallel'] = true;
+			$arrReturn['linesAreParallel'] = true;
 			return $arrReturn;
 		}
 
@@ -108,11 +117,13 @@ Class CoordinateGeometry extends Math{
 
 			if( $equationOfLineA['isVertical'] ){
 				$x = $equationOfLineA['x'];
+				$verticalSegmentLetter = 'A';
 				$verticalSegment = $lineSegmentA;
 				$nonVertEquation = $equationOfLineB;
 				
 			} else {
 				$x = $equationOfLineB['x'];
+				$verticalSegmentLetter = 'B';
 				$verticalSegment = $lineSegmentB;
 				$nonVertEquation = $equationOfLineA;
 			}
@@ -120,6 +131,7 @@ Class CoordinateGeometry extends Math{
 			// y = mx + b 
 			$y = ( $nonVertEquation['m'] * $x ) + $nonVertEquation['b'];
 			$y = round( $y, 2 );
+
 			// What's this nonsense! It removes -0 which can be returned by line above
 			if( $y == 0 ){
 				$y = 0;
@@ -127,10 +139,8 @@ Class CoordinateGeometry extends Math{
 
 			// Check if the intersection point is within the vertical segments y limits
 			if( $y >= min( $verticalSegment[0]->y, $verticalSegment[1]->y ) && $y <= max( $verticalSegment[0]->y, $verticalSegment[1]->y ) ){
-				$arrReturn['intersectionOnSegment'] = true;
-			} else {
-				$arrReturn['intersectionOnSegment'] = false;
-			}
+				$arrReturn['intersectionOnSegment'] = $verticalSegmentLetter;
+			} 
 
 		} else {
 
@@ -143,17 +153,27 @@ Class CoordinateGeometry extends Math{
 			// Now we have x, use A's equation to calculate y
 			$y = ( $equationOfLineA['m'] * $x ) + $equationOfLineA['b'];
 
-			// Check if the intersection point is within one of the line segment's x limits
+			// Check if the intersection point is within segmentA's x limits
 			if( $x >= $lineSegmentA[0]->x && $x <= $lineSegmentA[1]->x ){
-				$arrReturn['intersectionOnSegment'] = true;
+				$arrReturn['intersectionOnSegment'] = 'A';
+
+				// Also check if the intersection point is within segmentB's x limits
+				if( $x >= $lineSegmentB[0]->x && $x <= $lineSegmentB[1]->x ){
+					$arrReturn['intersectionOnSegment'] = 'BOTH';
+				}
+
 			} else {
-				$arrReturn['intersectionOnSegment'] = false;
+
+				// Check if the intersection point is within segmentB's x limits
+				if( $x >= $lineSegmentB[0]->x && $x <= $lineSegmentB[1]->x ){
+					$arrReturn['intersectionOnSegment'] = 'B';
+				}
+
 			}
 
 		}
 
-		$arrReturn['x'] = $x;
-		$arrReturn['y'] = $y;
+		$arrReturn['point'] = new Point( $x, $y);
 
 		return $arrReturn;
 

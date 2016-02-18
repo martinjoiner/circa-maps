@@ -307,6 +307,41 @@ abstract class Map{
 
 
 
+	/**
+	 * Returns all the points where routes intersect
+	 *
+	 * @return {array} of Points
+	 */
+	public function junctions(){
+
+		$arrResult = [];
+
+		// Iterate over all the routes
+		foreach( $this->arrRoutes as $routeA ){
+
+			// Iterate over all the routes apart from the last one because by the nature of grid iteration that one will have already been checked
+			$iLimit = count($this->arrRoutes) - 1;
+			for( $i = 0; $i < $iLimit; $i++ ){
+
+				$routeB = $this->arrRoutes[$i];
+
+				// Don't bother to check if a route intersects with itself
+				if( $routeA->getId() != $routeB->getId() ){
+
+					$arrResult = array_merge( $arrResult, $routeA->intersectionsWithRoute( $routeB ) );
+
+				}
+
+			}
+
+		}
+
+		return $arrResult;
+	}
+
+
+
+
 	/** 
 	 * Tests all properties on the Map against a provided object of class Property looking for collisions
 	 * (useful when checking for improved version of property)
@@ -351,12 +386,12 @@ abstract class Map{
 		$arrAllSegments = [];
 
 		$arrCenterData = $objPropertySubject->getCenterData();
-		$arrCenterPoint = $arrCenterData['arrCenterPoint'];
+		$centerPoint = $arrCenterData['centerPoint'];
 
 		// Get all the route segments within range
 		foreach( $this->arrRoutes as $objThisRoute ){
 			// Append this route's segments to the total array
-			$arrAllSegments = array_merge( $arrAllSegments, $objThisRoute->getSegmentsWithinRange( $arrCenterPoint, 100 ) );
+			$arrAllSegments = array_merge( $arrAllSegments, $objThisRoute->getSegmentsWithinRange( $centerPoint, 100 ) );
 		}
 
 		$cntSegments = sizeof($arrAllSegments);

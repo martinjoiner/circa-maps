@@ -35,6 +35,8 @@ Map.prototype.renderPath = function( skvPath ){
 	
 	if( typeof skvPath['id'] !== 'undefined' ){
 		path.setAttribute("id", skvPath['id'] );
+
+        // Purge any elements with the same ID
 		$('svg #'+ skvPath['id']).remove();
 	}
 
@@ -57,12 +59,17 @@ Map.prototype.renderPath = function( skvPath ){
  *
  * @param x The co-ordinates of where the dot should be placed 
  * @param y 
- * @param colour *Optional* - Defaults to 'red' 
+ * @param {string} colour *Optional* - Defaults to 'red' 
+ * @param {string} dotClass *Optional* - Defaults to 'red' 
  */
-Map.prototype.debugDot = function( x, y, colour ){
+Map.prototype.debugDot = function( x, y, colour, dotClass ){
 
     if(typeof colour === 'undefined'){
         colour = 'red';
+    }
+
+    if(typeof dotClass === 'undefined'){
+        dotClass = 'Dot';
     }
 
     var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -70,7 +77,7 @@ Map.prototype.debugDot = function( x, y, colour ){
     circle.setAttribute("cy", y );
     circle.setAttribute("r", "2" );
     circle.setAttribute("fill", colour );
-    circle.setAttribute("class", "Dot" );
+    circle.setAttribute("class", dotClass );
 
     this.svg.append(circle); 
 };
@@ -313,7 +320,7 @@ function improvePropertyAtPoint( x, y ){
         dataType: "json"
     }).done(function(data) {
     	//renderSides( data.arrNeighboursOffsetSides );
-        console.log( data.cntSidesReplaced + ' sides replaced' );
+        console.log( data );
         if( data.cntSidesReplaced ){
         	map.renderPath( data.path );
         }
@@ -492,6 +499,38 @@ $('#btnDrawFronts').click( function(){
 /** Delete the red lines that indicate the fronts properties */
 $('#btnDeleteFronts').click( function(){
 	$('svg .Front').remove();
+});
+
+
+
+
+/** Render yellow dots to indicate all the junctions on the map */
+$('#btnDrawJunctions').click( function(){
+    $.ajax({
+        type: "GET",
+        url: "/GET/junctions/",
+        data: { "mapID": map.id },
+        dataType: "json"
+    }).done(function(data) {
+
+        console.log(data);
+        for( var i = 0, iLimit = data.length; i < iLimit; i++ ){
+            
+            map.debugPath( data[i].segmentA, 'red' );
+            map.debugPath( data[i].segmentB, 'blue' );
+            map.debugDot( data[i].point.x, data[i].point.y, 'yellow', 'junction' );
+            
+        }
+
+    });
+});
+
+
+
+
+/** Delete the yellow dots that indicate the junctions */
+$('#btnDeleteJunctions').click( function(){
+    $('svg .junction').remove();
 });
 
 

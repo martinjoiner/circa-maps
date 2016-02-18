@@ -22,7 +22,7 @@ class PropertyCollision{
 		$arrProperty1Data = $property1->getCenterData();
 		$arrProperty2Data = $property2->getCenterData();
 
-		$distanceBetweenCentres = $objMath->distanceBetween( $arrProperty1Data['arrCenterPoint'], $arrProperty2Data['arrCenterPoint'] );
+		$distanceBetweenCentres = $objMath->distanceBetween( $arrProperty1Data['centerPoint'], $arrProperty2Data['centerPoint'] );
 		$sumOfFarthestRadii = $arrProperty1Data['farthestRadius'] + $arrProperty2Data['farthestRadius'];
 
 		// Firstly: If distance between mid points is more than sum of maximum radius
