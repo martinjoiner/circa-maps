@@ -68,6 +68,8 @@
 			
 			<input type="button" id="btnInitXRoads" value="Init X-roads">
 
+			<input type="button" id="btnMostIsolated" value="Most isolated point">
+
 		</fieldset>
 		
 

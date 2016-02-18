@@ -375,8 +375,8 @@ function stopSpawning(){
 
 /** AJAX call to server to /POST/initCrossRoads/ */
 $('#btnInitXRoads').click( function(){
-	
-	$.ajax({
+    
+    $.ajax({
         type: "GET",
         url: "/POST/initCrossRoads/",
         data: { "mapID": map.id },
@@ -384,10 +384,30 @@ $('#btnInitXRoads').click( function(){
     }).done(function(data) {
 
         if( data.success ){
-	        for( var i = 0, iLimit = data.arrPaths.length; i < iLimit; i++ ){
-	        	map.renderPath( data.arrPaths[i] );
-	        }
+            for( var i = 0, iLimit = data.arrPaths.length; i < iLimit; i++ ){
+                map.renderPath( data.arrPaths[i] );
+            }
         }
+
+    });
+
+});
+
+
+
+
+/** AJAX call to server to /GET/mostIsolatedPoint/ */
+$('#btnMostIsolated').click( function(){
+	
+	$.ajax({
+        type: "GET",
+        url: "/GET/mostIsolatedPoint/",
+        data: { "mapID": map.id },
+        dataType: "json"
+    }).done(function(data) {
+
+        console.log( data );
+        map.debugDot( data.point.x, data.point.y );
 
     });
 
