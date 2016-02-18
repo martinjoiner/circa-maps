@@ -273,7 +273,7 @@ class Property{
 
 
 	/**
-	 *
+	 * Is the property a funny 'hour glass' / 'figure 8' shape
 	 *
 	 * @return {boolean}
 	 */

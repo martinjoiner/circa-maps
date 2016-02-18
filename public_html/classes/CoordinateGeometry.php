@@ -72,7 +72,7 @@ Class CoordinateGeometry extends Math{
 	 */
 	function doSegmentsIntersect( $lineSegmentA, $lineSegmentB ){
 		$result = self::lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB );
-		if( $result['intersectionOnSegment'] == 'A' ){
+		if( $result['intersectionOnSegment'] == 'BOTH' ){
 			return true;
 		} else {
 			return false;
