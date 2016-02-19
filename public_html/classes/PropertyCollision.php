@@ -23,10 +23,8 @@ class PropertyCollision{
 		$distanceBetweenCentres = Math::distanceBetween( $arrProperty1Data['centerPoint'], $arrProperty2Data['centerPoint'] );
 		$sumOfFarthestRadii = $arrProperty1Data['farthestRadius'] + $arrProperty2Data['farthestRadius'];
 
-		// Firstly: If distance between mid points is more than sum of maximum radius
-		// there definitely cannot be a collision
+		// Firstly: If distance between mid points is more than sum of maximum radius there definitely cannot be a collision (fastest)
 		if( $distanceBetweenCentres > $sumOfFarthestRadii ){
-			//console.warn('polyCollision(): Failed at stage 1');
 			return false;
 		}
 
@@ -37,18 +35,16 @@ class PropertyCollision{
 			return true;
 		}
 
-		// Next check if any of $arrPoints1's points are inside $arrPoints2, If so: return true;
+		// Check if any of $property1's points are inside $property2
 		foreach( $property1->arrPoints as $thisPoint ){
-			$points_polygon = count($property2->arrPoints);  // number vertices - zero-based array
-			if( Math::isInPolygon($points_polygon, $property2->arrVerticesX, $property2->arrVerticesY, $thisPoint ) ){
+			if( $property2->coversPoint( $thisPoint ) ){
 				return true;
 			}
 		}
 
-		// Next check if any of $arrPoints1's points are inside $arrPoints2, If so: return true;
+		// Now check if any of $property2's points are inside $property1
 		foreach( $property2->arrPoints as $thisPoint ){
-			$points_polygon = count($property1->arrPoints);  // number vertices - zero-based array
-			if( Math::isInPolygon($points_polygon, $property1->arrVerticesX, $property1->arrVerticesY, $thisPoint ) ){
+			if( $property1->coversPoint( $thisPoint ) ){
 				return true;
 			}
 		}

@@ -1,16 +1,24 @@
 <?php
 
+/**
+ * A property is a 4-sided shape (self-closing polygon)
+ */
 class Property{
 
+	/** {array} of Points that define this property boundary */
 	public $arrPoints = [];
 
 	/** Database ID of the property (public so CoordinateGeometry can access it) */
 	public $id;
 
-	var $mapID; 
+	/** {integer} Database ID of the map that this Property belongs to */
+	private $mapID; 
 
-	var $arrVerticesX = array(); // An array of just the x values (Useful for basic sanity checking in collision detection)
-	var $arrVerticesY = array(); // An array of just the y values
+	/** An array of just the x values (Useful for fast sanity checking in collision detection) */
+	public $arrVerticesX = []; 
+
+	/** An array of just the y values */
+	public $arrVerticesY = []; 
 
 
 
@@ -20,8 +28,8 @@ class Property{
 	 * passing and an id is optional
 	 *
 	 * @param {array} $arrPoints Array of instances of Point class
-	 * @param {integer} $mapID
-	 * @param {integer} $id
+	 * @param {integer|string} $mapID
+	 * @param {integer|string} $id
 	 */
 	public function __construct( $arrPoints, $mapID = NULL, $id = NULL ){
 
@@ -46,8 +54,9 @@ class Property{
 	 */
 	private function calcVertices(){
 
-		$this->arrVerticesX = array();
-		$this->arrVerticesY = array();
+		// Empty any previous values
+		$this->arrVerticesX = [];
+		$this->arrVerticesY = [];
 
 		foreach( $this->arrPoints as $thisPoint ){
 			$this->arrVerticesX[] = $thisPoint->x;
@@ -59,8 +68,14 @@ class Property{
 
 
 	
-	public function replacePoint( $arrayPointer, $arrPointReplacement ){
-		$this->arrPoints[$arrayPointer] = $arrPointReplacement;
+	/**
+	 * Setter method for a particular Point
+	 *
+	 * @param {integer} $arrayPointer Which side to replace
+	 * @param {array} $replacementPoint
+	 */
+	public function replacePoint( $arrayPointer, Point $replacementPoint ){
+		$this->arrPoints[$arrayPointer] = $replacementPoint;
 		$this->calcVertices();
 	}
 
@@ -106,9 +121,7 @@ class Property{
 	 */
 	public function getCenterData(){
 
-		$firstAveragePoint = Math::midPoint( $this->arrPoints[0], $this->arrPoints[2] );
-		$secondAveragePoint = Math::midPoint( $this->arrPoints[1], $this->arrPoints[3] );
-		$centerPoint = Math::midPoint( $firstAveragePoint, $secondAveragePoint );
+		$centerPoint = $this->centerPoint();
 
 		// Use the mid point to calculate which point is farthest away from center and define that as the radius 
 		$farthestPointDistance = 0;
@@ -132,6 +145,42 @@ class Property{
 			'farthestRadius' => $farthestPointDistance
 		];
 
+	}
+
+
+
+
+	/**
+	 * Gets the center of the property
+	 *
+	 * @return {Point}
+	 */
+	public function centerPoint(){
+		$firstAveragePoint = Math::midPoint( $this->arrPoints[0], $this->arrPoints[2] );
+		$secondAveragePoint = Math::midPoint( $this->arrPoints[1], $this->arrPoints[3] );
+		return Math::midPoint( $firstAveragePoint, $secondAveragePoint );
+	}
+
+
+
+
+	/**
+	 * Tests if a Point is inside the property
+	 *
+	 * @param {Point} $point
+	 *
+	 * @return {boolean}
+	 */
+	public function coversPoint( Point $point ){
+
+		// Number of vertices
+		$points_polygon = count($this->arrPoints); 
+
+		if( Math::isInPolygon($points_polygon, $this->arrVerticesX, $this->arrVerticesY, $point ) ){
+			return true;
+		}
+
+		return false;
 	}
 
 
