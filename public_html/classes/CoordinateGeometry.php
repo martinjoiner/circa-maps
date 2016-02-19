@@ -6,12 +6,20 @@ Class CoordinateGeometry extends Math{
 	 * Calculates the equation of the line segment as if it continues forever
 	 * y = mx + b
 	 *
+	 * @param {Point} $pointA
+	 * @param {Point} $pointB
+	 *
 	 * @return {array} with keys 'm', 'b', 'x', 'equation' and 'isVertical'
 	 */
 	function equationOfLine( Point $pointA, Point $pointB ){
 
 		// Set up the return array with all possible elements
-		$arrReturn = array( 'm'=>null, 'b'=>null, 'x'=>null, 'equation'=>'y = mx + b', 'isVertical'=>false );
+		$arrReturn = [ 	'm' => null, 
+						'b' => null, 
+						'x' => null, 
+						'equation' => 'y = mx + b', 
+						'isVertical' => false 
+					];
 
 		// Arrange the points so that point A is on the left
 		parent::orientSoLeftmostIsFirst( $pointA, $pointB );
@@ -70,7 +78,7 @@ Class CoordinateGeometry extends Math{
 	 *
 	 * @return {boolean} 
 	 */
-	function doSegmentsIntersect( $lineSegmentA, $lineSegmentB ){
+	public static function doSegmentsIntersect( $lineSegmentA, $lineSegmentB ){
 		$result = self::lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB );
 		if( $result['intersectionOnSegment'] == 'BOTH' ){
 			return true;
@@ -91,7 +99,7 @@ Class CoordinateGeometry extends Math{
 	 *
 	 * @return {array} Contains 'point', {string} 'intersectionOnSegment' ('NEITHER','A','B','BOTH'), 'linesAreParallel'
 	 */
-	public function lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB ){
+	public static function lineSegmentIntersectionPoint( $lineSegmentA, $lineSegmentB ){
 
 		$arrReturn = [ 	'point' => null, 
 						'intersectionOnSegment' => 'NEITHER',
@@ -103,8 +111,8 @@ Class CoordinateGeometry extends Math{
 		parent::orientSoLeftmostIsFirst( $lineSegmentB[0], $lineSegmentB[1] );
 
 		// Get the equations of both line segments
-		$equationOfLineA = $this->equationOfLine( $lineSegmentA[0], $lineSegmentA[1] );
-		$equationOfLineB = $this->equationOfLine( $lineSegmentB[0], $lineSegmentB[1] );
+		$equationOfLineA = static::equationOfLine( $lineSegmentA[0], $lineSegmentA[1] );
+		$equationOfLineB = static::equationOfLine( $lineSegmentB[0], $lineSegmentB[1] );
 
 		// If the slopiness of both lines is equal or both m values are null, they will never intersect
 		if( $equationOfLineA['m'] === $equationOfLineB['m'] ){ 

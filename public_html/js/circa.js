@@ -176,7 +176,9 @@ $('#mask').click( function(){
 	} else if( map.mode === 'offsetSides' ){
 		offsetSides( x, y );
 	} else if( map.mode === 'improvePropertyAtPoint' ){
-		improvePropertyAtPoint( x, y );
+        improvePropertyAtPoint( x, y );
+    } else if( map.mode === 'routeSegmentsWithinRange' ){
+		routeSegmentsWithinRange( x, y );
 	}
 	
 });
@@ -310,19 +312,46 @@ function offsetSides( x, y ){
 /* it returns the offset points of that property's neighbouring properties  */
 /* @x, @y - co-ordinates of point ----------------------------------------- */ 
 function improvePropertyAtPoint( x, y ){
-	$.ajax({
+    $.ajax({
         type: "GET",
         url: "/PUT/improvePropertyAtPoint/",
+        data: { 'mapID': map.id, 
+                'x': x, 
+                'y': y 
+            },
+        dataType: "json"
+    }).done(function(data) {
+        //renderSides( data.arrNeighboursOffsetSides );
+        console.log( data );
+        if( data.cntSidesReplaced ){
+            map.renderPath( data.path );
+        }
+    });
+}
+
+
+
+
+/**
+ * Renders all the segments of a route returned by the getSegmentsWithinRange() method
+ * it returns the offset points of that property's neighbouring properties 
+ *
+ * @param x co-ordinates of point
+ * @param y 
+ */ 
+function routeSegmentsWithinRange( x, y ){
+	$.ajax({
+        type: "GET",
+        url: "/GET/routeSegmentsWithinRange/",
         data: { 'mapID': map.id, 
         		'x': x, 
         		'y': y 
         	},
         dataType: "json"
     }).done(function(data) {
-    	//renderSides( data.arrNeighboursOffsetSides );
         console.log( data );
-        if( data.cntSidesReplaced ){
-        	map.renderPath( data.path );
+        if( data.length ){
+            renderSides( data );
         }
     });
 }

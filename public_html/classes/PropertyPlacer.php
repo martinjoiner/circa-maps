@@ -17,9 +17,9 @@ class PropertyPlacer extends MapSection{
 
 		$startTime = microtime(true);
 
-		$arrResult = [ 'arrPath'=>null, 'success'=>false ];
-
-		$objMath = new Math();
+		$arrResult = [ 	'arrPath' => null, 
+						'success' => false 
+					];
 
 		// Get the nearest route
 		$arrNearestRouteResult = $this->nearestRoute( $point );
@@ -30,11 +30,11 @@ class PropertyPlacer extends MapSection{
 		 	return $arrResult;
 		}
 
-		// Generate 4 points based on supplied x and y
+		// Generate 4 points based on supplied point
 
-		$arrFrontLeftPoint = $objMath->pointDistanceBetweenPoints( $closestPointOnRoute['arrPointResult'], $point, 8); 
-		$arrFrontRightPoint = $objMath->ninetyDeg( $point, $arrFrontLeftPoint ); 
-		$arrRearRightPoint = $objMath->ninetyDeg( $arrFrontLeftPoint, $arrFrontRightPoint ); 
+		$arrFrontLeftPoint = Math::pointDistanceBetweenPoints( $closestPointOnRoute['arrPointResult'], $point, 8); 
+		$arrFrontRightPoint = Math::ninetyDeg( $point, $arrFrontLeftPoint ); 
+		$arrRearRightPoint = Math::ninetyDeg( $arrFrontLeftPoint, $arrFrontRightPoint ); 
 
 		$point = $point->randomVary( 5 );
 		$arrRearRightPoint = $arrRearRightPoint->randomVary( 5 );

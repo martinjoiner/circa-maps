@@ -105,8 +105,6 @@ class Route{
 	 */
 	public function gimme2NearestPoints( Point $point ){
 
-		$objMath = new Math();
-
 		// Loop through all the points in arrPoints
 		$arrScoreBoard = [];
 		$arrScoreBoard[0] = new Point();
@@ -114,7 +112,7 @@ class Route{
 
 		// Iterate over all points on a route
 		foreach( $this->arrPoints as $thisPoint ){
-			$thisDistance = $objMath->distanceBetween( $point, $thisPoint );
+			$thisDistance = Math::distanceBetween( $point, $thisPoint );
 			if( $arrScoreBoard[1]->distance > $thisDistance ){
 				$thisPoint->distance = $thisDistance;
 				array_unshift( $arrScoreBoard, $thisPoint);
@@ -137,29 +135,28 @@ class Route{
 	 * Returns any segments of the route that contain a point within distance limit
 	 * (Used by Map to only load data inside a limited area when checking for collisions)
 	 *
-	 * @param {array} $arrPointOrigin
+	 * @param {Point} $originPoint
 	 * @param {integer} $distanceLimit
 	 *
 	 * @return {array} The segments of this route within radius
 	 */
-	public function getSegmentsWithinRange( $arrPointOrigin, $distanceLimit = 200 ){
-		
-		$objMath = new Math();
+	public function getSegmentsWithinRange( Point $originPoint, $distanceLimit = 200 ){
 
 		$arrSegments = [];
 
 		// Because the loop takes the point at i *and* the next one we only need to go to 1 before end of array
-		$iLimit = sizeof($this->arrPoints) - 1;
+		$iLimit = count($this->arrPoints) - 1;
 		for( $i = 0; $i < $iLimit; $i++ ){
-			$arrPointA = $this->arrPoints[$i];
-			$arrPointB = $this->arrPoints[$i+1];
 
-			$distanceA = $objMath->distanceBetween( $arrPointOrigin, $arrPointA );
-			$distanceB = $objMath->distanceBetween( $arrPointOrigin, $arrPointB );
+			$pointA = $this->arrPoints[$i];
+			$pointB = $this->arrPoints[$i+1];
+
+			$distanceA = Math::distanceBetween( $originPoint, $pointA );
+			$distanceB = Math::distanceBetween( $originPoint, $pointB );
 
 			// If either point is within distance, add the segment to return
 			if( $distanceA < $distanceLimit || $distanceB < $distanceLimit ){
-				$arrSegments[] = array( $arrPointA, $arrPointB );
+				$arrSegments[] = [ $pointA, $pointB ];
 			} 
 		}
 
@@ -213,8 +210,6 @@ class Route{
 	 */
 	private function intersectionsWithSegment( array $segment ){
 
-		$coordinateGeometry = new CoordinateGeometry();
-
 		// Iterate over my own points
 		// Because the loop takes the point at i *and* the next one we only need to go to 1 before end of array
 		$iLimit = count($this->arrPoints) - 1;
@@ -222,7 +217,7 @@ class Route{
 
 			$thisSegment = [ $this->arrPoints[$i], $this->arrPoints[$i+1] ];
 
-			$result = $coordinateGeometry->lineSegmentIntersectionPoint( $thisSegment, $segment );
+			$result = CoordinateGeometry::lineSegmentIntersectionPoint( $thisSegment, $segment );
 			if( $result['intersectionOnSegment'] === 'BOTH' ){
 				return [ 'point'=>$result['point'], 'segmentA'=>$thisSegment, 'segmentB'=>$segment ];
 			}

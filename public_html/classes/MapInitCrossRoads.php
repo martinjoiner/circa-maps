@@ -93,8 +93,6 @@ class MapInitCrossRoads extends Map{
 	 */
 	private function generateRoute( Point $startPoint, Point $endPoint ){
 
-		$objMath = new Math();
-
 		$arrPoints = [];
 
 		// Set the first item as the start point
@@ -104,7 +102,7 @@ class MapInitCrossRoads extends Map{
 
 		// Walk a varying path between start and end points
 		$pointer = 0;
-		$distanceLeft = $objMath->distanceBetween( $arrPoints[$pointer], $endPoint );
+		$distanceLeft = Math::distanceBetween( $arrPoints[$pointer], $endPoint );
 
 		while( $distanceLeft > $routeSectionLength ){
 
@@ -112,12 +110,12 @@ class MapInitCrossRoads extends Map{
 
 			$pointer++;
 
-			$perfectPoint = $objMath->pointPercentageBetweenPoints( $arrPoints[$pointer-1], $endPoint, $percentageStep );
+			$perfectPoint = Math::pointPercentageBetweenPoints( $arrPoints[$pointer-1], $endPoint, $percentageStep );
 
 			$arrPoints[$pointer] = $perfectPoint->randomVary();
 
 			// Update how much distance left until we reach the endPoint
-			$distanceLeft = $objMath->distanceBetween( $arrPoints[$pointer], $endPoint );
+			$distanceLeft = Math::distanceBetween( $arrPoints[$pointer], $endPoint );
 
 		}
 

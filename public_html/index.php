@@ -54,6 +54,9 @@
 
 			<input type="radio" name="mouseMode" value="improvePropertyAtPoint" id="chkImprovePropertyAtPoint">
 			<label for="chkImprovePropertyAtPoint" class="checkLabel">Improve property</label>
+
+			<input type="radio" name="mouseMode" value="routeSegmentsWithinRange" id="chkRouteSegmentsWithinRange">
+			<label for="chkRouteSegmentsWithinRange" class="checkLabel">Route segments</label>
 			
 		</fieldset>
 

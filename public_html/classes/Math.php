@@ -78,7 +78,7 @@ class Math{
 	 *
 	 * @return {Point}
 	 */
-	public function pointPercentageBetweenPoints( Point $pointA, Point $pointB, $percent ){
+	public static function pointPercentageBetweenPoints( Point $pointA, Point $pointB, $percent ){
 
 		$percAsDec = 100 / $percent;
 

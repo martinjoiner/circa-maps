@@ -293,10 +293,9 @@ abstract class Map{
 		}
 
 		if( $cntRoutesChecked ){
-			$objMath = new Math();
-			$closestPointBetween2 = $objMath->closestPointBetween2( $point, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
+			$closestPointBetween2 = Math::closestPointBetween2( $point, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
 			$arrResult['closestPointOnRoute'] = $closestPointBetween2;
-			$arrResult['distanceToClosestPointOnRoute'] = $objMath->distanceBetween( $point, $closestPointBetween2['arrPointResult'] );
+			$arrResult['distanceToClosestPointOnRoute'] = Math::distanceBetween( $point, $closestPointBetween2['arrPointResult'] );
 			$arrResult['cntRoutesChecked'] = $cntRoutesChecked;
 		}
 
@@ -372,6 +371,29 @@ abstract class Map{
 
 
 	/** 
+	 * Gets all segments of all routes within range 
+	 *
+	 * @param {Point} $centerPoint
+	 * @param {integer} $searchRadius
+	 *
+	 * @return {array}
+	 */
+	public function getRouteSegmentsWithinRange( Point $centerPoint, $searchRadius = 100 ){
+		$arrAllSegments = [];
+
+		// Get all the route segments within range
+		foreach( $this->arrRoutes as $thisRoute ){
+			// Append this route's segments to the total array
+			$arrAllSegments = array_merge( $arrAllSegments, $thisRoute->getSegmentsWithinRange( $centerPoint, $searchRadius ) );
+		}
+
+		return $arrAllSegments;
+	}
+
+
+
+
+	/** 
 	 * Tests all routes on the Map against a provided object of class Property
 	 * return true if any sides of the property intersect a segment of the route
 	 * (useful when checking for improved version of property)
@@ -382,26 +404,19 @@ abstract class Map{
 	 */
 	protected function isCollisionWithMapRoutes( Property $objPropertySubject ){
 		
-		$arrAllSegments = [];
-
 		$arrCenterData = $objPropertySubject->getCenterData();
 		$centerPoint = $arrCenterData['centerPoint'];
+		$searchRadius = $arrCenterData['farthestRadius'] * 3;
 
-		// Get all the route segments within range
-		foreach( $this->arrRoutes as $objThisRoute ){
-			// Append this route's segments to the total array
-			$arrAllSegments = array_merge( $arrAllSegments, $objThisRoute->getSegmentsWithinRange( $centerPoint, 100 ) );
-		}
+		$arrAllSegments = $this->getRouteSegmentsWithinRange( $centerPoint, $searchRadius );
 
-		$cntSegments = sizeof($arrAllSegments);
-
-		$objCoordinateGeometry = new CoordinateGeometry();
+		$cntSegments = count($arrAllSegments);
 
 		// Test each of the properties' sides against all the nearby route segments 
 		for( $i = 0; $i < 4; $i++ ){
 			$thisSide = $objPropertySubject->getSide($i);
 			for( $s = 0; $s < $cntSegments; $s++ ){
-				if( $objCoordinateGeometry->doSegmentsIntersect( $thisSide, $arrAllSegments[$s] ) ){
+				if( CoordinateGeometry::doSegmentsIntersect( $thisSide, $arrAllSegments[$s] ) ){
 					return true;
 				}
 			}
