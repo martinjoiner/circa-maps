@@ -13,7 +13,7 @@ class Math{
 	 * 
 	 * @return {Point} A point between 2 points 
 	 */
-	public function pointDistanceBetweenPoints( Point $pointA, Point $pointB, $distance ){
+	public static function pointDistanceBetweenPoints( Point $pointA, Point $pointB, $distance ){
 
 		$resultPoint = new Point(); 
 
@@ -99,8 +99,8 @@ class Math{
 	 *
 	 * @return {Point}
 	 */
-	function midPoint( $pointA, $pointB ){
-		return $this->pointPercentageBetweenPoints( $pointA, $pointB, 50 );
+	public static function midPoint( Point $pointA, Point $pointB ){
+		return static::pointPercentageBetweenPoints( $pointA, $pointB, 50 );
 	}
 
 
@@ -112,23 +112,24 @@ class Math{
 	 * @param {integer} $cntPolygonPoints
 	 * @param {array} $arrVerticesX
 	 * @param {array} $arrVerticesY
-	 * @param {integer} $x
-	 * @param {integer} $y
+	 * @param {Point} 
 	 *
 	 * @return {boolean} 0 or 1
 	 */
-	public function isInPolygon($cntPolygonPoints, $arrVerticesX, $arrVerticesY, $x, $y){
+	public static function isInPolygon($cntPolygonPoints, $arrVerticesX, $arrVerticesY, Point $point){
 
-		$i = $j = $c = $point = 0;
+		$i = $j = $c = $pointer = 0;
 
 		for( $i = 0, $j = $cntPolygonPoints-1; $i < $cntPolygonPoints; $j = $i++ ){
-			$point = $i;
+			$pointer = $i;
+
 			// If i is past the final point, use the first point
-			if( $point == $cntPolygonPoints ){
-				$point = 0;
+			if( $pointer == $cntPolygonPoints ){
+				$pointer = 0;
 			}
-			if ( ( ($arrVerticesY[$point] > $y != ($arrVerticesY[$j] > $y) ) &&
-				($x < ($arrVerticesX[$j] - $arrVerticesX[$point]) * ($y - $arrVerticesY[$point]) / ($arrVerticesY[$j] - $arrVerticesY[$point]) + $arrVerticesX[$point]) ) ){
+
+			if ( ( ($arrVerticesY[$pointer] > $point->y != ($arrVerticesY[$j] > $point->y) ) &&
+				($point->x < ($arrVerticesX[$j] - $arrVerticesX[$pointer]) * ($point->y - $arrVerticesY[$pointer]) / ($arrVerticesY[$j] - $arrVerticesY[$pointer]) + $arrVerticesX[$pointer]) ) ){
 				$c = !$c;
 			}
 		}
@@ -147,7 +148,7 @@ class Math{
 	 *
 	 * @return {float} Distance between points
 	 */
-	function distanceBetween( Point $pointA, Point $pointB ){
+	public static function distanceBetween( Point $pointA, Point $pointB ){
 
 		$x1 = floatval($pointA->x);
 		$y1 = floatval($pointA->y);
@@ -168,24 +169,23 @@ class Math{
 
 
 	/**
-	 Returns the co-ordinates of a point projected a distace from 2 points 
-	 @arrPoint1 associative array - The origin of the line of projection							
-	 @arrPoint2 associative array - The direction of the line of projection		
-	 @percent The percentage the line must be extended by path second point 	
-	*/
-	function projectPath( $arrPoint1, $arrPoint2, $percent = 10 ){
+	 * Returns a Point projected a distace from pointA past pointB 
+	 * (TODO: Needs testing, might operate the opposite of described above)
+	 *
+	 * @param {Point} $point1 associative array - The origin of the line of projection							
+	 * @param {Point} $point2 associative array - The direction of the line of projection		
+	 * @param percent The percentage the line must be extended by path second point 
+	 *
+	 * @return {Point}	
+	 */
+	public function projectPath( Point $pointA, Point $pointB, $percent = 10 ){
 
-		$x1 = $arrPoint1['x'];
-		$y1 = $arrPoint1['y'];
+		$x = $pointA->x + ( ( $pointA->x - $pointB->x ) / $percent );
+		$y = $pointA->y + ( ( $pointA->y - $pointB->y ) / $percent );
 
-		$x2 = $arrPoint2['x'];
-		$y2 = $arrPoint2['y'];
-
-		$x3 = $x1 + ( ( $x1 - $x2 ) / $percent );
-		$y3 = $y1 + ( ( $y1 - $y2 ) / $percent );
-
-		return round($x3, 3) + ',' + round($y3, 3);
+		return new Path( round($x, 3), round($y, 3) );
 	}
+
 
 
 
@@ -198,7 +198,7 @@ class Math{
 	 *
 	 * @return {Point}
 	 */
-	function ninetyDeg( Point $pointA, Point $pointB, $clockwise = true ){
+	public static function ninetyDeg( Point $pointA, Point $pointB, $clockwise = true ){
 
 		$pointResult = new Point();
 
@@ -227,8 +227,9 @@ class Math{
 	 * @return {boolean}
 	 */
 	function isOriginAboveLine( Point $pointOrigin, Point $pointA, Point $pointB ){
+
 		// Discover if the line is ascending or descending
-		$abOrientation = $this->abOrientation( $pointA, $pointB );
+		$abOrientation = static::abOrientation( $pointA, $pointB );
 
 		if( $abOrientation === 'flat' ){
 
@@ -253,7 +254,7 @@ class Math{
 			// If we've reached this point of the function, origin must be inside the bounding box so we need to compare angles
 			$oppositeSideToBLength = $pointOrigin->x - $pointA->x;
 
-			$hypotenuseToBLength = $this->distanceBetween( $pointOrigin, $pointA );
+			$hypotenuseToBLength = static::distanceBetween( $pointOrigin, $pointA );
 
 			$sinB = $oppositeSideToBLength / $hypotenuseToBLength;
 			$angleB = rad2deg( asin( $sinB ) );
@@ -272,7 +273,7 @@ class Math{
 
 			// If we've reached this point of the function, origin must be inside the bounding box so we need to compare angles
 			$oppositeSideToBLength = $pointB->x - $pointOrigin->x;
-			$hypotenuseToBLength = $this->distanceBetween( $pointB, $pointOrigin );
+			$hypotenuseToBLength = static::distanceBetween( $pointB, $pointOrigin );
 			if( $hypotenuseToBLength == 0 ){
 				$sinB = 0;
 			} else {
@@ -283,7 +284,7 @@ class Math{
 		}
 
 		$oppositeSideToALength = $pointB->x - $pointA->x;
-		$hypotenuseToALength = $this->distanceBetween( $pointB, $pointA );
+		$hypotenuseToALength = static::distanceBetween( $pointB, $pointA );
 		$sinA = $oppositeSideToALength / $hypotenuseToALength;
 		$angleA = rad2deg( asin( $sinA ) );
 
@@ -307,7 +308,7 @@ class Math{
 	 *
 	 * @return {string}
 	 */
-	function abOrientation( Point $pointA, Point $pointB ){
+	public static function abOrientation( Point $pointA, Point $pointB ){
 		if( $pointA->y === $pointB->y ){
 			return 'flat';
 		} else if( $pointA->y < $pointB->y ){
@@ -325,7 +326,7 @@ class Math{
 	 * @param {Point}
 	 * @param {Point}
 	 */
-	function orientSoLeftmostIsFirst( Point &$pointA, Point &$pointB ){
+	public static function orientSoLeftmostIsFirst( Point &$pointA, Point &$pointB ){
 		if( $pointA->x > $pointB->x ){
 			$tempB = $pointB;
 			$pointB = $pointA;
@@ -347,13 +348,13 @@ class Math{
 	 *
 	 * @return {array}
 	 */
-	function closestPointBetween2( Point $pointOrigin, Point $pointA, Point $pointB ){
+	public static function closestPointBetween2( Point $pointOrigin, Point $pointA, Point $pointB ){
 
 		// Orient the points so that A is on the left
-		$this->orientSoLeftmostIsFirst( $pointA, $pointB );
+		static::orientSoLeftmostIsFirst( $pointA, $pointB );
 
-		$abOrientation = $this->abOrientation( $pointA, $pointB );
-		$isOriginAboveLine = $this->isOriginAboveLine( $pointOrigin, $pointA, $pointB );
+		$abOrientation = static::abOrientation( $pointA, $pointB );
+		$isOriginAboveLine = static::isOriginAboveLine( $pointOrigin, $pointA, $pointB );
 
 		$arrReturn = array();
 
@@ -368,8 +369,8 @@ class Math{
 												$arrRightAngleCornerPointToA, 
 												$pointA
 											];
-		$oppositeSideToALength = $this->distanceBetween( $pointB, $arrRightAngleCornerPointToA );
-		$hypotenuseToALength = $this->distanceBetween( $pointA, $pointB );
+		$oppositeSideToALength = static::distanceBetween( $pointB, $arrRightAngleCornerPointToA );
+		$hypotenuseToALength = static::distanceBetween( $pointA, $pointB );
 		if( $hypotenuseToALength == 0 ){
 			$sinA = 0;
 		} else {
@@ -390,8 +391,8 @@ class Math{
 														$arrRightAngleCornerPointToC, 
 														$pointA
 												);
-		$oppositeSideToCLength = $this->distanceBetween( $pointOrigin, $arrRightAngleCornerPointToC );
-		$hypotenuseToCLength = $this->distanceBetween( $pointOrigin, $pointA );
+		$oppositeSideToCLength = static::distanceBetween( $pointOrigin, $arrRightAngleCornerPointToC );
+		$hypotenuseToCLength = static::distanceBetween( $pointOrigin, $pointA );
 		if( $hypotenuseToCLength == 0 ){
 			$sinC = 0;
 		} else {
@@ -439,7 +440,7 @@ class Math{
 
 		// Return some debugging
 		$arrReturn['arrPointResult'] = $arrPointResult;
-		$arrReturn['distanceToPointResult'] = $this->distanceBetween( $pointOrigin, $arrPointResult );
+		$arrReturn['distanceToPointResult'] = static::distanceBetween( $pointOrigin, $arrPointResult );
 
 		$arrReturn['arrPointA'] = $pointA;
 		$arrReturn['arrPointB'] = $pointB;
@@ -476,19 +477,19 @@ class Math{
 	 *
 	 * @return {array} Contains: 'area' and 'rightAngledTriangles'
 	 */
-	public function areaOfTriangle( Point $pointA, Point $pointB, Point $pointC ){
+	public static function areaOfTriangle( Point $pointA, Point $pointB, Point $pointC ){
 
 		$arrReturn['area'] = 0;
 		$arrReturn['rightAngledTriangles'] = [ null, null ];
 
-		$arrClosestPointBetween2 = $this->closestPointBetween2( $pointA, $pointB, $pointC );
+		$arrClosestPointBetween2 = static::closestPointBetween2( $pointA, $pointB, $pointC );
 
 		$arrReturn['rightAngledTriangles'][0] = array( $pointA, $arrClosestPointBetween2['arrPointResult'], $pointB );
-		$lengthOfBase = $this->distanceBetween( $arrClosestPointBetween2['arrPointResult'], $pointB );
+		$lengthOfBase = static::distanceBetween( $arrClosestPointBetween2['arrPointResult'], $pointB );
 		$arrReturn['area'] += $lengthOfBase * $arrClosestPointBetween2['distanceToPointResult'] / 2;
 
 		$arrReturn['rightAngledTriangles'][1] = array( $pointA, $arrClosestPointBetween2['arrPointResult'], $pointC );
-		$lengthOfBase = $this->distanceBetween( $arrClosestPointBetween2['arrPointResult'], $pointC );
+		$lengthOfBase = static::distanceBetween( $arrClosestPointBetween2['arrPointResult'], $pointC );
 		$arrReturn['area'] += $lengthOfBase * $arrClosestPointBetween2['distanceToPointResult'] / 2;
 
 		$arrReturn['area'] = round( $arrReturn['area'], 2 );
@@ -510,7 +511,7 @@ class Math{
 		// Loop over $arrPoints calculating distance and assigning them to $arrPointsWithinLimit if within limit
 		$iLimit = sizeof($arrPoints);
 		for( $i = 0; $i < $iLimit; $i++ ){
-			$arrPoints[$i]['distance'] = $this->distanceBetween( $pointOrigin, $arrPoints[$i] );
+			$arrPoints[$i]['distance'] = static::distanceBetween( $pointOrigin, $arrPoints[$i] );
 			if( $arrPoints[$i]['distance'] < $distanceLimit ){
 				$arrPointsWithinLimit[] = $arrPoints[$i];
 			}

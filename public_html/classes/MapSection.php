@@ -204,7 +204,7 @@ class MapSection extends Map{
 
 				$validReplacement = true;
 				
-				// if( $thisPropertyToBeImproved->hasPointWithSameCoords($arrNearestPoints[$n]) ){
+				// if( $thisPropertyToBeImproved->hasMatchingPoint($arrNearestPoints[$n]) ){
 				// 	$validReplacement = false;
 				// } else {
 

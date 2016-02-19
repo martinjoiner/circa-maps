@@ -9,19 +9,21 @@ class PropertyDeleter extends MapSection{
 
 
 	/**
-	 Deletes any properties that occupy $x $y
-	*/
-	function deleteProperties( $x, $y ){
+	 * Deletes any properties that occupy the given point
+	 *
+	 * @param {Point} $point
+	 *
+	 * @return {array} of IDs of deleted properties (used to update the DOM interface)
+	 */
+	public function deleteProperties( Point $point ){
 
-		$objMath = new Math();
-
-		$arrPropertyIDs = array();
+		$arrPropertyIDs = [];
 
 		foreach( $this->arrProperties as $thisProperty ){
 
 			$points_polygon = count($thisProperty->arrPoints);  // number vertices - zero-based array
 
-			if( $objMath->isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $x, $y) ){
+			if( Math::isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $point) ){
 				$arrPropertyIDs[] = $thisProperty->id;
 			}
 
@@ -36,11 +38,12 @@ class PropertyDeleter extends MapSection{
 
 
 	/**
-	 Deletes the row from the database
-	*/
-	public function deleteFromDB( $arrPropertyIDs ){
+	 * Deletes the row from the database
+	 *
+	 * @param {array} IDs of properties to delete
+	 */
+	private function deleteFromDB( array $arrPropertyIDs ){
 
-		// Call the saveInDB method of the newly created Property 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
 
 		$qry = $db->prepare("	DELETE FROM `property` 

@@ -104,20 +104,19 @@ class Property{
 	 *
 	 * @return {array} Contains: 'centerPoint', 'nearestRadius' and 'farthestRadius'
 	 */
-	function getCenterData(){
+	public function getCenterData(){
 
-		$objMath = new Math();
-
-		$firstAveragePoint = $objMath->midPoint( $this->arrPoints[0], $this->arrPoints[2] );
-		$secondAveragePoint = $objMath->midPoint( $this->arrPoints[1], $this->arrPoints[3] );
-		$centerPoint = $objMath->midPoint( $firstAveragePoint, $secondAveragePoint );
+		$firstAveragePoint = Math::midPoint( $this->arrPoints[0], $this->arrPoints[2] );
+		$secondAveragePoint = Math::midPoint( $this->arrPoints[1], $this->arrPoints[3] );
+		$centerPoint = Math::midPoint( $firstAveragePoint, $secondAveragePoint );
 
 		// Use the mid point to calculate which point is farthest away from center and define that as the radius 
 		$farthestPointDistance = 0;
 		$nearestPointDistance = INF;
+
 		// Loop through all points finding the farthest
 		foreach( $this->arrPoints as $thisPoint ){
-			$thisDistance = $objMath->distanceBetween( $centerPoint, $thisPoint );
+			$thisDistance = Math::distanceBetween( $centerPoint, $thisPoint );
 
 			if( $nearestPointDistance > $thisDistance ){
 				$nearestPointDistance = $thisDistance;
@@ -127,12 +126,12 @@ class Property{
 			}
 		}
 
-		$arrReturn = [];
-		$arrReturn['centerPoint'] = $centerPoint;
-		$arrReturn['nearestRadius'] = $nearestPointDistance;
-		$arrReturn['farthestRadius'] = $farthestPointDistance;
+		return [
+			'centerPoint' => $centerPoint,
+			'nearestRadius' => $nearestPointDistance,
+			'farthestRadius' => $farthestPointDistance
+		];
 
-		return $arrReturn;
 	}
 
 
@@ -199,32 +198,30 @@ class Property{
 	 */
 	public function getAreaData(){
 
-		$objMath = new Math();
-
 		$arrReturn['area'] = 0;
 		$arrReturn['rightAngledTriangles'] = [];
 
-		$disection1Length = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
+		$disection1Length = Math::distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
 
-		$disection2Length = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
+		$disection2Length = Math::distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
 
 		if( $disection1Length > $disection2Length ){
 
-			$result = $objMath->areaOfTriangle( $this->arrPoints[1], $this->arrPoints[0], $this->arrPoints[2] );
+			$result = Math::areaOfTriangle( $this->arrPoints[1], $this->arrPoints[0], $this->arrPoints[2] );
 			$arrReturn['area'] += $result['area'];
 			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
 
-			$result = $objMath->areaOfTriangle( $this->arrPoints[3], $this->arrPoints[0], $this->arrPoints[2] );
+			$result = Math::areaOfTriangle( $this->arrPoints[3], $this->arrPoints[0], $this->arrPoints[2] );
 			$arrReturn['area'] += $result['area'];
 			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
 
 		} else {
 
-			$result = $objMath->areaOfTriangle( $this->arrPoints[0], $this->arrPoints[1], $this->arrPoints[3] );
+			$result = Math::areaOfTriangle( $this->arrPoints[0], $this->arrPoints[1], $this->arrPoints[3] );
 			$arrReturn['area'] += $result['area'];
 			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
 
-			$result = $objMath->areaOfTriangle( $this->arrPoints[2], $this->arrPoints[1], $this->arrPoints[3] );
+			$result = Math::areaOfTriangle( $this->arrPoints[2], $this->arrPoints[1], $this->arrPoints[3] );
 			$arrReturn['area'] += $result['area'];
 			$arrReturn['rightAngledTriangles'] = array_merge( $arrReturn['rightAngledTriangles'], $result['rightAngledTriangles'] );
 
@@ -244,12 +241,10 @@ class Property{
 	 *
 	 * @param {integer} $minShortPercentageOfLong
 	 */
-	function areDisectionsWithinLimits( $minShortPercentageOfLong = 80 ){
+	public function areDisectionsWithinLimits( $minShortPercentageOfLong = 80 ){
 
-		$objMath = new Math();
-
-		$disection1Length = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
-		$disection2Length = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
+		$disection1Length = Math::distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
+		$disection2Length = Math::distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
 
 		if( $disection1Length == 0 || $disection2Length == 0 ){
 			return false;
@@ -277,7 +272,7 @@ class Property{
 	 *
 	 * @return {boolean}
 	 */
-	function doSidesIntersect(){
+	public function doSidesIntersect(){
 		$objCoordinateGeometry = new CoordinateGeometry();
 		$arrSide[] = array( $this->arrPoints[0], $this->arrPoints[1] );
 		$arrSide[] = array( $this->arrPoints[1], $this->arrPoints[2] );
@@ -306,12 +301,10 @@ class Property{
 	 */
 	public function areSideLengthsWithinLimits( $minShortPercentageOfLong = 20 ){
 
-		$objMath = new Math();
-
-		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[0], $this->arrPoints[1] );
-		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[1], $this->arrPoints[2] );
-		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[2], $this->arrPoints[3] );
-		$arrSideLengths[] = $objMath->distanceBetween( $this->arrPoints[3], $this->arrPoints[0] );
+		$arrSideLengths[] = Math::distanceBetween( $this->arrPoints[0], $this->arrPoints[1] );
+		$arrSideLengths[] = Math::distanceBetween( $this->arrPoints[1], $this->arrPoints[2] );
+		$arrSideLengths[] = Math::distanceBetween( $this->arrPoints[2], $this->arrPoints[3] );
+		$arrSideLengths[] = Math::distanceBetween( $this->arrPoints[3], $this->arrPoints[0] );
 
 		$shortestSideLength = min( $arrSideLengths );
 		$longestSideLength = max( $arrSideLengths );
@@ -331,41 +324,44 @@ class Property{
 
 	/**
 	 * Returns an array of 4 sides, each side contains 2 points. A side represents a paralel line offset from the side of the building
-	 * $numDistance is how far away from the property the sides are offset (breathing room basically)
 	 *
-	 * @param {integer}
+	 * @param {integer} $numDistance How far away from the property the sides are offset (This amounts to setting the breathing room between properties basically)
 	 *
 	 * @return {array}
 	 */
 	public function getOffsetSides( $numDistance = 3 ){
 
-		$arrReturn = array();
+		$arrResult = [];
 
-		$arrReturn[] = $this->calculateOffsetSide( 0, 1, $numDistance );
-		$arrReturn[] = $this->calculateOffsetSide( 1, 2, $numDistance );
-		$arrReturn[] = $this->calculateOffsetSide( 2, 3, $numDistance );
-		$arrReturn[] = $this->calculateOffsetSide( 3, 0, $numDistance );
+		$arrResult[] = $this->calculateOffsetSide( 0, 1, $numDistance );
+		$arrResult[] = $this->calculateOffsetSide( 1, 2, $numDistance );
+		$arrResult[] = $this->calculateOffsetSide( 2, 3, $numDistance );
+		$arrResult[] = $this->calculateOffsetSide( 3, 0, $numDistance );
 
-		return $arrReturn;
+		return $arrResult;
 	}
 
 
 
 
 	/**
+	 * Produces a new side that is offset by a given distance from one of the existing sides
+	 * 
+	 * @param {integer} $numPoint1
+	 * @param {integer} $numPoint2
+	 * @param {integer} $numDistance
 	 *
 	 * @return {array}
 	 */
 	private function calculateOffsetSide( $numPoint1, $numPoint2, $numDistance ){
 
-		$objMath = new Math();
-		$arrSide = array();
+		$arrSide = [];
 
-		$arrPointProjected = $objMath->ninetyDeg( $this->arrPoints[$numPoint1], $this->arrPoints[$numPoint2], false );
-		$arrSide[0] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[$numPoint2], $arrPointProjected, $numDistance );
+		$arrPointProjected = Math::ninetyDeg( $this->arrPoints[$numPoint1], $this->arrPoints[$numPoint2], false );
+		$arrSide[0] = Math::pointDistanceBetweenPoints( $this->arrPoints[$numPoint2], $arrPointProjected, $numDistance );
 
-		$arrPointProjected = $objMath->ninetyDeg( $this->arrPoints[$numPoint2], $this->arrPoints[$numPoint1], true );
-		$arrSide[1] = $objMath->pointDistanceBetweenPoints( $this->arrPoints[$numPoint1], $arrPointProjected, $numDistance );
+		$arrPointProjected = Math::ninetyDeg( $this->arrPoints[$numPoint2], $this->arrPoints[$numPoint1], true );
+		$arrSide[1] = Math::pointDistanceBetweenPoints( $this->arrPoints[$numPoint1], $arrPointProjected, $numDistance );
 
 		return $arrSide;
 	}
@@ -392,9 +388,10 @@ class Property{
 
 
 	/**
+	 * Replaces 2 points (eg. A 'side' of the Property)
 	 *
-	 * @param {integer}
-	 * @param {array}
+	 * @param {integer} $numSide
+	 * @param {array} $arrSide
 	 */
 	public function replaceSide( $numSide, $arrSide ){
 
@@ -417,10 +414,10 @@ class Property{
 	 *
 	 * @return {boolean} 
 	 */
-	function hasPointWithSameCoords( $arrPointCheck ){
-		// Loop through all points finding the farthest
+	public function hasMatchingPoint( Point $pointToCheck ){
+		// Iterate over all points 
 		foreach( $this->arrPoints as $thisPoint ){
-			if( $arrPointCheck['x'] === $thisPoint['x'] && $arrPointCheck['y'] === $thisPoint['y'] ){
+			if( $pointToCheck->x === $thisPoint->x && $pointToCheck->y === $thisPoint->y ){
 				return true;
 			}
 		}

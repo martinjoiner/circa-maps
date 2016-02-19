@@ -226,8 +226,6 @@ abstract class Map{
 	 */
 	public function isOccupied( $x, $y ){
 
-		$objMath = new Math();
-
 		$arrResult = [ 	'cntProperties' => sizeof($this->arrProperties), 
 						'cntRoutes' => sizeof($this->arrRoutes), 
 						'isOccupied' => false, 
@@ -235,12 +233,14 @@ abstract class Map{
 						'message' => '' 
 					];
 
+		$point = new Point( $x, $y );
+
 		// Iterate over properties, checking if point is inside it 
 		foreach( $this->arrProperties as $pointer => $thisProperty ){
 
 			$points_polygon = count($thisProperty->arrPoints);  // number vertices - zero-based array
 
-			if( $objMath->isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $x, $y) ){
+			if( Math::isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $point) ){
 				$arrResult['isOccupied'] = true;
 				$arrResult['occupationType'] = 'PROPERTY';
 				$arrResult['arrPropertiesPointer'] = $pointer;
@@ -251,7 +251,6 @@ abstract class Map{
 		}
 
 		// Fetch the nearest Route
-		$point = new Point( $x, $y );
 		$nearestRouteResult = $this->nearestRoute( $point );
 		if( $nearestRouteResult['distanceToClosestPointOnRoute'] > 0 && $nearestRouteResult['distanceToClosestPointOnRoute'] < 10 ){
 			$arrResult['isOccupied'] = true;
