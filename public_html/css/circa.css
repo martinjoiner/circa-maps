@@ -76,8 +76,20 @@ legend{
 	clear: left;
 }
 
-.checkLabel:hover{
+
+
+
+/* Hovers -------------------------------- */
+
+.checkLabel:hover,
+a:hover{
 	color: lightblue;
+	cursor: pointer;
+}
+
+button:hover,
+input[type=button]:hover{
+	background-color: lightblue;
 	cursor: pointer;
 }
 
@@ -125,4 +137,13 @@ legend{
 
 .renderField input{
 	font-size: 0.9em;
+}
+
+
+
+/* Maps --------------------------------- */
+
+ul li a{
+	display: inline-block;
+	padding: 2px;
 }
