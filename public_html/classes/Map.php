@@ -245,7 +245,7 @@ abstract class Map{
 				$arrResult['occupationType'] = 'PROPERTY';
 				$arrResult['arrPropertiesPointer'] = $pointer;
 				$arrResult['propertyInfo'] = $thisProperty->getInfo();
-				$arrResult['message'] .= $x . ',' . $y . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['arrAreaData']['area'] . ')';
+				$arrResult['message'] .= $point->coordSentence() . ' is inside property ID ' . $thisProperty->id . ' (area: ' . $arrResult['propertyInfo']['arrAreaData']['area'] . '). ';
 			} 
 
 		}
@@ -255,7 +255,7 @@ abstract class Map{
 		if( $nearestRouteResult['distanceToClosestPointOnRoute'] > 0 && $nearestRouteResult['distanceToClosestPointOnRoute'] < 10 ){
 			$arrResult['isOccupied'] = true;
 			$arrResult['occupationType'] = 'ROUTE';
-			$arrResult['message'] .= 'Point is ' . $nearestRouteResult['distanceToClosestPointOnRoute'] . ' units from a route';
+			$arrResult['message'] .= 'Point is ' . $nearestRouteResult['distanceToClosestPointOnRoute'] . ' units from a route. ';
 		}
 
 		return $arrResult;

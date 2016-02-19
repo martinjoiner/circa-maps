@@ -8,6 +8,15 @@ class Point implements JsonSerializable{
 	/** {integer} Used by Route when points are chained together */
 	public $distance = INF;
 
+
+
+
+	/** 
+	 * @constructor 
+	 *
+	 * @param {string|integer} $x
+	 * @param {string|integer} $y
+	 */
 	public function __construct( $x = 0, $y = 0 ){
 
 		$this->x = intval($x);
@@ -32,11 +41,30 @@ class Point implements JsonSerializable{
 		
 	}
 
+
+
+
+	/**
+	 * Because this class implements JsonSerializable we can provide this method to describe how it gets serialised
+	 */
 	public function jsonSerialize() {
         return [
             'x' => $this->x,
             'y' => $this->y
         ];
     }
+
+
+
+
+    /**
+     * Produce a human readable coordinates in for of 'x,y'
+     *
+     * @return {string}
+     */
+    public function coordSentence(){
+    	return $this->x . ',' . $this->y;
+    }
+
 
 }
