@@ -1,26 +1,26 @@
 
 html, 
-body{
+body {
 	font-family: arial, sans-serif;
 	padding: 0;
 	margin: 0;
 	font-size: 12px;
 }
 
-.canvasWrap{
+.canvasWrap {
 	width: 1200px;
 	height: 800px;
 	float: left;
 }
 
 #svgMap, 
-#mask{
+#mask {
 	position: absolute;
 	width: 1200px;
 	height: 800px;
 }
 
-#mask{
+#mask {
 	width: 1180px;
 	height: 780px;
 }
@@ -30,7 +30,7 @@ body{
 
 /** Controll panel ------------------------ */
 
-.controlPanel{
+.controlPanel {
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -41,38 +41,38 @@ body{
 	min-height: 800px;
 }
 
-fieldset{
+fieldset {
 	margin-bottom: 10px;
 	border: 1px solid #888;
 }
 
-legend{
+legend {
 	font-size: 1.1em;
 	font-weight: normal;
 }
 
-.controlPanel input{
+.controlPanel input {
 	margin-bottom: 5px;
 }
 
-.controlPanel a{
+.controlPanel a {
 	color: white;
 }
 
-.mouseMode{
+.mouseMode {
 
 }
 
 .mouseMode > label,
-.mouseMode > input{
+.mouseMode > input {
 	float: left;
 }
 
-.mouseMode > label{
+.mouseMode > label {
 	line-height: 20px;
 }
 
-.mouseMode input{
+.mouseMode input {
 	clear: left;
 }
 
@@ -82,13 +82,13 @@ legend{
 /* Hovers -------------------------------- */
 
 .checkLabel:hover,
-a:hover{
+a:hover {
 	color: lightblue;
 	cursor: pointer;
 }
 
 button:hover,
-input[type=button]:hover{
+input[type=button]:hover {
 	background-color: lightblue;
 	cursor: pointer;
 }
@@ -99,17 +99,17 @@ input[type=button]:hover{
 /** Actions field ------------------------ */
 
 .actionsField button,
-.actionsField input{
+.actionsField input {
 	width: 100%;
 	margin-bottom: 5px;
 }
 
-.actionsField :last-child{
+.actionsField :last-child {
 	margin-bottom: 0;
 }
 
 #btnSpawnStartStop i,
-#btnSpawnStartStop.active i{
+#btnSpawnStartStop.active i {
 	display: block;
 	background-image: url(/images/LoadingSpinner.gif);
 	background-repeat: no-repeat;
@@ -121,7 +121,7 @@ input[type=button]:hover{
 	visibility: hidden;	
 }
 
-#btnSpawnStartStop.active i{
+#btnSpawnStartStop.active i {
 	visibility: visible;
 }
 
@@ -130,12 +130,12 @@ input[type=button]:hover{
 
 /** Render field ------------------------ */
 
-.renderField th{
+.renderField th {
 	font-weight: normal;
 	text-align: left;
 }
 
-.renderField input{
+.renderField input {
 	font-size: 0.9em;
 }
 
@@ -143,7 +143,7 @@ input[type=button]:hover{
 
 /* Maps --------------------------------- */
 
-ul li a{
+ul li a {
 	display: inline-block;
 	padding: 2px;
 }
