@@ -156,7 +156,7 @@ class MapSection extends Map{
 			// Return result early, there's nowt we can do :-(
 			return $arrResult;
 		} else {
-			$thisPropertyToBeImproved = $this->arrProperties[ $arrIsOccupiedResult['arrPropertiesPointer'] ];
+			$propertyToBeImproved = $this->arrProperties[ $arrIsOccupiedResult['arrPropertiesPointer'] ];
 		}
 
 		$arrNeighboursOffsetSides = array();
@@ -173,23 +173,24 @@ class MapSection extends Map{
 
 		// TODO: Strip out any sides contianing points that are too close to a route
 
-		$objMath = new Math();
-
 		$objCoordinateGeometry = new CoordinateGeometry();
 
-		$arrPotentialImprovements = array();
+		$arrPotentialImprovements = [];
+
+		// Record the property's area before any changes
+		$arrAreaDataPreChange = $propertyToBeImproved->getAreaData();
+
+		// Record the property's centerPoint before any changes
+		$centerPointPreChange = $propertyToBeImproved->centerPoint();
 
 		// Loop over all 4 sides of the property, testing if replacing them with a neighbour's offset side would be an improvement in area
 		for( $i = 0; $i < 4; $i++ ){
 
 			// From the array of potential points, get the 5 nearest that are within 100 units 
-			//$arrNearestPoints = $objMath->nearestPointsInArray( $thisPropertyToBeImproved->arrPoints[$i], $arrNeighboursOffsetSides, 5, 100 );
-
-			// Record the current area
-			$arrAreaDataPreChange = $thisPropertyToBeImproved->getAreaData();
+			//$arrNearestPoints = Math::nearestPointsInArray( $propertyToBeImproved->arrPoints[$i], $arrNeighboursOffsetSides, 5, 100 );
 
 			// Save the original side in a variable
-			$arrSidePreChange = $thisPropertyToBeImproved->getSide($i);
+			$arrSidePreChange = $propertyToBeImproved->getSide($i);
 
 			// Set the best area achieved so far as being the current one
 			$bestAreaSoFar = $arrAreaDataPreChange['area'];
@@ -204,7 +205,7 @@ class MapSection extends Map{
 
 				$validReplacement = true;
 				
-				// if( $thisPropertyToBeImproved->hasMatchingPoint($arrNearestPoints[$n]) ){
+				// if( $propertyToBeImproved->hasMatchingPoint($arrNearestPoints[$n]) ){
 				// 	$validReplacement = false;
 				// } else {
 
@@ -220,19 +221,24 @@ class MapSection extends Map{
 				}
 
 				// Replace the point with the nearest point from arrNeighboursOffsetSides
-				$thisPropertyToBeImproved->replaceSide( $i, $arrCorrectedOrientationSide );
+				$propertyToBeImproved->replaceSide( $i, $arrCorrectedOrientationSide );
+
+				// Check the original centerPoint is still covered by the new property after changes (ie. It hasn't turned inside out)
+				if( !$propertyToBeImproved->coversPoint( $centerPointPreChange ) ){
+					$validReplacement = false;
+				}
 
 				// Get info on the new shape of property
-				$arrPostChangeInfo = $thisPropertyToBeImproved->getInfo();
+				$arrPostChangeInfo = $propertyToBeImproved->getInfo();
 				if( !$arrPostChangeInfo['isStandard'] ){
 					$validReplacement = false;
 				}
 
-				if( $validReplacement && parent::isCollisionWithMapProperties( $thisPropertyToBeImproved ) ){
+				if( $validReplacement && parent::isCollisionWithMapProperties( $propertyToBeImproved ) ){
 					$validReplacement = false;
 				}
 
-				if( $validReplacement && parent::isCollisionWithMapRoutes( $thisPropertyToBeImproved ) ){
+				if( $validReplacement && parent::isCollisionWithMapRoutes( $propertyToBeImproved ) ){
 					$validReplacement = false;
 				}
 
@@ -252,7 +258,7 @@ class MapSection extends Map{
 			} 
 			
 			// Revert the change for now because we gonna try the other sides
-			$thisPropertyToBeImproved->replaceSide( $i, $arrSidePreChange );
+			$propertyToBeImproved->replaceSide( $i, $arrSidePreChange );
 
 		}
 
@@ -267,17 +273,17 @@ class MapSection extends Map{
 			usort( $arrPotentialImprovements, array( $this, "compareImprovements") );
 
 			// Apply the first item in the arrPotentialImprovements array which will by definition be the best
-			$thisPropertyToBeImproved->replaceSide( $arrPotentialImprovements[0]['numSide'], $arrPotentialImprovements[0]['arrSideNew'] );
+			$propertyToBeImproved->replaceSide( $arrPotentialImprovements[0]['numSide'], $arrPotentialImprovements[0]['arrSideNew'] );
 
 			$arrResult['cntSidesReplaced']++;
 
 			$arrResult['message'] .= 'Replaced side ' . $arrPotentialImprovements[0]['numSide'];
 
 			// Save the new points in database
-			$thisPropertyToBeImproved->saveInDB();
+			$propertyToBeImproved->saveInDB();
 		}
 
-		$arrResult['path'] = $thisPropertyToBeImproved->getPath();
+		$arrResult['path'] = $propertyToBeImproved->getPath();
 		$arrResult['arrNeighboursOffsetSides'] = $arrNeighboursOffsetSides;
 
 		return $arrResult;

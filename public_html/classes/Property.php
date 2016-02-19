@@ -5,6 +5,10 @@
  */
 class Property{
 
+	/** Constant global limits on the size of a property */
+	const MINAREA = 100;
+	const MAXAREA = 3200;
+
 	/** {array} of Points that define this property boundary */
 	public $arrPoints = [];
 
@@ -205,17 +209,17 @@ class Property{
 	 * Returns an associative array of information about the property
 	 * Runs a series of checks to determine if the property is a standard (sensible) shape
 	 *
-	 * @return {array} Contains: 'arrAreaData', 'id', 'isStandard'
+	 * @return {array} Contains: {array} 'arrAreaData', 'id', 'isStandard'
 	 */
 	public function getInfo(){
 
-		$arrReturn = [];
-		$arrReturn['arrAreaData'] = $this->getAreaData();
-		$arrReturn['id'] = $this->id;
-		$arrReturn['isStandard'] = true;
+		$arrReturn = [	'arrAreaData' => $this->getAreaData(),
+						'id' => $this->id,
+						'isStandard' => true
+					];
 
-		// Area should be between 100 and 1600
-		if( $arrReturn['arrAreaData']['area'] < 100 || $arrReturn['arrAreaData']['area'] > 3200 ){
+		// Property is considered standard if it has an area within limits
+		if( $arrReturn['arrAreaData']['area'] < Property::MINAREA || $arrReturn['arrAreaData']['area'] > Property::MAXAREA ){
 			$arrReturn['isStandard'] = false;
 		}
 
@@ -247,8 +251,9 @@ class Property{
 	 */
 	public function getAreaData(){
 
-		$arrReturn['area'] = 0;
-		$arrReturn['rightAngledTriangles'] = [];
+		$arrReturn = [	'area' => 0,
+						'rightAngledTriangles' => []
+					];
 
 		$disection1Length = Math::distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
 
@@ -289,8 +294,10 @@ class Property{
 	 * $minShortPercentageOfLong The minimum percentage that shortest must be of longest
 	 *
 	 * @param {integer} $minShortPercentageOfLong
+	 *
+	 * @return {boolean}
 	 */
-	public function areDisectionsWithinLimits( $minShortPercentageOfLong = 80 ){
+	private function areDisectionsWithinLimits( $minShortPercentageOfLong = 80 ){
 
 		$disection1Length = Math::distanceBetween( $this->arrPoints[0], $this->arrPoints[2] );
 		$disection2Length = Math::distanceBetween( $this->arrPoints[1], $this->arrPoints[3] );
