@@ -14,7 +14,7 @@ The above image is a section of a print by Ashley Thomas. The inspiration for th
 Above: Image shows the level of complexity that the project was able to generate at end of 2015
 
 
-<img src="/docs/2016-02-20-Fourth-Map.svg" style="width: 100%; max-width: 50px;">
+![Example from February 2016](/docs/2016-02-20-Fourth-Map.jpg)
 
 Above: Example from February 2016
 
