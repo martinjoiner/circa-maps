@@ -9,33 +9,36 @@ Class CoordinateGeometry extends Math{
 	 * @param {Point} $pointA
 	 * @param {Point} $pointB
 	 *
-	 * @return {array} with keys 'm', 'b', 'x', 'equation' and 'isVertical'
+	 * @return {array} Containing 'm', 'b', 'x', 'equation', 'isVertical' and 'isHorizontal'
 	 */
-	function equationOfLine( Point $pointA, Point $pointB ){
+	private function equationOfLine( Point $pointA, Point $pointB ){
 
 		// Set up the return array with all possible elements
 		$arrReturn = [ 	'm' => null, 
 						'b' => null, 
 						'x' => null, 
-						'equation' => 'y = mx + b', 
-						'isVertical' => false 
+						'equation' => 'y = mx + b', // Equation in slope/intercept form
+						'isVertical' => false, 
+						'isHorizontal' => false 
 					];
 
 		// Arrange the points so that point A is on the left
 		parent::orientSoLeftmostIsFirst( $pointA, $pointB );
 
 		// If the line is horizontal the equation is easy! 
-		if( $pointA->y === $pointB->y ){
+		if( $pointA->y == $pointB->y ){
+			$arrReturn['isHorizontal'] = true;
 			$arrReturn['m'] = 0;
 			$arrReturn['b'] = $pointA->y;
+			$arrReturn['equation'] = 'y = ' . $pointA->y;
 			return $arrReturn;
 		}
 
 		// If the line is vertical the equation is easy!
-		if( $pointA->x === $pointB->x ){
+		if( $pointA->x == $pointB->x ){
 			$arrReturn['isVertical'] = true;
-			$arrReturn['equation'] = 'x = ' . $pointA->x;
 			$arrReturn['x'] = $pointA->x;
+			$arrReturn['equation'] = 'x = ' . $pointA->x;
 			return $arrReturn;
 		}
 
@@ -56,15 +59,19 @@ Class CoordinateGeometry extends Math{
 		$arrReturn['b'] = $pointA->y - round( $oppositeToDelta, 2);
 
 		if( $pointA->x === 0 ){
-			// TODO: If one of the points provided is on the y axis then we have to use y = m(x-Px) + Py equation 
-			error_log( 'coordinateGeometry->equationOfLine() says: Oh no, $pointA->x === 0', 0 );
-			return null;
+
+			// Use the difference between points to calculate m
+			$arrReturn['m'] = $oppositeToTheta / $adjacentToTheta;
+
+		} else {
+
+			$arrReturn['m'] = $oppositeToDelta / $pointA->x;
+
 		}
 
-		$arrReturn['m'] = $oppositeToDelta / $pointA->x;
+		$arrReturn['equation'] = 'y = ' . $arrReturn['m'] . 'x + ' . $arrReturn['b'];
 
 		return $arrReturn;
-
 	}
 
 

@@ -7,7 +7,7 @@ class Property{
 
 	/** Constant global limits on the size of a property */
 	const MINAREA = 100;
-	const MAXAREA = 3200;
+	const MAXAREA = 4000;
 
 	/** {array} of Points that define this property boundary */
 	public $arrPoints = [];
@@ -426,17 +426,18 @@ class Property{
 
 
 	/**
+	 * A side is made up of the corrosponding numbered point and the following one
 	 *
-	 * @param {integer} 
+	 * @param {integer} $numSide Between 0 - 3
 	 *
-	 * @return {array}
+	 * @return {array} Containing 2 points
 	 */
 	public function getSide( $numSide ){
 		switch( $numSide ){
-			case 0: return array( $this->arrPoints[0], $this->arrPoints[1] );
-			case 1: return array( $this->arrPoints[1], $this->arrPoints[2] );
-			case 2: return array( $this->arrPoints[2], $this->arrPoints[3] );
-			case 3: return array( $this->arrPoints[3], $this->arrPoints[0] );
+			case 0: return [ $this->arrPoints[0], $this->arrPoints[1] ];
+			case 1: return [ $this->arrPoints[1], $this->arrPoints[2] ];
+			case 2: return [ $this->arrPoints[2], $this->arrPoints[3] ];
+			case 3: return [ $this->arrPoints[3], $this->arrPoints[0] ];
 		}
 	}
 
