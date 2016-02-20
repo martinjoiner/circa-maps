@@ -172,7 +172,9 @@ $('#mask').click( function(){
 	} else if( map.mode === 'placeProperty' ){
 		placeProperty( x, y );
 	} else if( map.mode === 'deleteProperty' ){
-		deleteProperty( x, y );
+        deleteProperty( x, y );
+    } else if( map.mode === 'cleanseArea' ){
+		cleanseArea( x, y );
 	} else if( map.mode === 'offsetSides' ){
 		offsetSides( x, y );
 	} else if( map.mode === 'improvePropertyAtPoint' ){
@@ -266,8 +268,12 @@ function placeProperty( x, y ){
 
 
 
-/* Tests all paths on map to see if point is inside ------ */
-/* @x, @y - co-ordinates of point ------------------------ */ 
+/**
+ * Deletes any properties that cover a single point 
+ *
+ * @param x
+ * @param y
+ */ 
 function deleteProperty( x, y ){
 	$.ajax({
         type: "GET",
@@ -279,7 +285,34 @@ function deleteProperty( x, y ){
         dataType: "json"
     }).done(function(data) {
         for( var i = 0; i < data.length; i++ ){
+            console.log( 'Property ' + data[i] + ' deleted');
         	$( 'svg .Property#property' + data[i] ).remove();
+        }
+    });
+}
+
+
+
+
+/**
+ * Deletes all properties within range of point
+ *
+ * @param x co-ordinates of drop point
+ * @param y 
+ */ 
+function cleanseArea( x, y ){
+    $.ajax({
+        type: "GET",
+        url: "/DELETE/cleanseArea/",
+        data: { 'mapID': map.id, 
+                'x': x, 
+                'y': y 
+            },
+        dataType: "json"
+    }).done(function(data) {
+        for( var i = 0; i < data.length; i++ ){
+            console.log( 'Property ' + data[i] + ' deleted');
+            $( 'svg .Property#property' + data[i] ).remove();
         }
     });
 }
@@ -340,13 +373,13 @@ function improvePropertyAtPoint( x, y ){
  * @param y 
  */ 
 function routeSegmentsWithinRange( x, y ){
-	$.ajax({
+    $.ajax({
         type: "GET",
         url: "/GET/routeSegmentsWithinRange/",
         data: { 'mapID': map.id, 
-        		'x': x, 
-        		'y': y 
-        	},
+                'x': x, 
+                'y': y 
+            },
         dataType: "json"
     }).done(function(data) {
         console.log( data );

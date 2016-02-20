@@ -49,6 +49,9 @@
 			<input type="radio" name="mouseMode" value="deleteProperty" id="chkDeleteProperty">
 			<label for="chkDeleteProperty" class="checkLabel">Delete property</label>
 
+			<input type="radio" name="mouseMode" value="cleanseArea" id="chkCleanseArea">
+			<label for="chkCleanseArea" class="checkLabel">Cleanse area</label>
+
 			<input type="radio" name="mouseMode" value="offsetSides" id="chkOffsetSides">
 			<label for="chkOffsetSides" class="checkLabel">Offset Sides</label>
 

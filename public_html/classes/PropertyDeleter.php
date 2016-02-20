@@ -19,19 +19,34 @@ class PropertyDeleter extends MapSection{
 
 		$arrPropertyIDs = [];
 
-		foreach( $this->arrProperties as $thisProperty ){
+		foreach( $this->arrProperties as $property ){
 
-			$points_polygon = count($thisProperty->arrPoints);  // number vertices - zero-based array
-
-			if( Math::isInPolygon($points_polygon, $thisProperty->arrVerticesX, $thisProperty->arrVerticesY, $point) ){
-				$arrPropertyIDs[] = $thisProperty->id;
+			if( $property->coversPoint( $point ) ){
+				$arrPropertyIDs[] = $property->id;
 			}
 
 		}
 
-		$this->deleteFromDB( $arrPropertyIDs );
+		return $this->deleteFromDB( $arrPropertyIDs );
+	}
 
-		return $arrPropertyIDs;
+
+
+
+	/**
+	 * Deletes all properties on this map (map section)
+	 *
+	 * @return {array} of IDs of deleted properties 
+	 */
+	public function cleanseAll(){
+
+		$arrPropertyIDs = [];
+
+		foreach( $this->arrProperties as $property ){
+			$arrPropertyIDs[] = $property->id;
+		}
+
+		return $this->deleteFromDB( $arrPropertyIDs );
 	}
 
 
@@ -41,6 +56,8 @@ class PropertyDeleter extends MapSection{
 	 * Deletes the row from the database
 	 *
 	 * @param {array} IDs of properties to delete
+	 *
+	 * @return {array} The same array passed in
 	 */
 	private function deleteFromDB( array $arrPropertyIDs ){
 
@@ -55,6 +72,7 @@ class PropertyDeleter extends MapSection{
 		$qry->execute();
 		$qry->closeCursor();
 
+		return $arrPropertyIDs;
 	}
 
 
