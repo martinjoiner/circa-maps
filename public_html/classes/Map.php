@@ -8,8 +8,8 @@ abstract class Map{
 	/** {integer} Database ID of the map */
 	protected $id = 0;
 
-	/** {string} Name of the map */
-	protected $name = ''; 
+	/** {string} Name of the map (used for filename of SVG) */
+	public $name = ''; 
 
 	/** {integer} The total width of the whole map */
 	protected $width = 0;

@@ -123,6 +123,8 @@
 			</ul>
 		</fieldset>
 
+		<p><a href="/svg/?mapID=<?=$_GET['mapID']?>">Download SVG file</a></p>
+
 	</form>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
