@@ -23,9 +23,10 @@ Map = function(){
 /**
  * Method on Map Class: Renders the path on the canvas  
  *
- * @param skvPath Can contain 'class', 'id', 'd'
+ * @param {object} skvPath Can contain 'class', 'id', 'd'
+ * @param {string} group Class name of group in SVG to add to
  */
-Map.prototype.renderPath = function( skvPath ){
+Map.prototype.renderPath = function( skvPath, group ){
 
 	var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
@@ -48,7 +49,7 @@ Map.prototype.renderPath = function( skvPath ){
 		path.setAttribute("stroke-width", skvPath['stroke-width'] );
 	}
 
-	this.svg.append(path); 
+	this.svg.find('g.' + group).append(path); 
 };
 
 
@@ -79,7 +80,7 @@ Map.prototype.debugDot = function( x, y, colour, dotClass ){
     circle.setAttribute("fill", colour );
     circle.setAttribute("class", dotClass );
 
-    this.svg.append(circle); 
+    this.svg.find('g.debug').append(circle); 
 };
 
 
@@ -108,7 +109,7 @@ Map.prototype.debugPath = function( arrPoints, colour ){
     path.setAttribute("fill", colour );
     path.setAttribute("class", "DebugPath" );
 
-    this.svg.append(path); 
+    this.svg.find('g.debug').append(path); 
 }
 
 
@@ -260,7 +261,7 @@ function placeProperty( x, y ){
         dataType: "json"
     }).done(function(data) {
         if( data.success ){
-        	map.renderPath( data['arrPath'] );
+        	map.renderPath( data['arrPath'], 'properties' );
         }
     });
 }
@@ -357,7 +358,7 @@ function improvePropertyAtPoint( x, y ){
         //renderSides( data.arrNeighboursOffsetSides );
         console.log( data );
         if( data.cntSidesReplaced ){
-            map.renderPath( data.path );
+            map.renderPath( data.path, 'properties' );
         }
     });
 }
@@ -454,7 +455,7 @@ $('#btnInitXRoads').click( function(){
 
         if( data.success ){
             for( var i = 0, iLimit = data.arrPaths.length; i < iLimit; i++ ){
-                map.renderPath( data.arrPaths[i] );
+                map.renderPath( data.arrPaths[i], 'routes' );
             }
         }
 
@@ -495,7 +496,7 @@ $('#btnDrawRoutes').click( function(){
     }).done(function(data) {
 
         for( var i = 0, iLimit = data.length; i < iLimit; i++ ){
-        	map.renderPath( data[i] );
+        	map.renderPath( data[i], 'routes' );
         }
 
     });
@@ -522,7 +523,7 @@ $('#btnDrawProperties').click( function(){
     }).done(function(data) {
 
         for( var i = 0, iLimit = data.length; i < iLimit; i++ ){
-        	map.renderPath( data[i] );
+        	map.renderPath( data[i], 'properties' );
         }
 
     });
@@ -549,7 +550,7 @@ $('#btnDrawFronts').click( function(){
     }).done(function(data) {
 
         for( var i = 0, iLimit = data.length; i < iLimit; i++ ){
-        	map.renderPath( data[i] );
+        	map.renderPath( data[i], 'debug' );
         }
 
     });

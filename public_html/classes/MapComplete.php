@@ -104,16 +104,23 @@ class MapComplete extends Map{
 				  ]]></style>';
 
 		if( $includeRoutes ){
+			$xml .= '<g class="routes">';
 			foreach( $this->arrRoutes as $thisRoute ){
 				$xml .= $thisRoute->printMarkup();
 			}
+			$xml .= '</g>';
 		}		
 
 		if( $includeProperties ){
+			$xml .= '<g class="properties">';
 			foreach( $this->arrProperties as $thisProperty ){
 				$xml .= $thisProperty->printMarkup();
 			}
+			$xml .= '</g>';
 		}
+
+		// Add a group for debugging paths
+		$xml .= '<g class="debug"></g>';
 
 		$xml .= '</svg>
 		';
