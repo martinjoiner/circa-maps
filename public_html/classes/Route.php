@@ -57,7 +57,7 @@ class Route{
 	 */
 	public function printMarkup(){
 		$arrPath = $this->getPath();
-		$html = '<path class="' . $arrPath['class'] . '" stroke-width="' . $arrPath['stroke-width'] . '" d="' . $arrPath['d'] . '" id="' . $arrPath['id'] . '" />';
+		$html = "\t<path class=\"" . $arrPath['class'] . "\" stroke-width=\"" . $arrPath['stroke-width'] . "\" d=\"" . $arrPath['d'] . "\" id=\"" . $arrPath['id'] . "\" />\n";
 		return $html;	
 	}
 

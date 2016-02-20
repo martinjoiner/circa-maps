@@ -92,38 +92,39 @@ class MapComplete extends Map{
 	 * @return {string} XML markup 
 	 */
 	public function printMarkup( $includeRoutes = true, $includeProperties = true ){
-		$xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $this->width . '" height="' . $this->height . '" id="svgMap">
-				';
 
-		$xml .= '<style type="text/css"><![CDATA[
+		$xml = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
+
+		$xml .= "<svg id=\"svgMap\" xmlns=\"http://www.w3.org/2000/svg\" width=\"" . $this->width . "\" height=\"" . $this->height . "\" viewBox=\"0 0 " . $this->width . " " . $this->height . "\" enable-background=\"new 0 0 " . $this->width . " " . $this->height . "\">\n";
+
+		$xml .= "<style type=\"text/css\"><![CDATA[
 					.Route, .Property{ stroke: #555; stroke-opacity: 1;  }
 				    .Route{ fill: none; stroke-linejoin: round; }
 				    .Property{ fill: #777; opacity: 0.5; stroke-width: 0; }
 				    .Front{ stroke: #E22; }
 				    .DebugPath{ fill-opacity: 0.5; }
-				  ]]></style>';
+				  ]]></style>\n";
 
 		if( $includeRoutes ){
-			$xml .= '<g class="routes">';
+			$xml .= "<g class=\"routes\">\n";
 			foreach( $this->arrRoutes as $thisRoute ){
 				$xml .= $thisRoute->printMarkup();
 			}
-			$xml .= '</g>';
+			$xml .= "</g>\n";
 		}		
 
 		if( $includeProperties ){
-			$xml .= '<g class="properties">';
+			$xml .= "<g class=\"properties\">\n";
 			foreach( $this->arrProperties as $thisProperty ){
 				$xml .= $thisProperty->printMarkup();
 			}
-			$xml .= '</g>';
+			$xml .= "</g>\n";
 		}
 
 		// Add a group for debugging paths
-		$xml .= '<g class="debug"></g>';
+		$xml .= "<g class=\"debug\"></g>\n";
 
-		$xml .= '</svg>
-		';
+		$xml .= "</svg>\n";
 
 		return $xml;	
 
