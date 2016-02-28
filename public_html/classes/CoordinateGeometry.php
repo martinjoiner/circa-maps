@@ -11,7 +11,7 @@ Class CoordinateGeometry extends Math{
 	 *
 	 * @return {array} Containing 'm', 'b', 'x', 'equation', 'isVertical' and 'isHorizontal'
 	 */
-	private function equationOfLine( Point $pointA, Point $pointB ){
+	public static function equationOfLine( Point $pointA, Point $pointB ){
 
 		// Set up the return array with all possible elements
 		$arrReturn = [ 	'm' => null, 
