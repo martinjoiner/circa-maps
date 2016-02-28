@@ -84,7 +84,24 @@ class MapComplete extends Map{
 
 
 	/**
-	 * Produces markup for an SVG image
+	 * Produces markup for an SVG image file
+	 *
+	 * @param {boolean} $includeRoutes Dictates whether the routes are included
+	 * @param {boolean} $includeProperties Dictates whether the properties are included
+	 *
+	 * @return {string} XML markup 
+	 */
+	public function printFileMarkup( $includeRoutes = true, $includeProperties = true ){
+		$xml = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
+		$xml .= $this->printMarkup( $includeRoutes, $includeProperties );
+		return $xml;
+	}
+
+
+
+
+	/**
+	 * Produces markup for an SVG image inside HTML document
 	 *
 	 * @param {boolean} $includeRoutes Dictates whether the routes are included
 	 * @param {boolean} $includeProperties Dictates whether the properties are included
@@ -93,9 +110,7 @@ class MapComplete extends Map{
 	 */
 	public function printMarkup( $includeRoutes = true, $includeProperties = true ){
 
-		$xml = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
-
-		$xml .= "<svg id=\"svgMap\" xmlns=\"http://www.w3.org/2000/svg\" width=\"" . $this->width . "\" height=\"" . $this->height . "\" viewBox=\"0 0 " . $this->width . " " . $this->height . "\" enable-background=\"new 0 0 " . $this->width . " " . $this->height . "\">\n";
+		$xml = "<svg id=\"svgMap\" xmlns=\"http://www.w3.org/2000/svg\" width=\"" . $this->width . "\" height=\"" . $this->height . "\" viewBox=\"0 0 " . $this->width . " " . $this->height . "\" enable-background=\"new 0 0 " . $this->width . " " . $this->height . "\">\n";
 
 		$xml .= "<style type=\"text/css\"><![CDATA[
 					.Route, .Property{ stroke: #555; stroke-opacity: 1;  }
