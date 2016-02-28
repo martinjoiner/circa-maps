@@ -24,7 +24,9 @@ Live at: http://circa.butterscotchworld.co.uk
 
 ## Target Goal
 
-The end goal is to generate massively detailed SVG files (millions of properties and routes) which can be loaded into a CNC router which will carve the shapes into a 16 ft plywood printing block. This can then be inked-up and pressed using a ride-on road roller. This will be a public event of interest to print and art enthusiasts. 
+The end goal is to generate massively detailed SVG files (millions of properties) which can be loaded into a CNC router which will carve the shapes into the surface of a large (at least 6 ft) sheet of plywood to make a printing block. This can then be inked-up and pressed using a ride-on road roller (steamroller). 
+
+The printing process will be a bit of a spectacle and make a good public event attended by anyone interested in print and art. A good example of this process can be seen in this video from a Steamroller Festival in Canada: https://youtu.be/1tHgtmHc0bI 
 
 
 
