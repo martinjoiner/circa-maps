@@ -198,7 +198,7 @@ $('#mask').click( function(){
 function isOccupied( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/GET/isOccupied/",
+        url: "/api/isOccupied/",
         data: { 'mapID': map.id, 
         		'x': x, 
         		'y': y 
@@ -219,7 +219,7 @@ function isOccupied( x, y ){
 
 
 /**
- * Send AJAX request to /GET/nearestRoute/ and renders result 
+ * Send AJAX request to /api/nearestRoute/ and renders result 
  *
  * @param x
  * @param y
@@ -227,7 +227,7 @@ function isOccupied( x, y ){
 function nearestRoute( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/GET/nearestRoute/",
+        url: "/api/nearestRoute/",
         data: { 'mapID': map.id, 
         		'x': x, 
         		'y': y 
@@ -252,8 +252,8 @@ function nearestRoute( x, y ){
 /* @x, @y - co-ordinates of point ------------------------ */ 
 function placeProperty( x, y ){
 	$.ajax({
-        type: "GET",
-        url: "/POST/placeProperty/",
+        type: "POST",
+        url: "/api/placeProperty/",
         data: { 'mapID': map.id, 
         		'x': x, 
         		'y': y 
@@ -277,8 +277,8 @@ function placeProperty( x, y ){
  */ 
 function deleteProperty( x, y ){
 	$.ajax({
-        type: "GET",
-        url: "/DELETE/property/",
+        type: "POST",
+        url: "/api/property/",
         data: { 'mapID': map.id, 
         		'x': x, 
         		'y': y 
@@ -303,8 +303,8 @@ function deleteProperty( x, y ){
  */ 
 function cleanseArea( x, y ){
     $.ajax({
-        type: "GET",
-        url: "/DELETE/cleanseArea/",
+        type: "POST",
+        url: "/api/cleanseArea/",
         data: { 'mapID': map.id, 
                 'x': x, 
                 'y': y 
@@ -327,7 +327,7 @@ function cleanseArea( x, y ){
 function offsetSides( x, y ){
 	$.ajax({
         type: "GET",
-        url: "/GET/offsetSides/",
+        url: "/api/offsetSides/",
         data: { 'mapID': map.id, 
         		'x': x, 
         		'y': y 
@@ -347,8 +347,8 @@ function offsetSides( x, y ){
 /* @x, @y - co-ordinates of point ----------------------------------------- */ 
 function improvePropertyAtPoint( x, y ){
     $.ajax({
-        type: "GET",
-        url: "/PUT/improvePropertyAtPoint/",
+        type: "POST",
+        url: "/api/improvePropertyAtPoint/",
         data: { 'mapID': map.id, 
                 'x': x, 
                 'y': y 
@@ -376,7 +376,7 @@ function improvePropertyAtPoint( x, y ){
 function routeSegmentsWithinRange( x, y ){
     $.ajax({
         type: "GET",
-        url: "/GET/routeSegmentsWithinRange/",
+        url: "/api/routeSegmentsWithinRange/",
         data: { 'mapID': map.id, 
                 'x': x, 
                 'y': y 
@@ -447,8 +447,8 @@ function stopSpawning(){
 $('#btnInitXRoads').click( function(){
     
     $.ajax({
-        type: "GET",
-        url: "/POST/initCrossRoads/",
+        type: "POST",
+        url: "/api/initCrossRoads/",
         data: { "mapID": map.id },
         dataType: "json"
     }).done(function(data) {
@@ -466,12 +466,12 @@ $('#btnInitXRoads').click( function(){
 
 
 
-/** AJAX call to server to /GET/mostIsolatedPoint/ */
+/** AJAX call to server to /api/mostIsolatedPoint/ */
 $('#btnMostIsolated').click( function(){
 	
 	$.ajax({
         type: "GET",
-        url: "/GET/mostIsolatedPoint/",
+        url: "/api/mostIsolatedPoint/",
         data: { "mapID": map.id },
         dataType: "json"
     }).done(function(data) {
@@ -490,7 +490,7 @@ $('#btnMostIsolated').click( function(){
 $('#btnDrawRoutes').click( function(){
 	$.ajax({
         type: "GET",
-        url: "/GET/routes/",
+        url: "/api/routes/",
         data: { "mapID": map.id },
         dataType: "json"
     }).done(function(data) {
@@ -517,7 +517,7 @@ $('#btnDeleteRoutes').click( function(){
 $('#btnDrawProperties').click( function(){
 	$.ajax({
         type: "GET",
-        url: "/GET/properties/",
+        url: "/api/properties/",
         data: { "mapID": map.id },
         dataType: "json"
     }).done(function(data) {
@@ -544,7 +544,7 @@ $('#btnDeleteProperties').click( function(){
 $('#btnDrawFronts').click( function(){
 	$.ajax({
         type: "GET",
-        url: "/GET/propertyFronts/",
+        url: "/api/propertyFronts/",
         data: { "mapID": map.id },
         dataType: "json"
     }).done(function(data) {
@@ -571,12 +571,11 @@ $('#btnDeleteFronts').click( function(){
 $('#btnDrawJunctions').click( function(){
     $.ajax({
         type: "GET",
-        url: "/GET/junctions/",
+        url: "/api/junctions/",
         data: { "mapID": map.id },
         dataType: "json"
     }).done(function(data) {
 
-        console.log(data);
         for( var i = 0, iLimit = data.length; i < iLimit; i++ ){
             
             map.debugPath( data[i].segmentA, 'red' );

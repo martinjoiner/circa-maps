@@ -1,0 +1,19 @@
+{
+    "name": "martinjoiner/circa",
+    "type": "private",
+    "require": {
+        "vlucas/phpdotenv": "^2.4"
+    },
+    "license": "no-license",
+    "authors": [
+        {
+            "name": "Martin Joiner",
+            "email": "martin@martinjoiner.co.uk"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}

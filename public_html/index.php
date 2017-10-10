@@ -16,8 +16,9 @@
 			$_GET['mapID'] = 1;
 		}
 
-		include($_SERVER['DOCUMENT_ROOT'] . '/autoloadRegister.inc.php');
-		$objMap = new MapComplete($_GET['mapID']);
+		require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
+
+		$objMap = new \App\MapComplete($_GET['mapID']);
 		echo $objMap->printMarkup();
 		?>
 		<div id="mask"></div>
