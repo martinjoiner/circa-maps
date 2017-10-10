@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 
 // Initialise a MapSection object
-$objMapInitCrossRoads = new App\MapInitCrossRoads( $_GET['mapID'] );
+$objMapInitCrossRoads = new App\MapInitCrossRoads( $_POST['mapID'] );
 
 // Check if point is occupied
 $arrResult = $objMapInitCrossRoads->generateCrossRoads();

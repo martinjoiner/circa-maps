@@ -151,5 +151,14 @@ class MapComplete extends Map {
 	}
 
 
+	public function getWidth(){
+		return $this->width;
+	}
+
+	public function getHeight(){
+		return $this->height;
+	}
+
+
 }
 

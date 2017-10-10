@@ -1,11 +1,15 @@
 <?php
 
-header('Content-Type: application/json');
+if( $_SERVER['REQUEST_METHOD'] !== 'GET' ){
+    throw new Exception('Invalid Method', 405);
+}
 
-include($_SERVER['DOCUMENT_ROOT'] . '/autoloadRegister.inc.php');
+require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 
-$objMapSection = new MapSection( $_GET['mapID'], $_GET['x'], $_GET['y'] );
+$objMapSection = new App\MapSection( $_GET['mapID'], $_GET['x'], $_GET['y'] );
 
 $arrResult = $objMapSection->isOccupied( $_GET['x'], $_GET['y'] );
+
+header('Content-Type: application/json');
 
 echo json_encode($arrResult);

@@ -16,8 +16,6 @@ body {
 #svgMap, 
 #mask {
 	position: absolute;
-	width: 1200px;
-	height: 800px;
 }
 
 #mask {

@@ -9,18 +9,20 @@
 </head>
 <body>
 
-	<div class="canvasWrap">
-		<?php
+	<?php
 
-		if( !array_key_exists('mapID', $_GET) ){
-			$_GET['mapID'] = 1;
-		}
+	if( !array_key_exists('mapID', $_GET) ){
+		$_GET['mapID'] = 1;
+	}
 
-		require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
+	require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 
-		$objMap = new \App\MapComplete($_GET['mapID']);
-		echo $objMap->printMarkup();
-		?>
+	$map = new \App\MapComplete($_GET['mapID']);
+
+	?>
+
+	<div class="canvasWrap" style="width: <?=$map->getWidth()?>px; height: <?=$map->getHeight()?>px">
+		<?=$map->printMarkup();?>
 		<div id="mask"></div>
 	</div>
 
