@@ -117,9 +117,11 @@
 			<legend>Maps</legend>
 			<ul>
 				<?php
-				for( $i=1; $i < 5; $i++ ){
+				$maps = new App\Maps();
+				$maps = $maps->all();
+				foreach( $maps as $map ){
 					?>
-					<li><a href="?mapID=<?=$i?>">Map <?=$i?></a></li>
+					<li><a href="?mapID=<?=$map['id']?>"><?=$map['id']?>: <?=$map['name']?></a></li>
 					<?php
 				}
 				?>
