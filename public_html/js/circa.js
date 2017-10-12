@@ -574,14 +574,15 @@ $('#btnDrawJunctions').click( function(){
         url: "/api/junctions/",
         data: { "mapID": map.id },
         dataType: "json"
-    }).done(function(data) {
+    }).done(function(junctions) {
 
-        for( var i = 0, iLimit = data.length; i < iLimit; i++ ){
-            
-            map.debugPath( data[i].segmentA, 'red' );
-            map.debugPath( data[i].segmentB, 'blue' );
-            map.debugDot( data[i].point.x, data[i].point.y, 'yellow', 'junction' );
-            
+        var junction;
+        for( var i in junctions ){
+            junction = junctions[i];
+
+            map.debugPath( junction.segmentA, 'red' );
+            map.debugPath( junction.segmentB, 'blue' );
+            map.debugDot( junction.point.x, junction.point.y, 'yellow', 'junction' );
         }
 
     });

@@ -7,6 +7,7 @@ use App\Property;
 use PDO;
 use Exception;
 use App\Math;
+use App\Point;
 
 /**
  * Map abstract class is inherited by instantiations of MapComplete, MapInitCrossRoads or MapSection
@@ -29,7 +30,7 @@ abstract class Map {
 	protected $maxPropertyWidth = 100;
 
 	/** {array} All the routes on this map */
-	protected $arrRoutes =[];
+	protected $arrRoutes = [];
 
 	/** {array} All the properties on this MapComplete or MapSection */
 	protected $arrProperties = [];
@@ -238,7 +239,7 @@ abstract class Map {
 	 *
 	 * @return {array} Contains: 'cntProperties', 'cntRoutes', 'isOccupied', 'occupationType', 'message'
 	 */
-	public function isOccupied( $x, $y ){
+	public function isOccupied( Point $point ){
 
 		$arrResult = [ 	'cntProperties' => sizeof($this->arrProperties), 
 						'cntRoutes' => sizeof($this->arrRoutes), 
@@ -246,8 +247,6 @@ abstract class Map {
 						'occupationType' => null,
 						'message' => '' 
 					];
-
-		$point = new Point( $x, $y );
 
 		// Iterate over properties, checking if point is inside it 
 		foreach( $this->arrProperties as $pointer => $thisProperty ){
@@ -269,7 +268,7 @@ abstract class Map {
 		if( $nearestRouteResult['distanceToClosestPointOnRoute'] > 0 && $nearestRouteResult['distanceToClosestPointOnRoute'] < 10 ){
 			$arrResult['isOccupied'] = true;
 			$arrResult['occupationType'] = 'ROUTE';
-			$arrResult['message'] .= 'Point is ' . $nearestRouteResult['distanceToClosestPointOnRoute'] . ' units from a route. ';
+			$arrResult['message'] .= 'Point is ' . number_format($nearestRouteResult['distanceToClosestPointOnRoute'], 1) . ' units from a point on a route. ';
 		}
 
 		return $arrResult;
@@ -288,12 +287,13 @@ abstract class Map {
 	 */
 	public function nearestRoute( Point $point ){
 
-		$arrResult = [ 	'closestPointOnRoute' => null, 
-						'cntRoutesChecked' => 0, 
+		$arrResult = [ 	'closestPointOnRoute' => null,
+						'cntRoutesChecked' => 0,
+						'distanceToClosestPointOnRoute' => null,
 						'closestDistance' => INF
 					];
 
-		$nearestRoute = array();
+		$nearestRoute = [];
 		$cntRoutesChecked = 0;
 
 		// Iterate over all the routes
@@ -322,11 +322,11 @@ abstract class Map {
 	/**
 	 * Returns all the points where routes intersect
 	 *
-	 * @return {array} of Points
+	 * @return {array} of Junctions
 	 */
 	public function junctions(){
 
-		$arrResult = [];
+		$junctions = [];
 
 		// Iterate over all the routes
 		foreach( $this->arrRoutes as $routeA ){
@@ -340,7 +340,7 @@ abstract class Map {
 				// Don't bother to check if a route intersects with itself
 				if( $routeA->getId() != $routeB->getId() ){
 					
-					$arrResult = array_merge( $arrResult, $routeA->intersectionsWithRoute( $routeB ) );
+					$junctions = array_merge( $junctions, $routeA->intersectionsWithRoute( $routeB ) );
 
 				}
 
@@ -348,7 +348,7 @@ abstract class Map {
 
 		}
 
-		return $arrResult;
+		return $junctions;
 	}
 
 

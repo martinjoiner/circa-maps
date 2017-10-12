@@ -6,10 +6,12 @@ if( $_SERVER['REQUEST_METHOD'] !== 'GET' ){
 
 require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 
-$objMapSection = new App\MapSection( $_GET['mapID'], $_GET['x'], $_GET['y'] );
+$mapSection = new App\MapSection( $_GET['mapID'], $_GET['x'], $_GET['y'] );
 
-$arrResult = $objMapSection->isOccupied( $_GET['x'], $_GET['y'] );
+$point = new App\Point($_GET['x'], $_GET['y']);
+
+$result = $mapSection->isOccupied( $point );
 
 header('Content-Type: application/json');
 
-echo json_encode($arrResult);
+echo json_encode($result);

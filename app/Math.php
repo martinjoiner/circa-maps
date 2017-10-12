@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Point;
+
 class Math {
 
 

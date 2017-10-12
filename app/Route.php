@@ -3,6 +3,7 @@
 namespace App;
 
 use App\CoordinateGeometry;
+use App\Math;
 
 class Route {
 
@@ -171,15 +172,34 @@ class Route {
 
 
 	/**
+	 * Find intersections on this route with multiple routes.
+	 * If passed all routes on a map it would effectively find all the junctions on this route.
+	 * 
+	 * @param {array} $routes - Array of instances of App\Route
+	 */	
+	public function junctionsWithRoutes( array $routes ) {
+		$junctions = [];
+		foreach( $routes as $route ){
+			if( $route->getId !== $this->id ){
+				$junctions = array_merge( $junctions, $this->intersectionsWithRoute( $route ) );
+			}
+		}
+		return $junctions;
+	}
+
+
+
+
+	/**
 	 * Finds intersections between myself and a given Route
 	 * 
 	 * @param {Route} $route
 	 *
-	 * @return {array} of Points
+	 * @return {array} of Junctions
 	 */
 	public function intersectionsWithRoute( Route $route ){
 
-		$arrResult = [];
+		$junctions = [];
 
 		$routePoints = $route->getPoints();
 
@@ -194,12 +214,12 @@ class Route {
 
 			// If intersectionsWithSegment() returned an instance of Point, add it to the results
 			if( get_class($intersection['point']) === 'App\Point' ){
-				$arrResult[] = $intersection;
+				$junction = new Junction( $intersection, $this, $route );
+				$junctions[$junction->getKey()] = $junction;
 			}
 		}
 
-		return $arrResult;
-
+		return $junctions;
 	}
 
 

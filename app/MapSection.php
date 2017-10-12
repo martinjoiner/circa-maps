@@ -3,6 +3,7 @@
 namespace App;
 
 use PDO;
+use App\Point;
 
 /**
  * MapSection is a limited area of the map with only the routes and properties in proximity to given coordinates
@@ -54,10 +55,8 @@ class MapSection extends Map {
 								LEFT JOIN 	`route` ON `route`.`id` = p1.`route_id` 
 								LEFT JOIN 	`point` ON `point`.`route_id` = `route`.`id`
 								WHERE 		`route`.`map_id` = :mapID 
-								AND p1.x > :xMin 
-								AND p1.x < :xMax 
-								AND p1.y > :yMin 
-								AND p1.y < :yMax 
+								AND p1.x BETWEEN :xMin AND :xMax  
+								AND p1.y BETWEEN :yMin AND :yMax 
 								GROUP BY `point`.`id`
 								ORDER BY 	`route`.`id`, `point`.`order` 
 							");
@@ -91,10 +90,8 @@ class MapSection extends Map {
 								LEFT JOIN 	`property` ON `property`.`id` = p1.`property_id` 
 								LEFT JOIN 	`point` ON `point`.`property_id` = `property`.`id`
 								WHERE 		`property`.`map_id` = :mapID 
-								AND p1.x > :xMin 
-								AND p1.x < :xMax 
-								AND p1.y > :yMin 
-								AND p1.y < :yMax 
+								AND p1.x BETWEEN :xMin AND :xMax 
+								AND p1.y BETWEEN :yMin AND :yMax 
 								GROUP BY `point`.`id` 
 								ORDER BY 	`property`.`id`, `point`.`order` 
 							");
@@ -118,13 +115,12 @@ class MapSection extends Map {
 	 * Uses the isOccupied() function to find if a property is in this location 
 	 * Then returns the result of calling that property's getOffsetPoints() method
 	 *
-	 * @param {integer} $x
-	 * @param {integer} $y
+	 * @param {App\Point} $point
 	 *
 	 * @return {integer} $y
 	 */
-	public function getOffsetSides( $x, $y ){
-		$arrIsOccupiedResult = $this->isOccupied( $x, $y );
+	public function getOffsetSides( Point $point ){
+		$arrIsOccupiedResult = $this->isOccupied( $point );
 		if( $arrIsOccupiedResult['isOccupied'] ){
 			$thisProperty = $this->arrProperties[ $arrIsOccupiedResult['arrPropertiesPointer'] ];
 			return $thisProperty->getOffsetSides();
@@ -152,7 +148,7 @@ class MapSection extends Map {
 						'cntPotentialImprovements' => 0
 					];
 
-		$arrIsOccupiedResult = $this->isOccupied( $point->x, $point->y );
+		$arrIsOccupiedResult = $this->isOccupied( $point );
 
 		$arrResult['isOccupiedResult'] = $arrIsOccupiedResult;
 

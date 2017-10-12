@@ -2,6 +2,8 @@
 
 namespace App;
 
+use PDO;
+
 /**
  Class for deleting properties
 */

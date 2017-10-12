@@ -6,7 +6,7 @@ if( $_SERVER['REQUEST_METHOD'] !== 'POST' ){
 
 require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 
-$propertyDeleter = new App\PropertyDeleter( $_GET['mapID'], $_GET['x'], $_GET['y'], 30, 30 );
+$propertyDeleter = new App\PropertyDeleter( $_POST['mapID'], $_POST['x'], $_POST['y'], 30, 30 );
 
 header('Content-Type: application/json');
 
