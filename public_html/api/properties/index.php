@@ -8,8 +8,12 @@ require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 
 $map = new App\MapComplete( $_GET['mapID'] );
 
-$arrProperties = $map->getProperties();
+if( isSet($_GET['format']) ){
+    $properties = $map->getProperties( $_GET['format'] );
+} else {
+    $properties = $map->getProperties();
+}
 
 header('Content-Type: application/json');
 
-echo json_encode($arrProperties);
+echo json_encode($properties);

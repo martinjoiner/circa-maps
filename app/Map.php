@@ -73,6 +73,7 @@ abstract class Map {
 	protected function processDBResult( $rslt, $pathType = 'ROUTE' ){
 
 		$curID = 0;
+		$arrPoints = [];
 		foreach( $rslt as $thisResult ){
 
 			if( $curID != $thisResult['id'] ){
@@ -82,7 +83,7 @@ abstract class Map {
 				}
 
 				// Reset the variables
-				$arrPoints = array();
+				$arrPoints = [];
 				$curID = intval($thisResult['id']);
 			}
 
@@ -182,12 +183,14 @@ abstract class Map {
 	/** 
 	 * Returns an array of arrays representing properties
 	 *
+	 * @param {string} $format - Can be 'd' or 'points'
+	 *
 	 * @return {array} 
 	 */
-	public function getProperties(){
+	public function getProperties( $format = 'd' ){
 		$arrProperties = [];
 		foreach( $this->arrProperties as $thisProperty ){
-			$arrProperties[] = $thisProperty->getPath();
+			$arrProperties[] = $thisProperty->getPath($format);
 		}
 		return $arrProperties;
 	}
@@ -434,6 +437,14 @@ abstract class Map {
 		}
 
 		return false;
+	}
+
+	public function getId(){
+		return $this->id;
+	}
+	
+	public function getName(){
+		return $this->name;
 	}
 
 }

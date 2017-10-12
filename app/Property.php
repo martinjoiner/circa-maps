@@ -105,17 +105,27 @@ class Property {
 	/**
 	 * Returns an associative array with 'class', 'id' and 'd' values
 	 *
+	 * @param {string} $format - Can be 'd' or 'points'
+	 *
 	 * @return {array}
 	 */
-	public function getPath(){
+	public function getPath( $format = 'd' ){
 		$arrPath = array();
 		$arrPath['id'] = 'property' . $this->id;
 		$arrPath['class'] = 'Property';
-		$arrPath['d'] = 'M ';
-		foreach( $this->arrPoints as $thisPoint ){
-			$arrPath['d'] .= $thisPoint->x . ',' . $thisPoint->y . ' ';
-		} 
-		$arrPath['d'] .= 'z';
+
+		if( $format === 'd' ){
+			// Return a M...d string for rendering SVG
+			$arrPath['d'] = 'M ';
+			foreach( $this->arrPoints as $thisPoint ){
+				$arrPath['d'] .= $thisPoint->x . ',' . $thisPoint->y . ' ';
+			} 
+			$arrPath['d'] .= 'z';
+		} else if ( $format === 'points' ){
+			// Return the co-ordinates for rendering in 3D
+			$arrPath['points'] = $this->arrPoints;
+		}
+
 		return $arrPath;
 	}
 
