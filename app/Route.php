@@ -180,7 +180,7 @@ class Route {
 	public function junctionsWithRoutes( array $routes ) {
 		$junctions = [];
 		foreach( $routes as $route ){
-			if( $route->getId !== $this->id ){
+			if( $route->getId() !== $this->id ){
 				$junctions = array_merge( $junctions, $this->intersectionsWithRoute( $route ) );
 			}
 		}

@@ -43,6 +43,12 @@
 			<input type="radio" name="mouseMode" value="redDot" id="chkRedDot">
 			<label for="chkRedDot" class="checkLabel">Red dot</label>
 
+			<input type="radio" name="mouseMode" value="marker1" id="chkMarker1">
+			<label for="chkMarker1" class="checkLabel">Place Marker 1</label>
+
+			<input type="radio" name="mouseMode" value="marker2" id="chkMarker2">
+			<label for="chkMarker2" class="checkLabel">Place Marker 2</label>
+
 			<input type="radio" name="mouseMode" value="nearestRoute" id="chkNearestRoute">
 			<label for="chkNearestRoute" class="checkLabel">Nearest route</label>
 
@@ -78,6 +84,8 @@
 			<input type="button" id="btnInitXRoads" value="Init X-roads">
 
 			<input type="button" id="btnMostIsolated" value="Most isolated point">
+
+			<input type="button" id="btnShortestTravel" value="Shortest Travel">
 
 		</fieldset>
 		

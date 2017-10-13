@@ -1,4 +1,5 @@
 
+colors = [ 'aliceblue', 'pink' ];
 
 /** Map class. The big fat main badger. */
 Map = function(){
@@ -14,6 +15,8 @@ Map = function(){
 
     /** {string} Can be 'isOccupied'... */
     this.mode = '';
+
+    this.markers = [ null, null ];
 
 }
 
@@ -62,6 +65,8 @@ Map.prototype.renderPath = function( skvPath, group ){
  * @param y 
  * @param {string} colour *Optional* - Defaults to 'red' 
  * @param {string} dotClass *Optional* - Defaults to 'red' 
+ *
+ * @return SVG Element (Not DOM element)
  */
 Map.prototype.debugDot = function( x, y, colour, dotClass ){
 
@@ -81,6 +86,34 @@ Map.prototype.debugDot = function( x, y, colour, dotClass ){
     circle.setAttribute("class", dotClass );
 
     this.svg.find('g.debug').append(circle); 
+
+    circle.setPosition = function(x, y){
+        this.setAttribute("cx", x );
+        this.setAttribute("cy", y );
+    };
+
+    return circle;
+};
+
+
+
+
+/**
+ *
+ */
+Map.prototype.placeMarker = function( markerPointer, x, y ){
+
+    if( this.markers[markerPointer] == null ){
+        this.markers[markerPointer] = { 
+            x: x, 
+            y: y,
+            dot: this.debugDot( x, y, colors[markerPointer] )
+        };
+    } else {
+        this.markers[markerPointer].x = x;
+        this.markers[markerPointer].y = y;
+        this.markers[markerPointer].dot.setPosition(x,y);
+    }
 };
 
 
@@ -161,29 +194,23 @@ document.getElementById('mask').addEventListener('mousemove', function(e){
 $('#mask').click( function(){
 
 	var arrCoordParts = document.getElementById('mouseCoord').value.split(','),
-	   x = arrCoordParts[0],
-	   y = arrCoordParts[1];
+        x = arrCoordParts[0],
+        y = arrCoordParts[1];
 
-	if( map.mode === 'isOccupied' ){
-		isOccupied( x, y );
-	} else if( map.mode === 'redDot' ){
-		map.debugDot( x, y, 'red' );
-	} else if( map.mode === 'nearestRoute' ){
-		nearestRoute( x, y );
-	} else if( map.mode === 'placeProperty' ){
-		placeProperty( x, y );
-	} else if( map.mode === 'deleteProperty' ){
-        deleteProperty( x, y );
-    } else if( map.mode === 'cleanseArea' ){
-		cleanseArea( x, y );
-	} else if( map.mode === 'offsetSides' ){
-		offsetSides( x, y );
-	} else if( map.mode === 'improvePropertyAtPoint' ){
-        improvePropertyAtPoint( x, y );
-    } else if( map.mode === 'routeSegmentsWithinRange' ){
-		routeSegmentsWithinRange( x, y );
+    switch(map.mode){
+        case 'isOccupied': isOccupied( x, y ); break;
+        case 'redDot': map.debugDot( x, y, 'red' ); break;
+        case 'marker1': map.placeMarker( 0, x, y ); break;
+        case 'marker2': map.placeMarker( 1, x, y ); break;
+        case 'nearestRoute': nearestRoute( x, y ); break;
+        case 'placeProperty': placeProperty( x, y ); break;
+        case 'deleteProperty': deleteProperty( x, y ); break;
+        case 'cleanseArea':	cleanseArea( x, y ); break;
+        case 'offsetSides':	offsetSides( x, y ); break;
+        case 'improvePropertyAtPoint': improvePropertyAtPoint( x, y ); break;
+        case 'routeSegmentsWithinRange': routeSegmentsWithinRange( x, y ); break;
 	}
-	
+
 });
 
 
@@ -468,8 +495,8 @@ $('#btnInitXRoads').click( function(){
 
 /** AJAX call to server to /api/mostIsolatedPoint/ */
 $('#btnMostIsolated').click( function(){
-	
-	$.ajax({
+    
+    $.ajax({
         type: "GET",
         url: "/api/mostIsolatedPoint/",
         data: { "mapID": map.id },
@@ -478,6 +505,32 @@ $('#btnMostIsolated').click( function(){
 
         console.log( data );
         map.debugDot( data.point.x, data.point.y );
+
+    });
+
+});
+
+
+
+
+/** AJAX call to server to /api/mostIsolatedPoint/ */
+$('#btnShortestTravel').click( function(){
+	
+	$.ajax({
+        type: "GET",
+        url: "/api/shortestTravel/",
+        data: { 
+            mapID: map.id, 
+            x0: map.markers[0].x,
+            y0: map.markers[0].y,
+            x1: map.markers[1].x,
+            y1: map.markers[1].y,
+        },
+        dataType: "json"
+    }).done(function(data) {
+
+        console.log( data );
+        //map.debugDot( data.point.x, data.point.y );
 
     });
 

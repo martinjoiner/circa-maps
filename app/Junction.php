@@ -28,18 +28,33 @@ class Junction implements JsonSerializable {
         $this->segmentA = $intersection['segmentA'];
         $this->segmentB = $intersection['segmentB'];
 
+        $this->key = SELF::makeKey($routeA, $routeB);
         if( $routeA->getId() < $routeB->getId() ){
-            $this->key = 'j' . $routeA->getId() . '-' . $routeB->getId();
             $this->routeA = $routeA;
             $this->routeB = $routeB;
         } else if( $routeB->getId() < $routeA->getId() ){
-            $this->key = 'j' . $routeB->getId() . '-' . $routeA->getId();
             $this->routeA = $routeB;
             $this->routeB = $routeA;
         } else {
             // They are the same route!
             throw new Exception('A route cannot intersect itself!');
         }
+    }
+
+    /**
+     * The letter 'j' followed by the lowest route ID, a hyphen and the highest route ID
+     *
+     * @param App\Route $routeA
+     * @param App\Route $routeB
+     */
+    public static function makeKey( Route $routeA, Route $routeB ){
+        $key = 'j';
+        if( $routeA->getId() < $routeB->getId() ){
+            $key .= $routeA->getId() . '-' . $routeB->getId();
+        } else {
+            $key .= $routeB->getId() . '-' . $routeA->getId();
+        }
+        return $key;
     }
     
     public function getKey()

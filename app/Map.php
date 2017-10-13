@@ -287,20 +287,22 @@ abstract class Map {
 	 */
 	public function nearestRoute( Point $point ){
 
-		$arrResult = [ 	'closestPointOnRoute' => null,
-						'cntRoutesChecked' => 0,
-						'distanceToClosestPointOnRoute' => null,
-						'closestDistance' => INF
-					];
+		$result = [ 'closestPointOnRoute' => null,
+					'route' => null,
+					'cntRoutesChecked' => 0,
+					'distanceToClosestPointOnRoute' => null,
+					'closestDistance' => INF
+				];
 
 		$nearestRoute = [];
 		$cntRoutesChecked = 0;
 
 		// Iterate over all the routes
-		foreach( $this->arrRoutes as $thisRoute ){
-			$thisResult = $thisRoute->gimme2NearestPoints( $point );
-			if( $arrResult['closestDistance'] > $thisResult['closestDistance'] ){
-				$arrResult['closestDistance'] = $thisResult['closestDistance'];
+		foreach( $this->arrRoutes as $route ){
+			$thisResult = $route->gimme2NearestPoints( $point );
+			if( $result['closestDistance'] > $thisResult['closestDistance'] ){
+				$result['closestDistance'] = $thisResult['closestDistance'];
+				$result['route'] = $route;
 				$nearestRoute = $thisResult;
 			}
 			$cntRoutesChecked++;
@@ -308,12 +310,12 @@ abstract class Map {
 
 		if( $cntRoutesChecked ){
 			$closestPointBetween2 = Math::closestPointBetween2( $point, $nearestRoute['top2NearestPoints'][0], $nearestRoute['top2NearestPoints'][1] );
-			$arrResult['closestPointOnRoute'] = $closestPointBetween2;
-			$arrResult['distanceToClosestPointOnRoute'] = Math::distanceBetween( $point, $closestPointBetween2['arrPointResult'] );
-			$arrResult['cntRoutesChecked'] = $cntRoutesChecked;
+			$result['closestPointOnRoute'] = $closestPointBetween2;
+			$result['distanceToClosestPointOnRoute'] = Math::distanceBetween( $point, $closestPointBetween2['arrPointResult'] );
+			$result['cntRoutesChecked'] = $cntRoutesChecked;
 		}
 
-		return $arrResult;
+		return $result;
 	}
 
 
