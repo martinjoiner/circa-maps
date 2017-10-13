@@ -247,8 +247,8 @@
                 }
 
                 propertyGroup.rotateX( Math.PI / -2);
-                propertyGroup.translateX(- map.height / 2);
-                propertyGroup.translateY(- map.width / 4);
+                propertyGroup.translateX(- map.width / 2);
+                propertyGroup.translateY(- map.height / 2);
                 scene.add( propertyGroup );
 
             });
