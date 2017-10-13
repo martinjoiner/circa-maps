@@ -57,6 +57,15 @@ class PropertyPlacer extends MapSection {
 			$isValid = true;
 		}
 
+		// Check that none of the sides intersect a route 
+		// (this can happen if close to a junction where building parallel to a segment 
+		// of 1 route might cause the front face to intersect another route)
+		// This could later be made redundant by detecting when building near a junction and building "corner" properties
+		if( parent::isCollisionWithMapRoutes( $objProposedProperty ) ){
+			$isValid = false;
+		}
+
+
 		if( $isValid ){
 			// Check if property meets standards
 			$arrProposedPropertyInfo = $objProposedProperty->getInfo();
