@@ -278,7 +278,7 @@ function placeProperty( x, y ){
 function deleteProperty( x, y ){
 	$.ajax({
         type: "POST",
-        url: "/api/property/",
+        url: "/api/deleteProperty/",
         data: { 'mapID': map.id, 
         		'x': x, 
         		'y': y 

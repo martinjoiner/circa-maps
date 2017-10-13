@@ -6,9 +6,9 @@ if( $_SERVER['REQUEST_METHOD'] !== 'POST' ){
 
 require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 
-$propertyDeleter = new PropertyDeleter( $_GET['mapID'], $_GET['x'], $_GET['y'] );
+$propertyDeleter = new App\PropertyDeleter( $_POST['mapID'], $_POST['x'], $_POST['y'] );
 
-$point = new Point( $_GET['x'], $_GET['y'] );
+$point = new App\Point( $_POST['x'], $_POST['y'] );
 
 $arrResult = $propertyDeleter->deleteProperties( $point );
 
