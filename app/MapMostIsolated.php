@@ -16,9 +16,10 @@ class MapMostIsolated extends MapComplete {
 	 */
 	public function findMostIsolatedPoint(){
 
-		$arrResult = [ 	'point' => null,
-						'closestDistance' => 0
-					];
+        $result = [ 
+            'point' => null,
+            'closestDistance' => 0
+        ];
 
 		/** {integer} Number of units to leap on each iteration */
 		$leap = 50;
@@ -33,16 +34,16 @@ class MapMostIsolated extends MapComplete {
 
 				$nearestRouteRslt = $this->nearestRoute( $point );
 
-				if( $arrResult['closestDistance'] < $nearestRouteRslt['closestDistance'] ){
-					$arrResult['closestDistance'] = $nearestRouteRslt['closestDistance'];
-					$arrResult['point'] = $point;
-				}
+                if( $result['closestDistance'] < $nearestRouteRslt['closestDistance'] ){
+                    $result['closestDistance'] = $nearestRouteRslt['closestDistance'];
+                    $result['point'] = $point;
+                }
 
 			}
 
 		}
 
-		return $arrResult;
+        return $result;
 	}
 
 
