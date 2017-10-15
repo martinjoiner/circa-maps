@@ -56,6 +56,20 @@ class Junction implements JsonSerializable {
         }
         return $key;
     }
+
+    /**
+     * @param {App\Route}
+     *
+     * @return {boolean}
+     */
+    public function hasRoute( Route $route )
+    {
+        if( $this->routeA->getId() === $route->getId() || $this->routeB->getId() === $route->getId() ){
+            return true;
+        } else {
+            return false;
+        }
+    }
     
     public function getKey()
     {
@@ -65,6 +79,20 @@ class Junction implements JsonSerializable {
     public function getPoint()
     {
         return $this->point;
+    }
+
+    /**
+     * @param App\Route 
+     *
+     * @return App\Route - The other route that is not the provided one
+     */
+    public function getOtherRoute( Route $route )
+    {
+        if( $route->getId() == $this->routeA->getId() ){
+            return $this->routeB;
+        } else {
+            return $this->routeA;
+        }
     }
     
     public function getRouteA()

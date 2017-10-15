@@ -114,6 +114,10 @@ Map.prototype.placeMarker = function( markerPointer, x, y ){
         this.markers[markerPointer].y = y;
         this.markers[markerPointer].dot.setPosition(x,y);
     }
+
+    if( this.markers[0] !== null && this.markers[1] !== null ){
+        shortestTravel();
+    }
 };
 
 
@@ -124,25 +128,40 @@ Map.prototype.placeMarker = function( markerPointer, x, y ){
  * 
  * @param {array} arrPoints of points representing the path 
  * @param {string} colour *Optional* - Defaults to 'red' 
+ * @param {string} fill *Optional* - Fill colour
  */
-Map.prototype.debugPath = function( arrPoints, colour ){
+Map.prototype.debugPath = function( points, colour, fill ){
 
     if(typeof colour === 'undefined'){
         colour = 'red';
     }
 
+    if(typeof fill === 'undefined'){
+        fill = colour;
+    }
+
     var d = 'M ';
-    for( var i = 0, iLimit = arrPoints.length; i < iLimit; i++ ){
-        d += ' ' + arrPoints[i].x + ',' + arrPoints[i].y;
+    for( var i = 0, iLimit = points.length; i < iLimit; i++ ){
+        d += ' ' + points[i].x + ',' + points[i].y;
     }
 
     var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute("d", d );
     path.setAttribute("stroke", colour );
-    path.setAttribute("fill", colour );
+    path.setAttribute("fill", fill );
     path.setAttribute("class", "DebugPath" );
 
     this.svg.find('g.debug').append(path); 
+
+    path.update = function( points ){
+        var d = 'M ';
+        for( var i = 0, iLimit = points.length; i < iLimit; i++ ){
+            d += ' ' + points[i].x + ',' + points[i].y;
+        }
+        this.setAttribute("d", d );
+    }
+
+    return path;
 }
 
 
@@ -512,10 +531,14 @@ $('#btnMostIsolated').click( function(){
 
 
 
+var shortestTravelPath;
 
 /** AJAX call to server to /api/mostIsolatedPoint/ */
 $('#btnShortestTravel').click( function(){
-	
+    shortestTravel();
+});
+
+function shortestTravel(){
 	$.ajax({
         type: "GET",
         url: "/api/shortestTravel/",
@@ -530,11 +553,16 @@ $('#btnShortestTravel').click( function(){
     }).done(function(data) {
 
         console.log( data );
-        //map.debugDot( data.point.x, data.point.y );
+
+        if( shortestTravelPath ){
+            shortestTravelPath.update(data.steps);
+        } else {
+            shortestTravelPath = map.debugPath(data.steps, 'yellow', 'none');
+        }
 
     });
+}
 
-});
 
 
 
