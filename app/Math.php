@@ -438,7 +438,10 @@ class Math {
 				$resultX = $pointA->x + $side1Length;
 				$resultY = $pointA->y + $side2Length;
 			}
-		}
+        } else if( $abOrientation === 'flat' ){
+            $resultX = $pointOrigin->x;
+            $resultY = $pointA->y;
+        }
 
 		$arrPointResult = new Point( $resultX, $resultY );
 
