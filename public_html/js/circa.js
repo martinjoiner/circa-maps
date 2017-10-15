@@ -126,7 +126,7 @@ Map.prototype.placeMarker = function( markerPointer, x, y ){
 /**
  * Method on Map class: Places a path on the canvas for debugging purposes
  * 
- * @param {array} arrPoints of points representing the path 
+ * @param {array} points of points representing the path 
  * @param {string} colour *Optional* - Defaults to 'red' 
  * @param {string} fill *Optional* - Fill colour
  */
@@ -157,6 +157,9 @@ Map.prototype.debugPath = function( points, colour, fill ){
         var d = 'M ';
         for( var i = 0, iLimit = points.length; i < iLimit; i++ ){
             d += ' ' + points[i].x + ',' + points[i].y;
+        }
+        if( points.length === 0 ){
+            d = '';
         }
         this.setAttribute("d", d );
     }
@@ -554,10 +557,16 @@ function shortestTravel(){
 
         console.log( data );
 
-        if( shortestTravelPath ){
-            shortestTravelPath.update(data.steps);
+        if( data.possible ){
+            if( shortestTravelPath ){
+                shortestTravelPath.update(data.steps);
+            } else {
+                shortestTravelPath = map.debugPath(data.steps, 'yellow', 'none');
+            }
         } else {
-            shortestTravelPath = map.debugPath(data.steps, 'yellow', 'none');
+            if( shortestTravelPath ){
+                shortestTravelPath.update([]);
+            } 
         }
 
     });
