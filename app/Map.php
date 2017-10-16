@@ -216,17 +216,29 @@ abstract class Map {
 
 
 	/** 
-	 * Returns an array of arrays representing properties
+     * Returns an array of paths representing routes
 	 *
 	 * @return {array} 
 	 */
-	public function getRoutes(){
-		$arrFronts = array();
-		foreach( $this->arrRoutes as $thisRoute ){
-			$arrFronts[] = $thisRoute->getPath();
-		}
-		return $arrFronts;
-	}
+    public function getRoutePaths(){
+        $routePaths = array();
+        foreach( $this->arrRoutes as $thisRoute ){
+            $routePaths[] = $thisRoute->getPath();
+        }
+        return $routePaths;
+    }
+
+
+
+
+    /** 
+     * Returns the number of routes
+     *
+     * @return {number} 
+     */
+    public function getRouteCount(){
+        return count($this->arrRoutes);
+    }
 
 
 

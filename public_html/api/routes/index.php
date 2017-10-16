@@ -8,8 +8,8 @@ require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 
 $map = new App\MapComplete( $_GET['mapID'] );
 
-$arrRoutes = $map->getRoutes();
+$routePaths = $map->getRoutePaths();
 
 header('Content-Type: application/json');
 
-echo json_encode($arrRoutes);
+echo json_encode($routePaths);

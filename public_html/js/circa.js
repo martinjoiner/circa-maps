@@ -506,6 +506,7 @@ $('#btnInitXRoads').click( function(){
             for( var i = 0, iLimit = data.arrPaths.length; i < iLimit; i++ ){
                 map.renderPath( data.arrPaths[i], 'routes' );
             }
+            $('#btnInitXRoads').prop('disabled', true);
         }
 
     });

@@ -69,7 +69,7 @@
                 <span>Start Spawning</span>
             </button>
             
-            <input type="button" id="btnInitXRoads" value="Init X-roads">
+            <input type="button" id="btnInitXRoads" value="Init X-roads" <?php if( $map->getRouteCount() ){ print 'disabled'; } ?>>
 
             <input type="button" id="btnMostIsolated" value="Most isolated point">
 
