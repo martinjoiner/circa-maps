@@ -48,7 +48,11 @@ The application offers several ways to interact with the data:
 
 ### SVG
 
-`/{id}/svg` - Download an SVG file of the map
+`/{id}/svg` - Download an SVG file of the map.
+
+### VR
+
+`/{id}/vr` - WebVR interface for experiencing a map via a headset.
 
 ### API Routes
 
@@ -67,7 +71,7 @@ The application offers several ways to interact with the data:
 
 ## Technology 
 
-MySQL, PHP 7, JavaScript, jQuery, SVG, CSS, WebGL.
+PHP 7, Composer, MySQL, JavaScript, jQuery, SVG, CSS, WebGL.
 
 PHP does all the generation of items on the map, collision detection and reading/writing the database. 
 
