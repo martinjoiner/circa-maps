@@ -1,7 +1,7 @@
 
-# Circa Maps
+# Circa
 
-Generative design code to produce large map-like artworks. Database-backed for saving and efficient collision detection during generation by limiting run-time objects to a section of the map. 
+Generative design project to produce large map-like artworks. Events will be written to assess conditions and trigger changes in the size, shape and placement of roads and properties to mimick the expansion of a real human-populated city. Parameters such as economic conditions will affect size and decedance of structures built on a property. Political factors such as public or private-sector dominance will affect variety of building. Land value will be determined by proximity to major routes and value of neighbouring properties.
 
 
 ![Photographed segment of a print by Ashley Thomas](/docs/Segment-of-AT-Print.jpg)
@@ -22,19 +22,57 @@ Live at: http://circa.butterscotchworld.co.uk
 
 
 
+
 ## Target Goal
 
-The end goal is to generate massively detailed SVG files (millions of properties) which can be loaded into a CNC router which will carve the shapes into the surface of a large (at least 6 ft) sheet of plywood to make a printing block. This can then be inked-up and pressed using a ride-on road roller (steamroller). 
+The initial intention for this project was to be able to automatically generate highly detailed SVG files containing millions of properties which could then be loaded into a CNC router to cut a huge plywood printing block (at least 6 ft). This would be inked and pressed using a ride-on road roller at a public event open to spectators similar to this video from a Steamroller Festival in Canada: https://youtu.be/1tHgtmHc0bI 
 
-The printing process will be a bit of a spectacle and make a good public event attended by anyone interested in print and art. A good example of this process can be seen in this video from a Steamroller Festival in Canada: https://youtu.be/1tHgtmHc0bI 
+However, in December 2016, after receiving estimates of the cost and cutting time for such a large and complex pattern it soon became apparent this was unviable without significant financial input. 
+
+In October 2017 the project was reborn as a VR environment which can be experienced through a headset. 
+
+
+
+
+## Interface routes
+
+The application offers several ways to interact with the data:
+
+### View
+
+`/{id}` - A non-interactive web-page for viewing an SVG of a map.
+
+### Develop
+
+`/{id}/develop` - An interactive SVG view of the map with control panel to to send API requests to trigger map events and return results, updating the map if necessery. 
+
+### SVG
+
+`/{id}/svg` - Download an SVG file of the map
+
+### API Routes
+
+`/api/...` - Many operations can be triggered in isolation for development purposes. 
+
+
+
+
+## Real-world events to be simulated
+
+ - 2 small neighbouring properties on high value land might merge to enable them to build taller. 
+ - Wars or natural disasters may raze structures. 
+
 
 
 
 ## Technology 
 
-MySQL, PHP >5.4, Javascript, jQuery, SVG, CSS
+MySQL, PHP 7, JavaScript, jQuery, SVG, CSS, WebGL.
 
-In this version the Javascript is used to send AJAX requests for map events and then update the visible SVG in return. Events can cause changes in the data such as new roads, new properties, properties expanding by acquiring neighbouring property, structural growth, destruction or replacement. Each event goes with various parameters such as economic conditions which will affect size and decedance of structure and public or private dominence which will affect variety of building. PHP does all the generation of items on the map server-side with careful collision detection. 
+PHP does all the generation of items on the map, collision detection and reading/writing the database. 
+
+MySQL database-backed for saving data and efficiently being able to perform operations on a small section of the map by selecting points with a range. 
+
 
 
 

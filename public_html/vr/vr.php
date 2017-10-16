@@ -19,24 +19,12 @@
 </head>
 <body>
 
-    <?php
-
-    if( !array_key_exists('mapID', $_GET) ){
-        $_GET['mapID'] = 1;
-    }
-
-    require $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
-
-    $map = new \App\MapComplete($_GET['mapID']);
-
-    ?>
-
     <div id=container></div>
 
-    <script src="js/three.min.js"></script>
-    <script src="js/tween.min.js"></script>
-    <script src="js/WebVR.js"></script>
-    <script src="js/OrbitControls.js"></script>
+    <script src="/vr/js/three.min.js"></script>
+    <script src="/vr/js/tween.min.js"></script>
+    <script src="/vr/js/WebVR.js"></script>
+    <script src="/vr/js/OrbitControls.js"></script>
 
     <script src="http://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
