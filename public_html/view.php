@@ -12,6 +12,8 @@
     <div class="canvasWrap" style="width: <?=$map->getWidth()?>px; height: <?=$map->getHeight()?>px">
         <?=$map->printMarkup();?>
     </div>
+    
+    <p><a href="/<?=$map->getId()?>/vr">VR</a></p>
 
 </body>
 </html>

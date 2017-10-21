@@ -26,7 +26,7 @@
     <script src="/vr/js/WebVR.js"></script>
     <script src="/vr/js/OrbitControls.js"></script>
 
-    <script src="http://code.jquery.com/jquery-2.2.4.min.js"
+    <script src="//code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
         crossorigin="anonymous"></script>
 
@@ -182,6 +182,8 @@
             renderer.domElement.addEventListener( 'touchstart', onMouseDown, false );
             renderer.domElement.addEventListener( 'touchend', onMouseUp, false );
 
+            propertyGroup = new THREE.Group();
+
             //
 
             window.addEventListener( 'resize', onWindowResize, false );
@@ -214,8 +216,6 @@
                     property_shape,
                     property_material,
                     property_geometry;
-
-                propertyGroup = new THREE.Group()
 
                 for( var i = 0, iLimit = properties.length; i < iLimit; i++ ){
                     property = properties[i];
