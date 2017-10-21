@@ -26,8 +26,8 @@ class TravelMap extends MapComplete {
 	public function travelShortest( Point $originPoint, Point $targetPoint )
 	{
 		// Get nearest point on route for each point. 
-		$nearestRouteToOrigin = @$this->nearestRoute($originPoint);
-		$nearestRouteToTarget = @$this->nearestRoute($targetPoint);
+        $nearestRouteToOrigin = $this->nearestRoute($originPoint);
+        $nearestRouteToTarget = $this->nearestRoute($targetPoint);
 
 		$pointOnOriginsNearestRoute = $nearestRouteToOrigin['closestPointOnRoute']['arrPointResult'];
 		$pointOnTargetsNearestRoute = $nearestRouteToTarget['closestPointOnRoute']['arrPointResult'];

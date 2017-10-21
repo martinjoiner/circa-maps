@@ -295,12 +295,12 @@ abstract class Map {
 	 *
 	 * @param {Point} $point
 	 *
-	 * @return {array} Contains: closestPointOnRoute, cntRoutesChecked, closestDistance (closestPointOnRoute, distanceToClosestPointOnRoute, cntRoutesChecked)
+     * @return {array} Contains: closestPointOnRoute, route, cntRoutesChecked, closestDistance (closestPointOnRoute, distanceToClosestPointOnRoute, cntRoutesChecked)
 	 */
 	public function nearestRoute( Point $point ){
 
 		$result = [ 'closestPointOnRoute' => null,
-                    'route_id' => null,
+                    'route' => null,
 					'cntRoutesChecked' => 0,
 					'distanceToClosestPointOnRoute' => null,
 					'closestDistance' => INF
@@ -314,7 +314,7 @@ abstract class Map {
 			$thisResult = $route->gimme2NearestPoints( $point );
 			if( $result['closestDistance'] > $thisResult['closestDistance'] ){
 				$result['closestDistance'] = $thisResult['closestDistance'];
-                $result['route_id'] = $route->getId();
+                $result['route'] = $route;
 				$nearestRoute = $thisResult;
 			}
 			$cntRoutesChecked++;

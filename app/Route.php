@@ -4,8 +4,10 @@ namespace App;
 
 use App\CoordinateGeometry;
 use App\Math;
+use JsonSerializable;
 
-class Route {
+class Route implements JsonSerializable
+{
 
 	/** {integer} Database ID of route */
 	private $id = 0;
@@ -23,14 +25,25 @@ class Route {
 	 * @constructor 
 	 *
 	 * @param {integer} $id
-	 * @param {array} $arrPoints Array of instances of Point class
+     * @param {array} $points Array of instances of Point class
 	 */
-	public function __construct( $id, $arrPoints ){
+    public function __construct( $id, array $points )
+    {
 
 		$this->id 			= intval($id);
-		$this->arrPoints 	= $arrPoints;
+        $this->arrPoints 	= $points;
 
-	}
+    }
+
+
+
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->id
+        ];
+    }
 
 
 
