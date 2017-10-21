@@ -12,29 +12,6 @@
 		require_once( $_SERVER['DOCUMENT_ROOT'] . '/phDump/phDump.inc.php' );
 
 
-		print '<h3>A diagonal line</h3>';
-		$pointA = new Point( 10, 10 );
-		$pointB = new Point( 20, 20 );
-		phDump( CoordinateGeometry::equationOfLine( $pointA, $pointB ) ); 
-
-
-		print '<h3>A line</h3>';
-		$pointA = new Point( 10, 10 );
-		$pointB = new Point( 20, 15 );
-		phDump( CoordinateGeometry::equationOfLine( $pointA, $pointB ) );
-
-
-		print '<h3>A vertical line</h3>';
-		$pointA = new Point( 10, 10 );
-		$pointB = new Point( 10, 55 );
-		phDump( CoordinateGeometry::equationOfLine( $pointA, $pointB ) );
-
-
-		print '<h3>A line with point A on the right of point B!</h3>';
-		$pointA = new Point( 20, 20 );
-		$pointB = new Point( 10, 10 );
-		phDump( CoordinateGeometry::equationOfLine( $pointA, $pointB ) );
-
 
 
 		print '<h3>Scenario 1</h3>';

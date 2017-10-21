@@ -80,6 +80,13 @@ MySQL database-backed for saving data and efficiently being able to perform oper
 
 
 
+## Tests
+
+Run PHPUnit tests: `vendor/bin/phpunit`
+
+
+
+
 ## References
 
 Scalable Vector Graphics (SVG) 1.1 (Second Edition) http://www.w3.org/TR/SVG/

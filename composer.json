@@ -2,7 +2,8 @@
     "name": "martinjoiner/circa",
     "type": "private",
     "require": {
-        "vlucas/phpdotenv": "^2.4"
+        "vlucas/phpdotenv": "^2.4",
+        "phpunit/phpunit": "^6.4"
     },
     "license": "no-license",
     "authors": [
