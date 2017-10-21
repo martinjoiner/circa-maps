@@ -50,15 +50,15 @@ class MapSection extends Map {
 
 		include( $_SERVER['DOCUMENT_ROOT'] . '/db_connect.inc.php' );
 
-		$qry = $db->prepare("	SELECT 		`route`.`id`, `route`.`width` as 'routeWidth', `point`.`x`, `point`.`y`
+        $qry = $db->prepare("	SELECT 		`route`.`id`, `route`.`width` AS 'routeWidth', `point`.`x`, `point`.`y`
 								FROM 		`point` AS p1 
 								LEFT JOIN 	`route` ON `route`.`id` = p1.`route_id` 
 								LEFT JOIN 	`point` ON `point`.`route_id` = `route`.`id`
 								WHERE 		`route`.`map_id` = :mapID 
 								AND p1.x BETWEEN :xMin AND :xMax  
 								AND p1.y BETWEEN :yMin AND :yMax 
-								GROUP BY `point`.`id`
-								ORDER BY 	`route`.`id`, `point`.`order` 
+                                GROUP BY point.id, route.id
+                                ORDER BY route.id, point.order 
 							");
 		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
 		$qry->bindValue('xMin', $this->topLeftPoint->x, PDO::PARAM_INT);
@@ -92,7 +92,7 @@ class MapSection extends Map {
 								WHERE 		`property`.`map_id` = :mapID 
 								AND p1.x BETWEEN :xMin AND :xMax 
 								AND p1.y BETWEEN :yMin AND :yMax 
-								GROUP BY `point`.`id` 
+                                GROUP BY point.id, property.id 
 								ORDER BY 	`property`.`id`, `point`.`order` 
 							");
 		$qry->bindValue('mapID', $this->id, PDO::PARAM_INT);
