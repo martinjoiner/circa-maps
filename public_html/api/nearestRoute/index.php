@@ -10,8 +10,8 @@ $mapSection = new App\MapSection( $_GET['mapID'], $_GET['x'], $_GET['y'] );
 
 $point = new App\Point( $_GET['x'], $_GET['y'] );
 
-$arrResult = $mapSection->nearestRoute( $point );
+$result = $mapSection->nearestRoute( $point );
 
 header('Content-Type: application/json');
 
-echo json_encode($arrResult);
+echo json_encode($result);
