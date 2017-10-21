@@ -107,9 +107,10 @@ class Route implements JsonSerializable
 	 *
 	 * @return {integer} The total length of the whole route
 	 */
-	function calculateLength(){
-
-	}
+    public function getLength()
+    {
+        return TravelMap::totalStepsDistance($this->arrPoints, 1);
+    }
 
 
 

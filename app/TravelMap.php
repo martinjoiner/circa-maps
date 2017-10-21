@@ -61,7 +61,7 @@ class TravelMap extends MapComplete {
 				$shortestDistance = INF;
 				foreach( $this->possibleSteps as $possible ){
 					$possible = array_merge( $possible, [$pointOnTargetsNearestRoute, $targetPoint] );
-					$thisDistance = $this->totalStepsDistance( $possible );
+                    $thisDistance = SELF::totalStepsDistance( $possible );
 					if( $thisDistance < $shortestDistance ){
 						$result['steps'] = $possible;
 						$result['possible'] = true;
@@ -74,7 +74,7 @@ class TravelMap extends MapComplete {
 
 		if( $result['possible'] ){
 			$result['crowDistance'] = Math::distanceBetween($originPoint, $targetPoint);
-			$result['stepsDistance'] = $this->totalStepsDistance( $result['steps'] );
+            $result['stepsDistance'] = SELF::totalStepsDistance( $result['steps'] );
 		}
 
 		return $result;
@@ -124,17 +124,21 @@ class TravelMap extends MapComplete {
 
 
 	/**
-	 * @param {array} of App\Points
+     * @param {array} of App\Points
+     * @param {int} Number of dp to round to
 	 *
 	 * @return {number} Total distance
 	 */
-	private function totalStepsDistance( array $points )
+    public static function totalStepsDistance( array $points, $dp = null )
 	{
 		$distance = 0;
 		$iLimit = count($points) - 1;
 		for( $i = 0; $i < $iLimit; $i++ ){
 			$distance += Math::distanceBetween($points[$i], $points[$i+1]);
 		}
+        if( $dp ){
+            return round( $distance, $dp );
+        }
 		return $distance;
 	}
 
