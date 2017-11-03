@@ -14,4 +14,8 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ rewrite.php?path=$1 [L]
 
+    RewriteCond %{HTTP_HOST} ^circa\.butterscotchworld\.co\.uk$ 
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://circa.butterscotchworld.co.uk/ [L,R=301]
+
 </IfModule>
