@@ -10,21 +10,56 @@
         body {
             margin: 0;
             padding: 0;
+            font-family: sans-serif;
         }
         canvas {
             display: block;
+        }
+
+        #blocker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        #instructions {
+            width: 100%;
+            height: 100%;
+            display: -webkit-box;
+            display: -moz-box;
+            display: box;
+            -webkit-box-orient: horizontal;
+            -moz-box-orient: horizontal;
+            box-orient: horizontal;
+            -webkit-box-pack: center;
+            -moz-box-pack: center;
+            box-pack: center;
+            -webkit-box-align: center;
+            -moz-box-align: center;
+            box-align: center;
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
         }
     </style>
 
 </head>
 <body>
-
+    
+    <div id=blocker style="display: none">
+        <div id=instructions>
+            <span style="font-size:40px">Click to play</span>
+            <br />
+            (ESC = Exit)
+        </div>
+    </div>
     <div id=container></div>
 
     <script src="/vr/js/three.min.js"></script>
     <script src="/vr/js/tween.min.js"></script>
     <script src="/vr/js/WebVR.js"></script>
-    <script src="/vr/js/OrbitControls.js"></script>
+    <script src="/vr/js/PointerLockControls.js"></script>
 
     <script src="//code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
@@ -45,12 +80,16 @@
 
         } );
 
+        // The elements used by the PointerLockControls in non-VR mode
+        var blocker = document.getElementById( 'blocker' );
+        var instructions = document.getElementById( 'instructions' );
+
         //
 
         var clock = new THREE.Clock();
 
         var container;
-        var camera, scene, raycaster, renderer;
+        var camera, scene, world, raycaster, renderer;
         var controls; // Only set when developing in browser
         var propertyGroup;
 
@@ -108,7 +147,7 @@
             scene = new THREE.Scene();
             scene.background = new THREE.Color( 0x505050 );
 
-            camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, Math.max(map.width, map.height) );
+            camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, Math.max(map.width, map.height) );
             scene.add( camera );
 
             crosshair = new THREE.Mesh(
@@ -121,17 +160,21 @@
             );
             crosshair.position.z = - 2;
             camera.add( crosshair );
-            camera.position.x = 0;
-            camera.position.y = 0.5;
-            camera.position.z = 2;
 
-            //
 
-            scene.add( new THREE.HemisphereLight( 0x606060, 0x404040 ) );
+            // World is the group that will be moved around to compensate for the camera being fixed at 0,0,0
+
+            world = new THREE.Group();
+            scene.add(world);
+            world.translateY(-80);
+
+            var light = new THREE.HemisphereLight( 0x606060, 0x404040 );
+            light.position.y = 20;
+            world.add( light );
 
             var light = new THREE.DirectionalLight( 0xffffff );
             light.position.set( 1, 1, 1 ).normalize();
-            scene.add( light );
+            world.add( light );
 
 
             // Desert colour FLOOR
@@ -141,7 +184,7 @@
             var plane_material = new THREE.MeshBasicMaterial( { color: 0xecd888 } ); 
             var plane = new THREE.Mesh( plane_geometry, plane_material );
             plane.name = "Floor";
-            scene.add(plane);
+            world.add(plane);
 
 
             // Raycaster for detecting mouse-over
@@ -161,17 +204,9 @@
 
                 document.body.appendChild( WEBVR.getButton( display, renderer.domElement ) );
                 if( !display ){
-                    console.log('No displays, initialising OrbitControls');
 
-                    controls = new THREE.OrbitControls( camera, renderer.domElement );
-                    controls.addEventListener( 'change', render );
-                    controls.target.set(0, 10, 0);
-
-                    camera.position.x = 140;
-                    camera.position.y =  200;
-                    camera.position.z =  250;
-
-                    controls.update();
+                    console.log('No displays, initialising Pointer Lock Controls');
+                    enablePointerLockControls();
 
                 }
 
@@ -235,9 +270,11 @@
                 }
 
                 propertyGroup.rotateX( Math.PI / -2);
+
                 propertyGroup.translateX(- map.width / 2);
                 propertyGroup.translateY(- map.height / 2);
-                scene.add( propertyGroup );
+
+                world.add( propertyGroup );
 
             });
 
@@ -247,6 +284,30 @@
         function onMouseDown() {
 
             isMouseDown = true;
+
+            if (INTERSECTED) {
+                var bbox = new THREE.Box3().setFromObject(INTERSECTED);
+                var centerX = bbox.min.x + ( (bbox.max.x-bbox.min.x) / 2 );
+                var centerZ = bbox.min.z + ( (bbox.max.z-bbox.min.z) / 2 );
+
+                // Tween camera position
+
+                var position = {  
+                    x: world.position.x,
+                    z: world.position.z
+                };
+                var target = { 
+                    x: world.position.x-centerX,
+                    z: world.position.z-centerZ
+                };
+                var tween = new TWEEN.Tween(position).to(target, 1400);
+                tween.onUpdate(function(){
+                    world.position.x = position.x;
+                    world.position.z = position.z;
+                });
+                tween.easing(TWEEN.Easing.Exponential.InOut);
+                tween.start();
+            }
 
         }
 
@@ -313,6 +374,62 @@
             }
 
             renderer.render( scene, camera );
+
+        }
+
+
+        /**
+         * This is a mouse-controlled view to emulate a turning head in browser
+         */
+        function enablePointerLockControls() {
+
+            var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+
+            if ( havePointerLock ) {
+
+                // Making blocker visible
+                blocker.style.display = '-webkit-box';
+                blocker.style.display = '-moz-box';
+                blocker.style.display = 'box';
+
+                var element = document.body;
+                var pointerlockchange = function ( event ) {
+                    if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+                        controlsEnabled = true;
+                        controls.enabled = true;
+                        blocker.style.display = 'none';
+                    } else {
+                        controls.enabled = false;
+                        blocker.style.display = '-webkit-box';
+                        blocker.style.display = '-moz-box';
+                        blocker.style.display = 'box';
+                        instructions.style.display = '';
+                    }
+                };
+                var pointerlockerror = function ( event ) {
+                    instructions.style.display = '';
+                };
+                // Hook pointer lock state change events
+                document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+                document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+                document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+                document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+                document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+                document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+                document.addEventListener( 'mousedown', onMouseDown, false );
+                document.addEventListener( 'mouseup', onMouseUp, false );
+                instructions.addEventListener( 'click', function ( event ) {
+                    instructions.style.display = 'none';
+                    // Ask the browser to lock the pointer
+                    element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+                    element.requestPointerLock();
+                }, false );
+            } 
+
+
+            controls = new THREE.PointerLockControls( camera );
+            scene.add( controls.getObject() );
+
 
         }
 
