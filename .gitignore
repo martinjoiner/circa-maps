@@ -12,3 +12,6 @@ test.php
 
 # Ignore composer package folder
 vendor
+
+# Ignore PHPStorm project file
+.idea
