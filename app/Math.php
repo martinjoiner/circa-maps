@@ -11,11 +11,11 @@ class Math {
 	/**
 	 * Returns a new point that is a certain distance between 2 points 
 	 *
-	 * @param {Point} $pointA 
-	 * @param {Point} $pointB 
-	 * @param {integer} $distance How far from pointA toward pointB should the result be
+	 * @param Point $pointA
+	 * @param Point $pointB
+	 * @param integer $distance How far from pointA toward pointB should the result be
 	 * 
-	 * @return {Point} A point between 2 points 
+	 * @return Point A point between 2 points
 	 */
 	public static function pointDistanceBetweenPoints( Point $pointA, Point $pointB, $distance ){
 

@@ -3,6 +3,7 @@
 namespace App;
 
 use PDO;
+use \Exception;
 
 class Maps {
 
